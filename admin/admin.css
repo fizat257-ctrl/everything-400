@@ -1,3 +1,7 @@
+/* =========================
+   EVERYTHING 400 - ADMIN CSS
+========================= */
+
 * {
     margin: 0;
     padding: 0;
@@ -8,6 +12,7 @@ body {
     font-family: Arial, sans-serif;
     background: #f7f5f3;
     color: #222;
+    min-height: 100vh;
 }
 
 
@@ -24,23 +29,31 @@ body {
     box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
 }
 
-.admin-header h1 {
+.admin-brand h1 {
     font-size: 27px;
     margin-bottom: 5px;
 }
 
-.admin-header p {
+.admin-brand p {
     color: #777;
     font-size: 14px;
 }
 
+.admin-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
 .view-store {
+    display: inline-block;
     text-decoration: none;
     background: #222;
     color: white;
     padding: 11px 20px;
     border-radius: 7px;
     font-size: 14px;
+    transition: 0.2s;
 }
 
 .view-store:hover {
@@ -53,6 +66,7 @@ body {
 ========================= */
 
 .admin-container {
+    width: 100%;
     max-width: 1100px;
     margin: auto;
     padding: 50px 25px;
@@ -60,7 +74,7 @@ body {
 
 
 /* =========================
-   TITLE
+   PAGE TITLE
 ========================= */
 
 .admin-title {
@@ -74,6 +88,7 @@ body {
 
 .admin-title p {
     color: #777;
+    line-height: 1.5;
 }
 
 
@@ -82,7 +97,7 @@ body {
 ========================= */
 
 .admin-card {
-    background: white;
+    background: #ffffff;
     padding: 30px;
     margin-bottom: 30px;
     border-radius: 14px;
@@ -116,13 +131,20 @@ body {
     border: 1px solid #ddd;
     border-radius: 7px;
     font-size: 15px;
-    background: white;
+    background: #fff;
 }
 
 .form-group input:focus,
 .form-group select:focus {
     outline: none;
     border-color: #222;
+}
+
+.form-group small {
+    display: block;
+    margin-top: 7px;
+    color: #777;
+    font-size: 13px;
 }
 
 
@@ -140,10 +162,16 @@ body {
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
+    transition: 0.2s;
 }
 
 .add-product-btn:hover {
     background: #444;
+}
+
+.add-product-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
 
@@ -173,11 +201,12 @@ body {
     border-radius: 20px;
     font-size: 14px;
     font-weight: 600;
+    white-space: nowrap;
 }
 
 
 /* =========================
-   ADMIN PRODUCTS
+   ADMIN PRODUCTS GRID
 ========================= */
 
 .admin-products {
@@ -191,14 +220,62 @@ body {
    ADMIN PRODUCT CARD
 ========================= */
 
-.admin-product {
+.admin-product-card {
     border: 1px solid #eee;
     border-radius: 12px;
     padding: 15px;
     background: #fff;
+    overflow: hidden;
+    transition: 0.2s;
 }
 
+.admin-product-card:hover {
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+}
+
+
+/* =========================
+   PRODUCT INFO
+========================= */
+
+.admin-product-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-product-info h3 {
+    font-size: 18px;
+    margin: 0 0 7px;
+}
+
+.admin-product-info p {
+    color: #555;
+    margin-bottom: 7px;
+}
+
+.admin-product-info small {
+    display: inline-block;
+    color: #777;
+    text-transform: capitalize;
+}
+
+
+/* =========================
+   PRODUCT IMAGE
+========================= */
+
 .admin-product-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    background: #f5f2ef;
+    border-radius: 9px;
+    display: block;
+    margin-bottom: 15px;
+}
+
+.admin-product-placeholder {
     width: 100%;
     height: 200px;
     background: #f5f2ef;
@@ -207,23 +284,6 @@ body {
     justify-content: center;
     align-items: center;
     font-size: 65px;
-    overflow: hidden;
-    margin-bottom: 15px;
-}
-
-.admin-product-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.admin-product h4 {
-    font-size: 18px;
-    margin-bottom: 7px;
-}
-
-.admin-product p {
-    color: #666;
     margin-bottom: 15px;
 }
 
@@ -232,47 +292,71 @@ body {
    PRODUCT ACTIONS
 ========================= */
 
-.product-actions {
+.admin-product-actions {
     display: flex;
     gap: 8px;
+    margin-top: 15px;
 }
 
-.product-actions button {
+.admin-product-actions button {
     flex: 1;
-    padding: 9px;
+    padding: 10px;
     border: none;
     border-radius: 6px;
     cursor: pointer;
     font-size: 14px;
+    font-weight: 600;
+    transition: 0.2s;
 }
 
-.edit-btn {
+
+/* EDIT */
+
+.edit-product {
     background: #222;
     color: white;
 }
 
-.delete-btn {
+.edit-product:hover {
+    background: #444;
+}
+
+
+/* DELETE */
+
+.delete-product {
     background: #d33;
     color: white;
 }
 
-.edit-btn:hover {
-    background: #444;
-}
-
-.delete-btn:hover {
+.delete-product:hover {
     background: #b22;
 }
 
 
 /* =========================
-   EMPTY PRODUCTS
+   NO PRODUCTS
 ========================= */
 
 .no-products {
     grid-column: 1 / -1;
     text-align: center;
-    padding: 40px;
+    padding: 50px 20px;
+    color: #777;
+    background: #fafafa;
+    border: 1px dashed #ddd;
+    border-radius: 10px;
+}
+
+
+/* =========================
+   LOADING
+========================= */
+
+.loading-products {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 50px 20px;
     color: #777;
 }
 
@@ -289,6 +373,10 @@ footer {
     margin-top: 30px;
 }
 
+footer p {
+    font-size: 14px;
+}
+
 
 /* =========================
    TABLET
@@ -302,6 +390,10 @@ footer {
 
     .admin-header {
         padding: 20px 30px;
+    }
+
+    .admin-container {
+        padding: 40px 20px;
     }
 }
 
@@ -319,6 +411,10 @@ footer {
         text-align: center;
     }
 
+    .admin-brand h1 {
+        font-size: 24px;
+    }
+
     .admin-container {
         padding: 35px 15px;
     }
@@ -329,6 +425,11 @@ footer {
 
     .admin-card {
         padding: 20px;
+        border-radius: 12px;
+    }
+
+    .admin-card h3 {
+        font-size: 21px;
     }
 
     .products-heading {
@@ -341,7 +442,45 @@ footer {
         grid-template-columns: 1fr;
     }
 
-    .admin-product-image {
+    .admin-product-image,
+    .admin-product-placeholder {
         height: 230px;
+    }
+
+    .admin-product-actions {
+        flex-direction: column;
+    }
+
+    .admin-product-actions button {
+        width: 100%;
+    }
+
+    .add-product-btn {
+        font-size: 15px;
+    }
+}
+
+
+/* =========================
+   VERY SMALL SCREENS
+========================= */
+
+@media (max-width: 380px) {
+
+    .admin-container {
+        padding: 25px 10px;
+    }
+
+    .admin-card {
+        padding: 16px;
+    }
+
+    .admin-title h2 {
+        font-size: 24px;
+    }
+
+    .admin-product-image,
+    .admin-product-placeholder {
+        height: 200px;
     }
 }

@@ -5,7 +5,10 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>Admin Panel - Everything 400</title>
 
@@ -14,6 +17,7 @@
 </head>
 
 <body>
+
 
     <!-- =========================
          ADMIN HEADER
@@ -32,13 +36,17 @@
 
         <div class="admin-header-actions">
 
-            <a href="../index.html" class="view-store">
+            <a
+                href="../index.html"
+                class="view-store"
+            >
                 View Store
             </a>
 
         </div>
 
     </header>
+
 
 
     <!-- =========================
@@ -48,17 +56,20 @@
     <main class="admin-container">
 
 
-        <!-- PAGE TITLE -->
+        <!-- =========================
+             PAGE TITLE
+        ========================== -->
 
         <section class="admin-title">
 
-            <h2>Product Management</h2>
+            <h2>Admin Dashboard</h2>
 
             <p>
-                Add, edit and remove products from your store.
+                Manage your products and customer orders.
             </p>
 
         </section>
+
 
 
         <!-- =========================
@@ -68,6 +79,7 @@
         <section class="admin-card">
 
             <h3>Add New Product</h3>
+
 
             <form id="product-form">
 
@@ -88,6 +100,7 @@
                     >
 
                 </div>
+
 
 
                 <!-- CATEGORY -->
@@ -128,6 +141,7 @@
                 </div>
 
 
+
                 <!-- PRICE -->
 
                 <div class="form-group">
@@ -140,11 +154,12 @@
                         type="number"
                         id="product-price"
                         value="400"
-                        min="0"
+                        min="1"
                         required
                     >
 
                 </div>
+
 
 
                 <!-- IMAGE -->
@@ -161,7 +176,12 @@
                         accept="image/*"
                     >
 
+                    <small>
+                        Select an image for the product.
+                    </small>
+
                 </div>
+
 
 
                 <!-- ADD BUTTON -->
@@ -178,11 +198,13 @@
         </section>
 
 
+
         <!-- =========================
              PRODUCT MANAGEMENT
         ========================== -->
 
         <section class="admin-card">
+
 
             <div class="products-heading">
 
@@ -204,18 +226,70 @@
             </div>
 
 
-            <!-- PRODUCTS WILL APPEAR HERE -->
+
+            <!-- PRODUCTS FROM SUPABASE -->
 
             <div
                 id="admin-products"
                 class="admin-products"
             >
 
+                <p class="loading-products">
+                    Loading products...
+                </p>
+
             </div>
 
         </section>
 
+
+
+        <!-- =========================
+             ORDERS MANAGEMENT
+        ========================== -->
+
+        <section class="admin-card">
+
+
+            <div class="products-heading">
+
+                <div>
+
+                    <h3>Orders</h3>
+
+                    <p>
+                        View and manage customer orders.
+                    </p>
+
+                </div>
+
+
+                <span id="order-count">
+                    0 Orders
+                </span>
+
+            </div>
+
+
+
+            <!-- ORDERS FROM SUPABASE -->
+
+            <div
+                id="admin-orders"
+                class="admin-orders"
+            >
+
+                <p class="loading-orders">
+                    Loading orders...
+                </p>
+
+            </div>
+
+        </section>
+
+
     </main>
+
 
 
     <!-- =========================
@@ -231,11 +305,31 @@
     </footer>
 
 
+
+    <!-- =========================
+         SUPABASE LIBRARY
+    ========================== -->
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+    ></script>
+
+
+
+    <!-- =========================
+         SUPABASE CONNECTION
+    ========================== -->
+
+    <script src="../supabase.js"></script>
+
+
+
     <!-- =========================
          ADMIN JAVASCRIPT
     ========================== -->
 
     <script src="admin.js"></script>
+
 
 </body>
 
