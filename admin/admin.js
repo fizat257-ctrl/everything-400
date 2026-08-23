@@ -4,27 +4,14 @@
 // PART 1 - SETUP + PRODUCTS
 // =========================
 
-
-// =========================
-// SUPABASE CLIENT
-// =========================
-
-// supabase.js must be loaded before admin.js
-
 const db = window.supabaseClient;
 
-
-// =========================
-// DATA
-// =========================
-
 let products = [];
-
 let orders = [];
 
 
 // =========================
-// PRODUCT ELEMENTS
+// ELEMENTS
 // =========================
 
 const productForm =
@@ -39,11 +26,6 @@ const productCount =
 const imageInput =
     document.getElementById("product-image");
 
-
-// =========================
-// ORDER ELEMENTS
-// =========================
-
 const ordersContainer =
     document.getElementById("admin-orders");
 
@@ -56,11 +38,9 @@ const orderCount =
 // =========================
 
 if (!db) {
-
     console.error(
         "Supabase client not found. Make sure supabase.js is loaded before admin.js."
     );
-
 }
 
 
@@ -69,14 +49,12 @@ if (!db) {
 // =========================
 
 function escapeHTML(value) {
-
     return String(value ?? "")
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
-
 }
 
 
@@ -85,9 +63,7 @@ function escapeHTML(value) {
 // =========================
 
 function formatPrice(price) {
-
     return Number(price || 0).toLocaleString();
-
 }
 
 
@@ -98,22 +74,16 @@ function formatPrice(price) {
 function formatDate(dateValue) {
 
     if (!dateValue) {
-
         return "Date not available";
-
     }
 
-    const date =
-        new Date(dateValue);
+    const date = new Date(dateValue);
 
     if (Number.isNaN(date.getTime())) {
-
         return "Date not available";
-
     }
 
     return date.toLocaleString();
-
 }
 
 
@@ -124,28 +94,20 @@ function formatDate(dateValue) {
 async function loadProducts() {
 
     if (!db) {
-
         showProductError(
             "Supabase connection is not available."
         );
-
         return;
-
     }
-
 
     if (productsContainer) {
 
         productsContainer.innerHTML = `
-
             <p class="loading-products">
                 Loading products...
             </p>
-
         `;
-
     }
-
 
     try {
 
@@ -158,7 +120,6 @@ async function loadProducts() {
             .order("id", {
                 ascending: true
             });
-
 
         if (error) {
 
@@ -174,17 +135,12 @@ async function loadProducts() {
             );
 
             return;
-
         }
-
 
         products = data || [];
 
-
         displayProducts();
-
         updateProductCount();
-
 
     } catch (error) {
 
@@ -196,9 +152,7 @@ async function loadProducts() {
         showProductError(
             "Something went wrong while loading products."
         );
-
     }
-
 }
 
 
@@ -210,18 +164,13 @@ function showProductError(message) {
 
     if (!productsContainer) return;
 
-
     productsContainer.innerHTML = `
-
         <p class="no-products">
             ${escapeHTML(message)}
         </p>
-
     `;
 
-
     updateProductCount();
-
 }
 
 
@@ -233,14 +182,10 @@ function updateProductCount() {
 
     if (!productCount) return;
 
-
-    const count =
-        products.length;
-
+    const count = products.length;
 
     productCount.textContent =
         `${count} Product${count !== 1 ? "s" : ""}`;
-
 }
 
 
@@ -252,48 +197,33 @@ function displayProducts() {
 
     if (!productsContainer) return;
 
-
     productsContainer.innerHTML = "";
-
 
     if (products.length === 0) {
 
         productsContainer.innerHTML = `
-
             <div class="no-products">
-
-                <p>
-                    No products available.
-                </p>
-
+                <p>No products available.</p>
                 <small>
                     Add your first product using the form above.
                 </small>
-
             </div>
-
         `;
 
         updateProductCount();
-
         return;
-
     }
-
 
     products.forEach(function (product) {
 
         const card =
             document.createElement("div");
 
-
         card.className =
             "admin-product-card";
 
-
         const imageHTML =
             product.image
-
                 ? `
                     <img
                         src="${escapeHTML(product.image)}"
@@ -301,22 +231,18 @@ function displayProducts() {
                         class="admin-product-image"
                     >
                 `
-
                 : `
                     <div class="admin-product-placeholder">
                         🛍️
                     </div>
                 `;
 
-
         card.innerHTML = `
 
             <div class="admin-product-info">
 
                 <div class="admin-product-image-wrapper">
-
                     ${imageHTML}
-
                 </div>
 
                 <div class="admin-product-details">
@@ -337,7 +263,6 @@ function displayProducts() {
 
             </div>
 
-
             <div class="admin-product-actions">
 
                 <button
@@ -348,7 +273,6 @@ function displayProducts() {
                     Edit
                 </button>
 
-
                 <button
                     type="button"
                     class="delete-product"
@@ -358,56 +282,42 @@ function displayProducts() {
                 </button>
 
             </div>
-
         `;
-
 
         const editButton =
             card.querySelector(".edit-product");
 
-
         const deleteButton =
             card.querySelector(".delete-product");
-
 
         if (editButton) {
 
             editButton.addEventListener(
                 "click",
                 function () {
-
                     editProduct(product.id);
-
                 }
             );
-
         }
-
 
         if (deleteButton) {
 
             deleteButton.addEventListener(
                 "click",
                 function () {
-
                     deleteProduct(product.id);
-
                 }
             );
-
         }
 
-
         productsContainer.appendChild(card);
-
     });
 
-
     updateProductCount();
-
 }
 // =========================
-// PART 2 - ADD / EDIT / DELETE PRODUCTS
+// EVERYTHING 400 - ADMIN PANEL
+// PART 2 - PRODUCT ACTIONS
 // =========================
 
 
@@ -423,7 +333,6 @@ if (productForm) {
 
             event.preventDefault();
 
-
             if (!db) {
 
                 alert(
@@ -431,49 +340,31 @@ if (productForm) {
                 );
 
                 return;
-
             }
 
-
             const nameInput =
-                document.getElementById(
-                    "product-name"
-                );
-
+                document.getElementById("product-name");
 
             const priceInput =
-                document.getElementById(
-                    "product-price"
-                );
-
+                document.getElementById("product-price");
 
             const categoryInput =
-                document.getElementById(
-                    "product-category"
-                );
-
+                document.getElementById("product-category");
 
             const name =
                 nameInput
                     ? nameInput.value.trim()
                     : "";
 
-
             const price =
                 priceInput
                     ? Number(priceInput.value)
                     : 0;
 
-
             const category =
                 categoryInput
                     ? categoryInput.value
                     : "";
-
-
-            // =========================
-            // VALIDATION
-            // =========================
 
             if (!name) {
 
@@ -482,9 +373,7 @@ if (productForm) {
                 );
 
                 return;
-
             }
-
 
             if (!category) {
 
@@ -493,9 +382,7 @@ if (productForm) {
                 );
 
                 return;
-
             }
-
 
             if (!price || price <= 0) {
 
@@ -504,16 +391,9 @@ if (productForm) {
                 );
 
                 return;
-
             }
 
-
-            // =========================
-            // IMAGE
-            // =========================
-
             let image = "";
-
 
             if (
                 imageInput &&
@@ -523,9 +403,6 @@ if (productForm) {
 
                 const file =
                     imageInput.files[0];
-
-
-                // Maximum 2MB
 
                 if (
                     file.size >
@@ -537,9 +414,7 @@ if (productForm) {
                     );
 
                     return;
-
                 }
-
 
                 if (
                     !file.type.startsWith("image/")
@@ -550,9 +425,7 @@ if (productForm) {
                     );
 
                     return;
-
                 }
-
 
                 try {
 
@@ -573,15 +446,8 @@ if (productForm) {
                     );
 
                     return;
-
                 }
-
             }
-
-
-            // =========================
-            // INSERT INTO SUPABASE
-            // =========================
 
             try {
 
@@ -600,7 +466,6 @@ if (productForm) {
                     ])
                     .select();
 
-
                 if (error) {
 
                     console.error(
@@ -613,25 +478,16 @@ if (productForm) {
                     );
 
                     return;
-
                 }
-
 
                 console.log(
                     "Product added:",
                     data
                 );
 
-
-                // Clear form
-
                 productForm.reset();
 
-
-                // Reload products
-
                 await loadProducts();
-
 
                 alert(
                     "Product added successfully!"
@@ -647,12 +503,9 @@ if (productForm) {
                 alert(
                     "Something went wrong while adding the product."
                 );
-
             }
-
         }
     );
-
 }
 
 
@@ -668,32 +521,19 @@ function convertImageToBase64(file) {
             const reader =
                 new FileReader();
 
-
             reader.onload =
                 function () {
-
-                    resolve(
-                        reader.result
-                    );
-
+                    resolve(reader.result);
                 };
-
 
             reader.onerror =
                 function () {
-
-                    reject(
-                        reader.error
-                    );
-
+                    reject(reader.error);
                 };
 
-
             reader.readAsDataURL(file);
-
         }
     );
-
 }
 
 
@@ -710,20 +550,15 @@ async function editProduct(id) {
         );
 
         return;
-
     }
-
 
     const product =
         products.find(
             function (item) {
-
                 return String(item.id) ===
                     String(id);
-
             }
         );
-
 
     if (!product) {
 
@@ -732,13 +567,7 @@ async function editProduct(id) {
         );
 
         return;
-
     }
-
-
-    // =========================
-    // NEW NAME
-    // =========================
 
     const newName =
         prompt(
@@ -746,13 +575,10 @@ async function editProduct(id) {
             product.name
         );
 
-
     if (newName === null) return;
-
 
     const cleanName =
         newName.trim();
-
 
     if (!cleanName) {
 
@@ -761,13 +587,7 @@ async function editProduct(id) {
         );
 
         return;
-
     }
-
-
-    // =========================
-    // NEW PRICE
-    // =========================
 
     const newPrice =
         prompt(
@@ -775,13 +595,10 @@ async function editProduct(id) {
             product.price
         );
 
-
     if (newPrice === null) return;
-
 
     const price =
         Number(newPrice);
-
 
     if (!price || price <= 0) {
 
@@ -790,13 +607,7 @@ async function editProduct(id) {
         );
 
         return;
-
     }
-
-
-    // =========================
-    // UPDATE
-    // =========================
 
     try {
 
@@ -805,17 +616,10 @@ async function editProduct(id) {
         } = await db
             .from("products")
             .update({
-
                 name: cleanName,
-
                 price: price
-
             })
-            .eq(
-                "id",
-                id
-            );
-
+            .eq("id", id);
 
         if (error) {
 
@@ -829,17 +633,13 @@ async function editProduct(id) {
             );
 
             return;
-
         }
 
-
         await loadProducts();
-
 
         alert(
             "Product updated successfully!"
         );
-
 
     } catch (error) {
 
@@ -851,9 +651,7 @@ async function editProduct(id) {
         alert(
             "Something went wrong while updating the product."
         );
-
     }
-
 }
 
 
@@ -870,20 +668,15 @@ async function deleteProduct(id) {
         );
 
         return;
-
     }
-
 
     const product =
         products.find(
             function (item) {
-
                 return String(item.id) ===
                     String(id);
-
             }
         );
-
 
     if (!product) {
 
@@ -892,22 +685,14 @@ async function deleteProduct(id) {
         );
 
         return;
-
     }
-
 
     const confirmDelete =
         confirm(
             `Are you sure you want to delete "${product.name}"?`
         );
 
-
     if (!confirmDelete) return;
-
-
-    // =========================
-    // DELETE
-    // =========================
 
     try {
 
@@ -916,11 +701,7 @@ async function deleteProduct(id) {
         } = await db
             .from("products")
             .delete()
-            .eq(
-                "id",
-                id
-            );
-
+            .eq("id", id);
 
         if (error) {
 
@@ -934,17 +715,13 @@ async function deleteProduct(id) {
             );
 
             return;
-
         }
 
-
         await loadProducts();
-
 
         alert(
             "Product deleted successfully!"
         );
-
 
     } catch (error) {
 
@@ -956,9 +733,7 @@ async function deleteProduct(id) {
         alert(
             "Something went wrong while deleting the product."
         );
-
     }
-
 }
 
 
@@ -967,10 +742,7 @@ async function deleteProduct(id) {
 // =========================
 
 const logoutButton =
-    document.getElementById(
-        "admin-logout"
-    );
-
+    document.getElementById("admin-logout");
 
 if (logoutButton) {
 
@@ -980,12 +752,11 @@ if (logoutButton) {
 
             window.location.href =
                 "../index.html";
-
         }
     );
-
 }
 // =========================
+// EVERYTHING 400 - ADMIN PANEL
 // PART 3 - ORDERS MANAGEMENT
 // =========================
 
@@ -1003,21 +774,15 @@ async function loadOrders() {
         );
 
         return;
-
     }
-
 
     if (!ordersContainer) return;
 
-
     ordersContainer.innerHTML = `
-
         <p class="loading-orders">
             Loading orders...
         </p>
-
     `;
-
 
     try {
 
@@ -1030,7 +795,6 @@ async function loadOrders() {
             .order("created_at", {
                 ascending: false
             });
-
 
         if (error) {
 
@@ -1046,17 +810,12 @@ async function loadOrders() {
             );
 
             return;
-
         }
-
 
         orders = data || [];
 
-
         displayOrders();
-
         updateOrderCount();
-
 
     } catch (error) {
 
@@ -1070,9 +829,7 @@ async function loadOrders() {
         showOrderError(
             "Something went wrong while loading orders."
         );
-
     }
-
 }
 
 
@@ -1084,18 +841,13 @@ function showOrderError(message) {
 
     if (!ordersContainer) return;
 
-
     ordersContainer.innerHTML = `
-
         <p class="no-orders">
             ${escapeHTML(message)}
         </p>
-
     `;
 
-
     updateOrderCount();
-
 }
 
 
@@ -1107,14 +859,11 @@ function updateOrderCount() {
 
     if (!orderCount) return;
 
-
     const count =
         orders.length;
 
-
     orderCount.textContent =
         `${count} Order${count !== 1 ? "s" : ""}`;
-
 }
 
 
@@ -1126,14 +875,11 @@ function displayOrders() {
 
     if (!ordersContainer) return;
 
-
     ordersContainer.innerHTML = "";
-
 
     if (orders.length === 0) {
 
         ordersContainer.innerHTML = `
-
             <div class="no-orders">
 
                 <p>
@@ -1145,21 +891,16 @@ function displayOrders() {
                 </small>
 
             </div>
-
         `;
 
         updateOrderCount();
-
         return;
-
     }
-
 
     orders.forEach(function (order) {
 
         const card =
             document.createElement("div");
-
 
         card.className =
             "admin-order-card";
@@ -1171,7 +912,6 @@ function displayOrders() {
 
         let customer = {};
 
-
         if (
             order.customer &&
             typeof order.customer === "object"
@@ -1180,8 +920,7 @@ function displayOrders() {
             customer =
                 order.customer;
 
-        }
-        else if (
+        } else if (
             typeof order.customer === "string"
         ) {
 
@@ -1195,9 +934,7 @@ function displayOrders() {
             } catch {
 
                 customer = {};
-
             }
-
         }
 
 
@@ -1206,18 +943,15 @@ function displayOrders() {
             customer.name ||
             "Unknown Customer";
 
-
         const phone =
             order.phone ||
             customer.phone ||
             "Not provided";
 
-
         const address =
             order.address ||
             customer.address ||
             "Not provided";
-
 
         const city =
             order.city ||
@@ -1230,9 +964,7 @@ function displayOrders() {
         // =========================
 
         const total =
-            Number(
-                order.total || 0
-            );
+            Number(order.total || 0);
 
 
         // =========================
@@ -1243,9 +975,17 @@ function displayOrders() {
             order.created_at ||
             order.createdAt;
 
-
         const orderDate =
             formatDate(createdAt);
+
+
+        // =========================
+        // ORDER STATUS
+        // =========================
+
+        const status =
+            order.status ||
+            "Pending";
 
 
         // =========================
@@ -1256,7 +996,6 @@ function displayOrders() {
             order.products ||
             order.items ||
             [];
-
 
         if (
             typeof orderProducts === "string"
@@ -1272,14 +1011,11 @@ function displayOrders() {
             } catch {
 
                 orderProducts = [];
-
             }
-
         }
 
 
         let productsHTML = "";
-
 
         if (
             Array.isArray(orderProducts) &&
@@ -1287,11 +1023,10 @@ function displayOrders() {
         ) {
 
             productsHTML = `
-
                 <div class="order-products">
 
                     <strong>
-                        Products
+                        Products:
                     </strong>
 
                     <ul>
@@ -1299,32 +1034,18 @@ function displayOrders() {
                         ${orderProducts
                             .map(function (product) {
 
-                                const productName =
-                                    product.name ||
-                                    "Product";
-
-
-                                const productPrice =
-                                    Number(
-                                        product.price || 0
-                                    );
-
-
                                 return `
-
                                     <li>
-
                                         ${escapeHTML(
-                                            productName
+                                            product.name ||
+                                            "Product"
                                         )}
 
-                                        — Rs.
+                                        - Rs.
                                         ${formatPrice(
-                                            productPrice
+                                            product.price || 0
                                         )}
-
                                     </li>
-
                                 `;
 
                             })
@@ -1333,29 +1054,48 @@ function displayOrders() {
                     </ul>
 
                 </div>
-
             `;
 
-        }
-        else {
+        } else {
 
             productsHTML = `
-
-                <div class="order-products">
-
+                <p>
                     <strong>
-                        Products
+                        Products:
                     </strong>
-
-                    <p>
-                        Order details unavailable.
-                    </p>
-
-                </div>
-
+                    Order details unavailable
+                </p>
             `;
-
         }
+
+
+        // =========================
+        // STATUS OPTIONS
+        // =========================
+
+        const statusOptions = [
+            "Pending",
+            "Confirmed",
+            "Shipped",
+            "Delivered",
+            "Cancelled"
+        ];
+
+        const statusSelectHTML =
+            statusOptions
+                .map(function (option) {
+
+                    return `
+                        <option
+                            value="${escapeHTML(option)}"
+                            ${status === option ? "selected" : ""}
+                        >
+                            ${escapeHTML(option)}
+                        </option>
+                    `;
+
+                })
+                .join("");
 
 
         // =========================
@@ -1366,161 +1106,248 @@ function displayOrders() {
 
             <div class="admin-order-info">
 
-                <div class="order-header">
+                <h3>
+                    Order #${escapeHTML(order.id)}
+                </h3>
 
-                    <h3>
-                        Order #${escapeHTML(order.id)}
-                    </h3>
+                <p>
+                    <strong>
+                        Customer:
+                    </strong>
+                    ${escapeHTML(customerName)}
+                </p>
 
-                    <span class="order-status">
-                        New Order
-                    </span>
+                <p>
+                    <strong>
+                        Phone:
+                    </strong>
+                    ${escapeHTML(phone)}
+                </p>
 
-                </div>
+                <p>
+                    <strong>
+                        Address:
+                    </strong>
+                    ${escapeHTML(address)}
+                </p>
 
-
-                <div class="customer-details">
-
-                    <p>
-
-                        <strong>
-                            Customer:
-                        </strong>
-
-                        ${escapeHTML(
-                            customerName
-                        )}
-
-                    </p>
-
-
-                    <p>
-
-                        <strong>
-                            Phone:
-                        </strong>
-
-                        ${escapeHTML(
-                            phone
-                        )}
-
-                    </p>
-
-
-                    <p>
-
-                        <strong>
-                            Address:
-                        </strong>
-
-                        ${escapeHTML(
-                            address
-                        )}
-
-                    </p>
-
-
-                    <p>
-
-                        <strong>
-                            City:
-                        </strong>
-
-                        ${escapeHTML(
-                            city
-                        )}
-
-                    </p>
-
-                </div>
-
+                <p>
+                    <strong>
+                        City:
+                    </strong>
+                    ${escapeHTML(city)}
+                </p>
 
                 ${productsHTML}
 
+                <p class="order-total">
+                    <strong>
+                        Total:
+                    </strong>
 
-                <div class="order-footer">
+                    Rs. ${formatPrice(total)}
+                </p>
 
-                    <p class="order-total">
+                <p class="order-status">
+                    <strong>
+                        Status:
+                    </strong>
 
-                        <strong>
-                            Total:
-                        </strong>
+                    <span class="status-badge status-${status
+                        .toLowerCase()
+                        .replace(/\s+/g, "-")}">
+                        ${escapeHTML(status)}
+                    </span>
+                </p>
 
-                        Rs. ${formatPrice(total)}
-
-                    </p>
-
-
-                    <small>
-
+                <p>
+                    <strong>
                         Order Date:
-                        ${escapeHTML(
-                            orderDate
-                        )}
+                    </strong>
 
-                    </small>
+                    ${escapeHTML(orderDate)}
+                </p>
+
+
+                <!-- STATUS CONTROL -->
+
+                <div class="order-status-control">
+
+                    <label
+                        for="status-${escapeHTML(order.id)}"
+                    >
+                        Update Status
+                    </label>
+
+                    <select
+                        id="status-${escapeHTML(order.id)}"
+                        class="order-status-select"
+                        data-id="${escapeHTML(order.id)}"
+                    >
+                        ${statusSelectHTML}
+                    </select>
+
+                    <button
+                        type="button"
+                        class="update-status-btn"
+                        data-id="${escapeHTML(order.id)}"
+                    >
+                        Update Status
+                    </button>
 
                 </div>
 
             </div>
-
         `;
 
 
-        ordersContainer.appendChild(
-            card
-        );
+        // =========================
+        // UPDATE STATUS BUTTON
+        // =========================
+
+        const updateButton =
+            card.querySelector(
+                ".update-status-btn"
+            );
+
+        const statusSelect =
+            card.querySelector(
+                ".order-status-select"
+            );
+
+
+        if (
+            updateButton &&
+            statusSelect
+        ) {
+
+            updateButton.addEventListener(
+                "click",
+                function () {
+
+                    updateOrderStatus(
+                        order.id,
+                        statusSelect.value
+                    );
+
+                }
+            );
+        }
+
+
+        ordersContainer.appendChild(card);
 
     });
 
 
     updateOrderCount();
-
 }
 
 
 // =========================
-// REFRESH ORDERS
+// UPDATE ORDER STATUS
 // =========================
 
-async function refreshOrders() {
+async function updateOrderStatus(
+    orderId,
+    newStatus
+) {
 
-    await loadOrders();
+    if (!db) {
 
+        alert(
+            "Supabase connection is not available."
+        );
+
+        return;
+    }
+
+
+    const validStatuses = [
+        "Pending",
+        "Confirmed",
+        "Shipped",
+        "Delivered",
+        "Cancelled"
+    ];
+
+
+    if (
+        !validStatuses.includes(
+            newStatus
+        )
+    ) {
+
+        alert(
+            "Invalid order status."
+        );
+
+        return;
+    }
+
+
+    try {
+
+        const {
+            error
+        } = await db
+            .from("orders")
+            .update({
+                status: newStatus
+            })
+            .eq(
+                "id",
+                orderId
+            );
+
+
+        if (error) {
+
+            console.error(
+                "Order status update error:",
+                error
+            );
+
+            alert(
+                "Order status could not be updated. Check Supabase UPDATE policy for orders."
+            );
+
+            return;
+        }
+
+
+        await loadOrders();
+
+
+        alert(
+            `Order status updated to ${newStatus}.`
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Update order status error:",
+            error
+        );
+
+        alert(
+            "Something went wrong while updating order status."
+        );
+    }
 }
 
 
 // =========================
-// INITIALIZE ADMIN PANEL
+// INITIALIZE ADMIN
 // =========================
 
 async function initializeAdmin() {
 
-    if (!db) {
-
-        console.error(
-            "Admin panel cannot initialize because Supabase is unavailable."
-        );
-
-        return;
-
-    }
-
-
-    // Load products
-
     await loadProducts();
 
-
-    // Load orders
-
     await loadOrders();
-
 }
 
-
-// =========================
-// START ADMIN PANEL
-// =========================
 
 initializeAdmin();
