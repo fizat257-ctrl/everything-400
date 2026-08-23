@@ -1,0 +1,347 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f7f5f3;
+    color: #222;
+}
+
+
+/* =========================
+   ADMIN HEADER
+========================= */
+
+.admin-header {
+    background: #ffffff;
+    padding: 20px 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+}
+
+.admin-header h1 {
+    font-size: 27px;
+    margin-bottom: 5px;
+}
+
+.admin-header p {
+    color: #777;
+    font-size: 14px;
+}
+
+.view-store {
+    text-decoration: none;
+    background: #222;
+    color: white;
+    padding: 11px 20px;
+    border-radius: 7px;
+    font-size: 14px;
+}
+
+.view-store:hover {
+    background: #444;
+}
+
+
+/* =========================
+   MAIN CONTAINER
+========================= */
+
+.admin-container {
+    max-width: 1100px;
+    margin: auto;
+    padding: 50px 25px;
+}
+
+
+/* =========================
+   TITLE
+========================= */
+
+.admin-title {
+    margin-bottom: 30px;
+}
+
+.admin-title h2 {
+    font-size: 34px;
+    margin-bottom: 8px;
+}
+
+.admin-title p {
+    color: #777;
+}
+
+
+/* =========================
+   ADMIN CARD
+========================= */
+
+.admin-card {
+    background: white;
+    padding: 30px;
+    margin-bottom: 30px;
+    border-radius: 14px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.07);
+}
+
+.admin-card h3 {
+    font-size: 23px;
+    margin-bottom: 25px;
+}
+
+
+/* =========================
+   FORM
+========================= */
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 13px;
+    border: 1px solid #ddd;
+    border-radius: 7px;
+    font-size: 15px;
+    background: white;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #222;
+}
+
+
+/* =========================
+   ADD PRODUCT BUTTON
+========================= */
+
+.add-product-btn {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    background: #222;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.add-product-btn:hover {
+    background: #444;
+}
+
+
+/* =========================
+   PRODUCTS HEADING
+========================= */
+
+.products-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.products-heading h3 {
+    margin-bottom: 5px;
+}
+
+.products-heading p {
+    color: #777;
+    font-size: 14px;
+}
+
+#product-count {
+    background: #f1eeee;
+    padding: 9px 15px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+
+/* =========================
+   ADMIN PRODUCTS
+========================= */
+
+.admin-products {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+
+/* =========================
+   ADMIN PRODUCT CARD
+========================= */
+
+.admin-product {
+    border: 1px solid #eee;
+    border-radius: 12px;
+    padding: 15px;
+    background: #fff;
+}
+
+.admin-product-image {
+    width: 100%;
+    height: 200px;
+    background: #f5f2ef;
+    border-radius: 9px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 65px;
+    overflow: hidden;
+    margin-bottom: 15px;
+}
+
+.admin-product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.admin-product h4 {
+    font-size: 18px;
+    margin-bottom: 7px;
+}
+
+.admin-product p {
+    color: #666;
+    margin-bottom: 15px;
+}
+
+
+/* =========================
+   PRODUCT ACTIONS
+========================= */
+
+.product-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.product-actions button {
+    flex: 1;
+    padding: 9px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.edit-btn {
+    background: #222;
+    color: white;
+}
+
+.delete-btn {
+    background: #d33;
+    color: white;
+}
+
+.edit-btn:hover {
+    background: #444;
+}
+
+.delete-btn:hover {
+    background: #b22;
+}
+
+
+/* =========================
+   EMPTY PRODUCTS
+========================= */
+
+.no-products {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 40px;
+    color: #777;
+}
+
+
+/* =========================
+   FOOTER
+========================= */
+
+footer {
+    text-align: center;
+    background: #222;
+    color: white;
+    padding: 25px 20px;
+    margin-top: 30px;
+}
+
+
+/* =========================
+   TABLET
+========================= */
+
+@media (max-width: 900px) {
+
+    .admin-products {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .admin-header {
+        padding: 20px 30px;
+    }
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 600px) {
+
+    .admin-header {
+        padding: 18px 20px;
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+
+    .admin-container {
+        padding: 35px 15px;
+    }
+
+    .admin-title h2 {
+        font-size: 28px;
+    }
+
+    .admin-card {
+        padding: 20px;
+    }
+
+    .products-heading {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .admin-products {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-product-image {
+        height: 230px;
+    }
+}

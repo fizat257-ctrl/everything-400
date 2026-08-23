@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Everything 400</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- =========================
+         HEADER
+    ========================== -->
+
+    <header>
+
+        <h1>Everything 400</h1>
+
+        <nav>
+
+            <a href="index.html">Home</a>
+
+            <a href="#products">Shop</a>
+
+            <a href="#products">Categories</a>
+
+            <a href="cart.html" id="cart-link">
+                Cart (0)
+            </a>
+
+            <!-- Admin Panel -->
+            <a href="admin/admin.html" class="admin-link">
+                Admin
+            </a>
+
+        </nav>
+
+    </header>
+
+
+    <!-- =========================
+         MAIN
+    ========================== -->
+
+    <main>
+
+        <!-- HERO -->
+
+        <section class="hero">
+
+            <h2>
+                Everything You Love, Just Rs. 400
+            </h2>
+
+            <p>
+                Discover amazing products at one simple price.
+            </p>
+
+            <button id="shop-now">
+                Shop Now
+            </button>
+
+        </section>
+
+
+        <!-- =========================
+             PRODUCTS
+        ========================== -->
+
+        <section class="products" id="products">
+
+            <h2>
+                Shop Our Products
+            </h2>
+
+
+            <!-- SEARCH -->
+
+            <div class="search-box">
+
+                <input
+                    type="text"
+                    id="product-search"
+                    placeholder="Search products..."
+                    autocomplete="off"
+                >
+
+                <button id="search-btn">
+                    Search
+                </button>
+
+            </div>
+
+
+            <!-- CATEGORIES -->
+
+            <div class="categories">
+
+                <button
+                    class="category-btn active"
+                    data-filter="all">
+                    All
+                </button>
+
+                <button
+                    class="category-btn"
+                    data-filter="jewelry">
+                    Jewelry
+                </button>
+
+                <button
+                    class="category-btn"
+                    data-filter="cosmetics">
+                    Cosmetics
+                </button>
+
+                <button
+                    class="category-btn"
+                    data-filter="home">
+                    Home
+                </button>
+
+                <button
+                    class="category-btn"
+                    data-filter="accessories">
+                    Accessories
+                </button>
+
+            </div>
+
+
+            <!-- =========================
+                 PRODUCT CONTAINER
+            ========================== -->
+
+            <div class="product-container">
+
+
+                <!-- JEWELRY -->
+
+                <div class="product-card" data-category="jewelry">
+
+                    <div class="product-image">
+                        💎
+                    </div>
+
+                    <h3>Elegant Earrings</h3>
+
+                    <p>Rs. 400</p>
+
+                    <button>
+                        Add to Cart
+                    </button>
+
+                </div>
+
+
+                <div class="product-card" data-category="jewelry">
+
+                    <div class="product-image">
+                        📿
+                    </div>
+
+                    <h3>Fashion Necklace</h3>
+
+                    <p>Rs. 400</p>
+
+                    <button>
+                        Add to Cart
+                    </button>
+
+                </div>
+
+
+                <div class="product-card" data-category="jewelry">
+
+                    <div class="product-image">
+                        💍
+                    </div>
+
+                    <h3>Fashion Ring</h3>
+
+                    <p>Rs. 400</p>
+
+                    <button>
+                        Add to Cart
+                    </button>
+
+                </div>
+
+
+                <!-- COSMETICS -->
+
+                <div class="product-card" data-category="cosmetics">
+
+                    <div class="product-image">
+                        💄
+                    </div>
+
+                    <h3>Lip Gloss</h3>
+
+                    <p>Rs. 400</p>
+
+                    <button>
+                        Add to Cart
+                    </button>
+
+                </div>
+
+
+                <div class="product-card" data-category="cosmetics">
+
+                    <div class="product-image">
+                        🧴
+                    </div>
+
+                    <h3>Beauty Cream</h3>
+
+                    <p>Rs. 400</p>
+
+                    <button>
+                        Add to Cart
+                    </button>
+
+                </div>
+
+
+                <div class="product-card" data-category="cosmetics">
+
+                    <div class="product-image">
+                        💅
+                    </div>
+
+                    <h3>Nail Care Set</h3>
+
+                    <p>Rs. 400</p>
+
+                    <button>
+                        Add to Cart
+                    </button>
+
+                </div>
+
+
+                <!-- HOME -->
+
+                <div class="product-card" data-category="home">
+
+                    <div class="product-image">
+                        🕯️
+                    </div>
+
+                    <h3>Decorative Candle</h3>
+
+                    <p>Rs. 400</p>
+
+                    <button>
+                        Add to Cart
+                    </button>
+
+                </div>
+
+
+                <div class="product-card" data-category="home">
+
+                    <div class="product-image">
+                        ☕
+                    </div>
+
+                    <h3>Ceramic Mug</h3>
+
+                    <p>Rs. 400</p>
+
+                    <button>
+                        Add to Cart
+                    </button>
+
+                </div>
+
+
+                <div class="product-card" data-category="home">
+
+                    <div class="product-image">
+                        🏠
+                    </div>
+
+                    <h3>Home Decor Item</h3>
+
+                    <p>Rs. 400</p>
+
+                    <button>
+                        Add to Cart
+                    </button>
+
+                </div>
+
+
+                <!-- ACCESSORIES -->
+
+                <div class="product-card" data-category="accessories">
+
+                    <div class="product-image">
+                        👜
+                    </div>
+
+                    <h3>Mini Handbag</h3>
+
+                    <p>Rs. 400</p>
+
+                    <button>
+                        Add to Cart
+                    </button>
+
+                </div>
+
+
+                <div class="product-card" data-category="accessories">
+
+                    <div class="product-image">
+                        🕶️
+                    </div>
+
+                    <h3>Fashion Sunglasses</h3>
+
+                    <p>Rs. 400</p>
+
+                    <button>
+                        Add to Cart
+                    </button>
+
+                </div>
+
+
+                <div class="product-card" data-category="accessories">
+
+                    <div class="product-image">
+                        ⌚
+                    </div>
+
+                    <h3>Fashion Watch</h3>
+
+                    <p>Rs. 400</p>
+
+                    <button>
+                        Add to Cart
+                    </button>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =========================
+         FOOTER
+    ========================== -->
+
+    <footer>
+
+        <p>
+            © 2026 Everything 400. All Rights Reserved.
+        </p>
+
+    </footer>
+
+
+    <!-- JAVASCRIPT -->
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>

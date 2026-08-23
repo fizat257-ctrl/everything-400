@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Checkout - Everything 400</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+
+<body>
+
+    <!-- Header -->
+
+    <header>
+
+        <h1>Everything 400</h1>
+
+        <nav>
+
+            <a href="index.html">Home</a>
+
+            <a href="index.html#products">Shop</a>
+
+            <a href="cart.html">Cart</a>
+
+        </nav>
+
+    </header>
+
+
+    <!-- Checkout -->
+
+    <main>
+
+        <section class="checkout-section">
+
+            <h2>Checkout</h2>
+
+
+            <div class="checkout-container">
+
+
+                <!-- Customer Information -->
+
+                <div class="checkout-form">
+
+                    <h3>Customer Information</h3>
+
+
+                    <form id="checkout-form">
+
+                        <label for="name">
+                            Full Name
+                        </label>
+
+                        <input
+                            type="text"
+                            id="name"
+                            placeholder="Enter your full name"
+                            required
+                        >
+
+
+                        <label for="phone">
+                            Phone Number
+                        </label>
+
+                        <input
+                            type="tel"
+                            id="phone"
+                            placeholder="Enter your phone number"
+                            required
+                        >
+
+
+                        <label for="address">
+                            Complete Address
+                        </label>
+
+                        <textarea
+                            id="address"
+                            placeholder="Enter your complete address"
+                            required
+                        ></textarea>
+
+
+                        <label for="city">
+                            City
+                        </label>
+
+                        <input
+                            type="text"
+                            id="city"
+                            placeholder="Enter your city"
+                            required
+                        >
+
+
+                        <button type="submit">
+                            Place Order
+                        </button>
+
+                    </form>
+
+                </div>
+
+
+
+                <!-- Order Summary -->
+
+                <div class="order-summary">
+
+                    <h3>Order Summary</h3>
+
+                    <div id="checkout-items"></div>
+
+
+                    <div class="checkout-total">
+
+                        <strong>
+                            Total: Rs.
+                            <span id="checkout-total">0</span>
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- Footer -->
+
+    <footer>
+
+        <p>
+            © 2026 Everything 400. All Rights Reserved.
+        </p>
+
+    </footer>
+
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
