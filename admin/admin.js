@@ -54,11 +54,9 @@ const dashboardTotalSales =
 // =====================================================
 
 if (!db) {
-
     console.error(
         "Supabase client not found. Make sure supabase.js is loaded before admin.js."
     );
-
 }
 
 
@@ -74,7 +72,6 @@ function escapeHTML(value) {
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
-
 }
 
 
@@ -85,7 +82,6 @@ function escapeHTML(value) {
 function formatPrice(price) {
 
     return Number(price || 0).toLocaleString();
-
 }
 
 
@@ -99,15 +95,13 @@ function formatDate(dateValue) {
         return "Date not available";
     }
 
-    const date =
-        new Date(dateValue);
+    const date = new Date(dateValue);
 
     if (Number.isNaN(date.getTime())) {
         return "Date not available";
     }
 
     return date.toLocaleString();
-
 }
 
 
@@ -118,36 +112,28 @@ function formatDate(dateValue) {
 function updateDashboardSummary() {
 
     if (dashboardProductCount) {
-
         dashboardProductCount.textContent =
             products.length;
-
     }
 
     if (dashboardOrderCount) {
-
         dashboardOrderCount.textContent =
             orders.length;
-
     }
 
     const pendingOrders =
         orders.filter(function(order) {
 
             return String(
-                order.status || "pending"
+                order.status || "Pending"
             ).toLowerCase() === "pending";
 
         }).length;
 
-
     if (dashboardPendingCount) {
-
         dashboardPendingCount.textContent =
             pendingOrders;
-
     }
-
 
     let totalSales = 0;
 
@@ -158,14 +144,12 @@ function updateDashboardSummary() {
 
     });
 
-
     if (dashboardTotalSales) {
 
         dashboardTotalSales.textContent =
             `Rs. ${formatPrice(totalSales)}`;
 
     }
-
 }
 
 
@@ -182,9 +166,7 @@ async function loadProducts() {
         );
 
         return;
-
     }
-
 
     if (productsContainer) {
 
@@ -195,7 +177,6 @@ async function loadProducts() {
         `;
 
     }
-
 
     try {
 
@@ -208,7 +189,6 @@ async function loadProducts() {
             .order("id", {
                 ascending: true
             });
-
 
         if (error) {
 
@@ -226,13 +206,10 @@ async function loadProducts() {
             updateDashboardSummary();
 
             return;
-
         }
-
 
         products =
             data || [];
-
 
         displayProducts();
 
@@ -250,9 +227,7 @@ async function loadProducts() {
         showProductError(
             "Something went wrong while loading products."
         );
-
     }
-
 }
 
 
@@ -271,7 +246,6 @@ function showProductError(message) {
     `;
 
     updateProductCount();
-
 }
 
 
@@ -288,7 +262,6 @@ function updateProductCount() {
 
     productCount.textContent =
         `${count} Product${count !== 1 ? "s" : ""}`;
-
 }
 
 
@@ -301,7 +274,6 @@ function displayProducts() {
     if (!productsContainer) return;
 
     productsContainer.innerHTML = "";
-
 
     if (products.length === 0) {
 
@@ -322,9 +294,7 @@ function displayProducts() {
         updateProductCount();
 
         return;
-
     }
-
 
     products.forEach(function(product) {
 
@@ -334,10 +304,8 @@ function displayProducts() {
         card.className =
             "admin-product-card";
 
-
         const imageHTML =
             product.image
-
                 ? `
                     <img
                         src="${escapeHTML(product.image)}"
@@ -345,22 +313,18 @@ function displayProducts() {
                         class="admin-product-image"
                     >
                 `
-
                 : `
                     <div class="admin-product-placeholder">
                         🛍️
                     </div>
                 `;
 
-
         card.innerHTML = `
 
             <div class="admin-product-info">
 
                 <div class="admin-product-image-wrapper">
-
                     ${imageHTML}
-
                 </div>
 
                 <div class="admin-product-details">
@@ -374,13 +338,14 @@ function displayProducts() {
                     </p>
 
                     <small class="admin-product-category">
-                        ${escapeHTML(product.category || "other")}
+                        ${escapeHTML(
+                            product.category || "other"
+                        )}
                     </small>
 
                 </div>
 
             </div>
-
 
             <div class="admin-product-actions">
 
@@ -401,16 +366,13 @@ function displayProducts() {
                 </button>
 
             </div>
-
         `;
-
 
         const editButton =
             card.querySelector(".edit-product");
 
         const deleteButton =
             card.querySelector(".delete-product");
-
 
         if (editButton) {
 
@@ -425,7 +387,6 @@ function displayProducts() {
 
         }
 
-
         if (deleteButton) {
 
             deleteButton.addEventListener(
@@ -439,14 +400,11 @@ function displayProducts() {
 
         }
 
-
         productsContainer.appendChild(card);
 
     });
 
-
     updateProductCount();
-
 }
 
 
@@ -456,33 +414,34 @@ function displayProducts() {
 
 function convertImageToBase64(file) {
 
-    return new Promise(function(resolve, reject) {
+    return new Promise(
+        function(resolve, reject) {
 
-        const reader =
-            new FileReader();
+            const reader =
+                new FileReader();
 
-        reader.onload =
-            function() {
+            reader.onload =
+                function() {
 
-                resolve(
-                    reader.result
-                );
+                    resolve(
+                        reader.result
+                    );
 
-            };
+                };
 
-        reader.onerror =
-            function() {
+            reader.onerror =
+                function() {
 
-                reject(
-                    reader.error
-                );
+                    reject(
+                        reader.error
+                    );
 
-            };
+                };
 
-        reader.readAsDataURL(file);
+            reader.readAsDataURL(file);
 
-    });
-
+        }
+    );
 }
 
 
@@ -498,7 +457,6 @@ if (productForm) {
 
             event.preventDefault();
 
-
             if (!db) {
 
                 alert(
@@ -506,37 +464,39 @@ if (productForm) {
                 );
 
                 return;
-
             }
 
-
             const nameInput =
-                document.getElementById("product-name");
+                document.getElementById(
+                    "product-name"
+                );
 
             const priceInput =
-                document.getElementById("product-price");
+                document.getElementById(
+                    "product-price"
+                );
 
             const categoryInput =
-                document.getElementById("product-category");
-
+                document.getElementById(
+                    "product-category"
+                );
 
             const name =
                 nameInput
                     ? nameInput.value.trim()
                     : "";
 
-
             const price =
                 priceInput
                     ? Number(priceInput.value)
                     : 0;
 
-
             const category =
                 categoryInput
-                    ? categoryInput.value.trim().toLowerCase()
+                    ? categoryInput.value
+                        .trim()
+                        .toLowerCase()
                     : "";
-
 
             if (!name) {
 
@@ -545,9 +505,7 @@ if (productForm) {
                 );
 
                 return;
-
             }
-
 
             if (!category) {
 
@@ -556,9 +514,7 @@ if (productForm) {
                 );
 
                 return;
-
             }
-
 
             if (!price || price <= 0) {
 
@@ -567,12 +523,9 @@ if (productForm) {
                 );
 
                 return;
-
             }
 
-
             let image = null;
-
 
             if (
                 imageInput &&
@@ -583,33 +536,35 @@ if (productForm) {
                 const file =
                     imageInput.files[0];
 
-
-                if (file.size > 2 * 1024 * 1024) {
+                if (
+                    file.size >
+                    2 * 1024 * 1024
+                ) {
 
                     alert(
                         "Image size must be less than 2MB."
                     );
 
                     return;
-
                 }
 
-
-                if (!file.type.startsWith("image/")) {
+                if (
+                    !file.type.startsWith("image/")
+                ) {
 
                     alert(
                         "Please select a valid image file."
                     );
 
                     return;
-
                 }
-
 
                 try {
 
                     image =
-                        await convertImageToBase64(file);
+                        await convertImageToBase64(
+                            file
+                        );
 
                 } catch (error) {
 
@@ -623,11 +578,8 @@ if (productForm) {
                     );
 
                     return;
-
                 }
-
             }
-
 
             try {
 
@@ -643,7 +595,6 @@ if (productForm) {
 
                 };
 
-
                 const {
                     data,
                     error
@@ -651,7 +602,6 @@ if (productForm) {
                     .from("products")
                     .insert(productData)
                     .select();
-
 
                 if (error) {
 
@@ -665,20 +615,16 @@ if (productForm) {
                     );
 
                     return;
-
                 }
-
 
                 console.log(
                     "Product added:",
                     data
                 );
 
-
                 productForm.reset();
 
                 await loadProducts();
-
 
                 alert(
                     "Product added successfully!"
@@ -694,12 +640,9 @@ if (productForm) {
                 alert(
                     `Unexpected error:\n\n${error.message}`
                 );
-
             }
-
         }
     );
-
 }
 
 
@@ -716,9 +659,7 @@ async function editProduct(id) {
         );
 
         return;
-
     }
-
 
     const product =
         products.find(function(item) {
@@ -728,7 +669,6 @@ async function editProduct(id) {
 
         });
 
-
     if (!product) {
 
         alert(
@@ -736,9 +676,7 @@ async function editProduct(id) {
         );
 
         return;
-
     }
-
 
     const newName =
         prompt(
@@ -746,13 +684,10 @@ async function editProduct(id) {
             product.name
         );
 
-
     if (newName === null) return;
-
 
     const cleanName =
         newName.trim();
-
 
     if (!cleanName) {
 
@@ -761,9 +696,7 @@ async function editProduct(id) {
         );
 
         return;
-
     }
-
 
     const newPrice =
         prompt(
@@ -771,13 +704,10 @@ async function editProduct(id) {
             product.price
         );
 
-
     if (newPrice === null) return;
-
 
     const price =
         Number(newPrice);
-
 
     if (!price || price <= 0) {
 
@@ -786,9 +716,7 @@ async function editProduct(id) {
         );
 
         return;
-
     }
-
 
     try {
 
@@ -797,14 +725,10 @@ async function editProduct(id) {
         } = await db
             .from("products")
             .update({
-
                 name: cleanName,
-
                 price: price
-
             })
             .eq("id", id);
-
 
         if (error) {
 
@@ -818,12 +742,9 @@ async function editProduct(id) {
             );
 
             return;
-
         }
 
-
         await loadProducts();
-
 
         alert(
             "Product updated successfully!"
@@ -839,9 +760,7 @@ async function editProduct(id) {
         alert(
             `Something went wrong:\n\n${error.message}`
         );
-
     }
-
 }
 
 
@@ -858,9 +777,7 @@ async function deleteProduct(id) {
         );
 
         return;
-
     }
-
 
     const product =
         products.find(function(item) {
@@ -870,7 +787,6 @@ async function deleteProduct(id) {
 
         });
 
-
     if (!product) {
 
         alert(
@@ -878,18 +794,14 @@ async function deleteProduct(id) {
         );
 
         return;
-
     }
-
 
     const confirmDelete =
         confirm(
             `Are you sure you want to delete "${product.name}"?`
         );
 
-
     if (!confirmDelete) return;
-
 
     try {
 
@@ -899,7 +811,6 @@ async function deleteProduct(id) {
             .from("products")
             .delete()
             .eq("id", id);
-
 
         if (error) {
 
@@ -913,12 +824,9 @@ async function deleteProduct(id) {
             );
 
             return;
-
         }
 
-
         await loadProducts();
-
 
         alert(
             "Product deleted successfully!"
@@ -934,9 +842,7 @@ async function deleteProduct(id) {
         alert(
             `Something went wrong:\n\n${error.message}`
         );
-
     }
-
 }
 // =====================================================
 // EVERYTHING 400 - ADMIN.JS
@@ -957,19 +863,15 @@ async function loadOrders() {
         );
 
         return;
-
     }
 
-
     if (!ordersContainer) return;
-
 
     ordersContainer.innerHTML = `
         <p class="loading-orders">
             Loading orders...
         </p>
     `;
-
 
     try {
 
@@ -982,7 +884,6 @@ async function loadOrders() {
             .order("created_at", {
                 ascending: false
             });
-
 
         if (error) {
 
@@ -1000,20 +901,16 @@ async function loadOrders() {
             updateDashboardSummary();
 
             return;
-
         }
-
 
         orders =
             data || [];
-
 
         displayOrders();
 
         updateOrderCount();
 
         updateDashboardSummary();
-
 
     } catch (error) {
 
@@ -1027,9 +924,7 @@ async function loadOrders() {
         showOrderError(
             "Something went wrong while loading orders."
         );
-
     }
-
 }
 
 
@@ -1041,16 +936,13 @@ function showOrderError(message) {
 
     if (!ordersContainer) return;
 
-
     ordersContainer.innerHTML = `
         <p class="no-orders">
             ${escapeHTML(message)}
         </p>
     `;
 
-
     updateOrderCount();
-
 }
 
 
@@ -1062,14 +954,11 @@ function updateOrderCount() {
 
     if (!orderCount) return;
 
-
     const count =
         orders.length;
 
-
     orderCount.textContent =
         `${count} Order${count !== 1 ? "s" : ""}`;
-
 }
 
 
@@ -1081,7 +970,6 @@ function getCustomerData(order) {
 
     let customer = {};
 
-
     if (
         order.customer &&
         typeof order.customer === "object"
@@ -1090,8 +978,7 @@ function getCustomerData(order) {
         customer =
             order.customer;
 
-    }
-    else if (
+    } else if (
         typeof order.customer === "string"
     ) {
 
@@ -1107,9 +994,7 @@ function getCustomerData(order) {
             customer = {};
 
         }
-
     }
-
 
     return {
 
@@ -1138,7 +1023,6 @@ function getCustomerData(order) {
             "Not provided"
 
     };
-
 }
 
 
@@ -1152,7 +1036,6 @@ function getOrderProducts(order) {
         order.products ||
         order.items ||
         [];
-
 
     if (
         typeof orderProducts === "string"
@@ -1170,14 +1053,11 @@ function getOrderProducts(order) {
             orderProducts = [];
 
         }
-
     }
-
 
     return Array.isArray(orderProducts)
         ? orderProducts
         : [];
-
 }
 
 
@@ -1188,11 +1068,10 @@ function getOrderProducts(order) {
 function getStatusClass(status) {
 
     return String(
-        status || "pending"
+        status || "Pending"
     )
         .toLowerCase()
         .replace(/\s+/g, "-");
-
 }
 
 
@@ -1204,9 +1083,7 @@ function displayOrders() {
 
     if (!ordersContainer) return;
 
-
     ordersContainer.innerHTML = "";
-
 
     if (orders.length === 0) {
 
@@ -1227,53 +1104,41 @@ function displayOrders() {
         updateOrderCount();
 
         return;
-
     }
-
 
     orders.forEach(function(order) {
 
         const card =
             document.createElement("div");
 
-
         card.className =
             "admin-order-card";
-
 
         const customer =
             getCustomerData(order);
 
-
         const total =
             Number(order.total || 0);
-
 
         const createdAt =
             order.created_at ||
             order.createdAt;
 
-
         const orderDate =
             formatDate(createdAt);
-
 
         const status =
             String(
                 order.status || "Pending"
             );
 
-
         const statusClass =
             getStatusClass(status);
-
 
         const orderProducts =
             getOrderProducts(order);
 
-
         let productsHTML = "";
-
 
         if (orderProducts.length > 0) {
 
@@ -1287,52 +1152,50 @@ function displayOrders() {
 
                     <ul>
 
-                        ${orderProducts.map(function(item) {
+                        ${orderProducts.map(
+                            function(item) {
 
-                            const itemName =
-                                item.name ||
-                                item.product_name ||
-                                "Product";
+                                const itemName =
+                                    item.name ||
+                                    item.product_name ||
+                                    "Product";
 
-                            const quantity =
-                                Number(
-                                    item.quantity || 1
-                                );
+                                const quantity =
+                                    Number(
+                                        item.quantity || 1
+                                    );
 
-                            const itemPrice =
-                                Number(
-                                    item.price || 0
-                                );
+                                const itemPrice =
+                                    Number(
+                                        item.price || 0
+                                    );
 
+                                return `
 
-                            return `
+                                    <li>
 
-                                <li>
+                                        ${escapeHTML(itemName)}
+                                        × ${quantity}
 
-                                    ${escapeHTML(itemName)}
+                                        ${
+                                            itemPrice
+                                                ? ` - Rs. ${formatPrice(itemPrice)}`
+                                                : ""
+                                        }
 
-                                    × ${quantity}
+                                    </li>
 
-                                    ${
-                                        itemPrice
-                                            ? ` - Rs. ${formatPrice(itemPrice)}`
-                                            : ""
-                                    }
+                                `;
 
-                                </li>
-
-                            `;
-
-                        }).join("")}
+                            }
+                        ).join("")}
 
                     </ul>
 
                 </div>
 
             `;
-
         }
-
 
         card.innerHTML = `
 
@@ -1342,33 +1205,27 @@ function displayOrders() {
                     ${escapeHTML(customer.name)}
                 </h3>
 
-
                 <p>
                     <strong>Phone:</strong>
                     ${escapeHTML(customer.phone)}
                 </p>
-
 
                 <p>
                     <strong>Address:</strong>
                     ${escapeHTML(customer.address)}
                 </p>
 
-
                 <p>
                     <strong>City:</strong>
                     ${escapeHTML(customer.city)}
                 </p>
-
 
                 <p>
                     <strong>Order Date:</strong>
                     ${escapeHTML(orderDate)}
                 </p>
 
-
                 ${productsHTML}
-
 
                 <p class="order-total">
 
@@ -1380,13 +1237,11 @@ function displayOrders() {
 
                 </p>
 
-
                 <div class="order-status-section">
 
                     <strong>
                         Status:
                     </strong>
-
 
                     <span
                         class="order-status ${statusClass}"
@@ -1394,52 +1249,47 @@ function displayOrders() {
                         ${escapeHTML(status)}
                     </span>
 
-
                     <div class="order-status-buttons">
 
                         <button
                             type="button"
-                            class="status-btn pending-btn"
+                            class="status-btn"
                             data-id="${escapeHTML(order.id)}"
                             data-status="Pending"
                         >
                             Pending
                         </button>
 
-
                         <button
                             type="button"
-                            class="status-btn confirm-btn"
+                            class="status-btn"
                             data-id="${escapeHTML(order.id)}"
                             data-status="Confirmed"
                         >
                             Confirm
                         </button>
 
-
                         <button
                             type="button"
-                            class="status-btn ship-btn"
+                            class="status-btn"
                             data-id="${escapeHTML(order.id)}"
                             data-status="Shipped"
                         >
                             Ship
                         </button>
 
-
                         <button
                             type="button"
-                            class="status-btn delivered-btn"
+                            class="status-btn"
                             data-id="${escapeHTML(order.id)}"
                             data-status="Delivered"
                         >
-                            Delivered
+                            Delivery
                         </button>
-
 
                         <button
                             type="button"
-                            class="status-btn cancel-btn"
+                            class="status-btn"
                             data-id="${escapeHTML(order.id)}"
                             data-status="Cancelled"
                         >
@@ -1451,51 +1301,46 @@ function displayOrders() {
                 </div>
 
             </div>
-
         `;
-
 
         const statusButtons =
             card.querySelectorAll(
                 ".status-btn"
             );
 
+        statusButtons.forEach(
+            function(button) {
 
-        statusButtons.forEach(function(button) {
+                button.addEventListener(
+                    "click",
+                    function() {
 
-            button.addEventListener(
-                "click",
-                function() {
+                        const orderId =
+                            this.dataset.id;
 
-                    const orderId =
-                        this.dataset.id;
+                        const newStatus =
+                            this.dataset.status;
 
-                    const newStatus =
-                        this.dataset.status;
+                        updateOrderStatus(
+                            orderId,
+                            newStatus
+                        );
 
+                    }
+                );
 
-                    updateOrderStatus(
-                        orderId,
-                        newStatus
-                    );
-
-                }
-            );
-
-        });
-
+            }
+        );
 
         ordersContainer.appendChild(card);
 
     });
 
-
     updateOrderCount();
-
 }
 // =====================================================
 // EVERYTHING 400 - ADMIN.JS
-// PART 3 - ORDER STATUS + LOGOUT + INITIALIZE
+// PART 3 - STATUS + LOGOUT + INITIALIZE
 // =====================================================
 
 
@@ -1515,9 +1360,7 @@ async function updateOrderStatus(
         );
 
         return;
-
     }
-
 
     if (!orderId) {
 
@@ -1526,9 +1369,7 @@ async function updateOrderStatus(
         );
 
         return;
-
     }
-
 
     const allowedStatuses = [
         "Pending",
@@ -1537,7 +1378,6 @@ async function updateOrderStatus(
         "Delivered",
         "Cancelled"
     ];
-
 
     if (
         !allowedStatuses.includes(
@@ -1550,27 +1390,31 @@ async function updateOrderStatus(
         );
 
         return;
-
     }
-
 
     const confirmChange =
         confirm(
             `Change order status to "${newStatus}"?`
         );
 
-
     if (!confirmChange) return;
-
 
     try {
 
         console.log(
-            "Updating order:",
-            orderId,
+            "Updating order ID:",
+            orderId
+        );
+
+        console.log(
+            "New status:",
             newStatus
         );
 
+
+        // =================================================
+        // UPDATE SUPABASE
+        // =================================================
 
         const {
             data,
@@ -1578,63 +1422,101 @@ async function updateOrderStatus(
         } = await db
             .from("orders")
             .update({
-
-                status:
-                    newStatus
-
+                status: newStatus
             })
             .eq(
                 "id",
                 orderId
             )
-            .select();
+            .select("*");
 
+
+        // =================================================
+        // SUPABASE ERROR
+        // =================================================
 
         if (error) {
 
             console.error(
-                "Order status update error:",
+                "ORDER STATUS UPDATE ERROR:",
                 error
             );
 
-
             alert(
-                `Status update failed:\n\n${error.message}`
+                "Status update failed:\n\n" +
+                error.message
             );
 
             return;
-
         }
 
 
+        // =================================================
+        // IMPORTANT: CHECK ACTUAL UPDATED ROW
+        // =================================================
+
+        if (
+            !data ||
+            data.length === 0
+        ) {
+
+            console.error(
+                "No order row was updated.",
+                {
+                    orderId: orderId,
+                    newStatus: newStatus
+                }
+            );
+
+            alert(
+                "Status was not updated in the database.\n\n" +
+                "Please check the UPDATE policy for the orders table in Supabase."
+            );
+
+            return;
+        }
+
+
+        // =================================================
+        // VERIFY DATABASE VALUE
+        // =================================================
+
+        const updatedOrder =
+            data[0];
+
         console.log(
-            "Order status updated:",
-            data
+            "Updated order from database:",
+            updatedOrder
         );
 
 
-        // Update local order
-        const order =
-            orders.find(function(item) {
+        if (
+            String(
+                updatedOrder.status
+            ).toLowerCase() !==
+            String(
+                newStatus
+            ).toLowerCase()
+        ) {
 
-                return String(item.id) ===
-                    String(orderId);
+            alert(
+                "The database did not save the new status."
+            );
 
-            });
-
-
-        if (order) {
-
-            order.status =
-                newStatus;
-
+            return;
         }
 
 
-        displayOrders();
+        // =================================================
+        // RELOAD ORDERS FROM DATABASE
+        // =================================================
 
-        updateDashboardSummary();
+        await loadOrders();
 
+
+        // =================================================
+        // SUCCESS
+        // =================================================
 
         alert(
             `Order status changed to ${newStatus}.`
@@ -1648,13 +1530,11 @@ async function updateOrderStatus(
             error
         );
 
-
         alert(
-            `Something went wrong:\n\n${error.message}`
+            "Something went wrong:\n\n" +
+            (error.message || error)
         );
-
     }
-
 }
 
 
@@ -1667,7 +1547,6 @@ const logoutButton =
         "admin-logout"
     );
 
-
 if (logoutButton) {
 
     logoutButton.addEventListener(
@@ -1679,7 +1558,6 @@ if (logoutButton) {
 
         }
     );
-
 }
 
 
@@ -1695,12 +1573,10 @@ document.addEventListener(
             "Everything 400 admin.js loaded."
         );
 
-
         console.log(
             "Supabase available:",
             !!window.supabaseClient
         );
-
 
         await loadProducts();
 
