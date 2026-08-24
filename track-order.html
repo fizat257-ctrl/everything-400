@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Track Order - Everything 400</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================
+         HEADER
+    ========================== -->
+
+    <header>
+
+        <h1>Everything 400</h1>
+
+        <nav>
+
+            <a href="index.html">
+                Home
+            </a>
+
+            <a href="index.html#products">
+                Shop
+            </a>
+
+            <a href="cart.html">
+                Cart
+            </a>
+
+            <a href="track-order.html">
+                Track Order
+            </a>
+
+        </nav>
+
+    </header>
+
+
+    <!-- =========================
+         TRACK ORDER
+    ========================== -->
+
+    <main>
+
+        <section class="track-order-section">
+
+            <h2>
+                Track Your Order
+            </h2>
+
+            <p>
+                Enter your Order ID to check your
+                latest order status.
+            </p>
+
+
+            <!-- =========================
+                 ORDER ID FORM
+            ========================== -->
+
+            <form id="track-order-form">
+
+                <label for="order-id">
+                    Order ID
+                </label>
+
+                <input
+                    type="text"
+                    id="order-id"
+                    placeholder="Enter your Order ID"
+                    required
+                >
+
+                <button
+                    type="submit"
+                >
+                    Track Order
+                </button>
+
+            </form>
+
+
+            <!-- =========================
+                 ORDER RESULT
+            ========================== -->
+
+            <div
+                id="track-order-result"
+                class="track-order-result"
+            >
+
+                <p>
+                    Enter your Order ID to see
+                    your order status.
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =========================
+         FOOTER
+    ========================== -->
+
+    <footer>
+
+        <p>
+            © 2026 Everything 400.
+            All Rights Reserved.
+        </p>
+
+    </footer>
+
+
+    <!-- =========================
+         SUPABASE LIBRARY
+    ========================== -->
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+    ></script>
+
+
+    <!-- =========================
+         SUPABASE CONNECTION
+    ========================== -->
+
+    <script src="./supabase.js"></script>
+
+
+    <!-- =========================
+         TRACK ORDER JAVASCRIPT
+    ========================== -->
+
+    <script>
+
+        // =====================================================
+        // SUPABASE
+        // =====================================================
+
+        const db =
+            window.supabaseClient;
+
+
+        // =====================================================
+        // ELEMENTS
+        // =====================================================
+
+        const trackForm =
+            document.getElementById(
+                "track-order-form"
+            );
+
+        const orderIdInput =
+            document.getElementById(
+                "order-id"
+            );
+
+        const resultContainer =
+            document.getElementById(
+                "track-order-result"
+            );
+
+
+        // =====================================================
+        // ESCAPE HTML
+        // =====================================================
+
+        function escapeHTML(value) {
+
+            return String(value ?? "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+
+        }
+
+
+        // =====================================================
+        // STATUS MESSAGE
+        // =====================================================
+
+        function getStatusMessage(status) {
+
+            const value =
+                String(status || "Pending")
+                    .toLowerCase()
+                    .trim();
+
+
+            if (value === "pending") {
+
+                return "Your order is pending.";
+
+            }
+
+
+            if (
+                value === "confirm" ||
+                value === "confirmed"
+            ) {
+
+                return "Your order has been confirmed.";
+
+            }
+
+
+            if (
+                value === "ship" ||
+                value === "shipped"
+            ) {
+
+                return "Your order has been shipped.";
+
+            }
+
+
+            if (
+                value === "delivery" ||
+                value === "delivered"
+            ) {
+
+                return "Your order has been delivered.";
+
+            }
+
+
+            if (
+                value === "cancel" ||
+                value === "cancelled" ||
+                value === "canceled"
+            ) {
+
+                return "Your order has been cancelled.";
+
+            }
+
+
+            return "Your order is being processed.";
+
+        }
+
+
+        // =====================================================
+        // TRACK ORDER
+        // =====================================================
+
+        if (trackForm) {
+
+            trackForm.addEventListener(
+                "submit",
+                async function(event) {
+
+                    event.preventDefault();
+
+
+                    const orderId =
+                        orderIdInput
+                            .value
+                            .trim();
+
+
+                    if (!orderId) {
+
+                        alert(
+                            "Please enter your Order ID."
+                        );
+
+                        return;
+
+                    }
+
+
+                    if (!db) {
+
+                        resultContainer.innerHTML = `
+
+                            <p>
+                                Database connection is not available.
+                            </p>
+
+                        `;
+
+                        return;
+
+                    }
+
+
+                    resultContainer.innerHTML = `
+
+                        <p>
+                            Loading order...
+                        </p>
+
+                    `;
+
+
+                    try {
+
+                        const {
+                            data,
+                            error
+                        } = await db
+                            .from("orders")
+                            .select("*")
+                            .eq("id", orderId)
+                            .maybeSingle();
+
+
+                        if (error) {
+
+                            console.error(
+                                "Track order error:",
+                                error
+                            );
+
+
+                            resultContainer.innerHTML = `
+
+                                <p>
+                                    Unable to find this order.
+                                </p>
+
+                            `;
+
+                            return;
+
+                        }
+
+
+                        if (!data) {
+
+                            resultContainer.innerHTML = `
+
+                                <p>
+                                    No order found with this Order ID.
+                                </p>
+
+                            `;
+
+                            return;
+
+                        }
+
+
+                        const status =
+                            data.status ||
+                            "Pending";
+
+
+                        const message =
+                            getStatusMessage(
+                                status
+                            );
+
+
+                        const orderDate =
+                            data.created_at
+                                ? new Date(
+                                    data.created_at
+                                ).toLocaleString()
+                                : "Not available";
+
+
+                        const total =
+                            Number(
+                                data.total || 0
+                            ).toLocaleString();
+
+
+                        resultContainer.innerHTML = `
+
+                            <div class="order-tracking-card">
+
+                                <h3>
+                                    Order Details
+                                </h3>
+
+
+                                <p>
+
+                                    <strong>
+                                        Order ID:
+                                    </strong>
+
+                                    ${escapeHTML(
+                                        data.id
+                                    )}
+
+                                </p>
+
+
+                                <p>
+
+                                    <strong>
+                                        Customer:
+                                    </strong>
+
+                                    ${escapeHTML(
+                                        data.customer_name ||
+                                        "Customer"
+                                    )}
+
+                                </p>
+
+
+                                <p>
+
+                                    <strong>
+                                        Phone:
+                                    </strong>
+
+                                    ${escapeHTML(
+                                        data.customer_phone ||
+                                        "Not available"
+                                    )}
+
+                                </p>
+
+
+                                <p>
+
+                                    <strong>
+                                        City:
+                                    </strong>
+
+                                    ${escapeHTML(
+                                        data.customer_city ||
+                                        "Not available"
+                                    )}
+
+                                </p>
+
+
+                                <p>
+
+                                    <strong>
+                                        Order Date:
+                                    </strong>
+
+                                    ${escapeHTML(
+                                        orderDate
+                                    )}
+
+                                </p>
+
+
+                                <div class="order-status">
+
+                                    <strong>
+                                        Current Status:
+                                    </strong>
+
+                                    <span>
+                                        ${escapeHTML(
+                                            status
+                                        )}
+                                    </span>
+
+                                </div>
+
+
+                                <p class="status-message">
+
+                                    ${escapeHTML(
+                                        message
+                                    )}
+
+                                </p>
+
+
+                                <p>
+
+                                    <strong>
+                                        Total:
+                                    </strong>
+
+                                    Rs. ${total}
+
+                                </p>
+
+
+                                <div class="tracking-steps">
+
+                                    <div class="${
+                                        ["pending",
+                                         "confirm",
+                                         "confirmed",
+                                         "ship",
+                                         "shipped",
+                                         "delivery",
+                                         "delivered"]
+                                        .includes(
+                                            String(status)
+                                                .toLowerCase()
+                                        )
+                                        ? "completed"
+                                        : ""
+                                    }">
+                                        1. Pending
+                                    </div>
+
+
+                                    <div>
+                                        2. Confirm
+                                    </div>
+
+
+                                    <div>
+                                        3. Ship
+                                    </div>
+
+
+                                    <div>
+                                        4. Delivery
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        `;
+
+                    } catch (error) {
+
+                        console.error(
+                            "Tracking error:",
+                            error
+                        );
+
+
+                        resultContainer.innerHTML = `
+
+                            <p>
+                                Something went wrong while
+                                tracking your order.
+                            </p>
+
+                        `;
+
+                    }
+
+                }
+            );
+
+        }
+
+    </script>
+
+</body>
+
+</html>

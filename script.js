@@ -1,6 +1,6 @@
 // =====================================================
 // EVERYTHING 400 - SCRIPT.JS
-// PART 1 - SUPABASE + CART + PRODUCTS
+// PART 1 - SUPABASE + PRODUCTS + CART
 // =====================================================
 
 let cart = [];
@@ -50,6 +50,9 @@ const checkoutForm =
 const checkoutButton =
     document.getElementById("checkout-btn");
 
+const customerOrderStatus =
+    document.getElementById("customer-order-status");
+
 let selectedCategory = "all";
 
 
@@ -67,21 +70,10 @@ function getSupabaseClient() {
             "Supabase client not found."
         );
 
-        console.error(
-            "Make sure supabase.js is loaded BEFORE script.js."
-        );
-
         return null;
     }
 
     return db;
-}
-
-
-function checkSupabase() {
-
-    return !!getSupabaseClient();
-
 }
 
 
@@ -114,7 +106,7 @@ function saveCart() {
 
 
 // =====================================================
-// CART COUNT
+// UPDATE CART COUNT
 // =====================================================
 
 function updateCartCount() {
@@ -132,7 +124,8 @@ function updateCartCount() {
 
 async function getProducts() {
 
-    const db = getSupabaseClient();
+    const db =
+        getSupabaseClient();
 
     if (!db) return [];
 
@@ -189,9 +182,11 @@ function addToCart(product) {
 
     cart.push({
 
-        id: product.id,
+        id:
+            product.id,
 
-        name: product.name,
+        name:
+            product.name,
 
         price:
             Number(product.price) || 0,
@@ -302,10 +297,12 @@ async function displayProducts() {
         productContainer.appendChild(card);
     });
 
+
     const addButtons =
         productContainer.querySelectorAll(
             ".add-cart-btn"
         );
+
 
     addButtons.forEach(function(button) {
 
@@ -331,6 +328,7 @@ async function displayProducts() {
             }
         );
     });
+
 
     filterProducts();
 }
@@ -518,7 +516,9 @@ function displayCart() {
         return;
     }
 
+
     let total = 0;
+
 
     cart.forEach(function(product, index) {
 
@@ -527,11 +527,13 @@ function displayCart() {
 
         total += price;
 
+
         const cartItem =
             document.createElement("div");
 
         cartItem.className =
             "cart-item";
+
 
         cartItem.innerHTML = `
 
@@ -557,10 +559,12 @@ function displayCart() {
 
         `;
 
+
         cartItemsContainer.appendChild(
             cartItem
         );
     });
+
 
     if (cartTotalElement) {
 
@@ -583,7 +587,12 @@ function removeFromCart(index) {
         return;
     }
 
-    cart.splice(index, 1);
+
+    cart.splice(
+        index,
+        1
+    );
+
 
     saveCart();
 
@@ -593,6 +602,7 @@ function removeFromCart(index) {
 
     displayCheckout();
 }
+
 
 window.removeFromCart =
     removeFromCart;
@@ -606,7 +616,10 @@ function displayCheckout() {
 
     if (!checkoutItemsContainer) return;
 
-    checkoutItemsContainer.innerHTML = "";
+
+    checkoutItemsContainer.innerHTML =
+        "";
+
 
     if (cart.length === 0) {
 
@@ -622,6 +635,7 @@ function displayCheckout() {
 
         `;
 
+
         if (checkoutTotalElement) {
 
             checkoutTotalElement.textContent =
@@ -631,7 +645,9 @@ function displayCheckout() {
         return;
     }
 
+
     let total = 0;
+
 
     cart.forEach(function(product) {
 
@@ -640,11 +656,14 @@ function displayCheckout() {
 
         total += price;
 
+
         const item =
             document.createElement("div");
 
+
         item.className =
             "checkout-item";
+
 
         item.innerHTML = `
 
@@ -662,10 +681,12 @@ function displayCheckout() {
 
         `;
 
+
         checkoutItemsContainer.appendChild(
             item
         );
     });
+
 
     if (checkoutTotalElement) {
 
@@ -675,8 +696,278 @@ function displayCheckout() {
 }
 // =====================================================
 // EVERYTHING 400 - SCRIPT.JS
-// PART 3 - CHECKOUT + SUPABASE ORDERS
+// PART 3 - CHECKOUT + ORDER STATUS
 // =====================================================
+
+
+// =====================================================
+// SAVE CUSTOMER ORDER ID
+// =====================================================
+
+function saveCustomerOrderId(orderId) {
+
+    if (!orderId) return;
+
+    localStorage.setItem(
+        "lastOrderId",
+        String(orderId)
+    );
+}
+
+
+// =====================================================
+// GET CUSTOMER ORDER ID
+// =====================================================
+
+function getCustomerOrderId() {
+
+    return localStorage.getItem(
+        "lastOrderId"
+    );
+}
+
+
+// =====================================================
+// FORMAT DATE
+// =====================================================
+
+function formatOrderDate(dateValue) {
+
+    if (!dateValue) {
+        return "Date not available";
+    }
+
+    const date =
+        new Date(dateValue);
+
+    if (Number.isNaN(date.getTime())) {
+        return "Date not available";
+    }
+
+    return date.toLocaleString();
+}
+
+
+// =====================================================
+// SHOW CUSTOMER ORDER STATUS
+// =====================================================
+
+async function loadCustomerOrderStatus() {
+
+    if (!customerOrderStatus) {
+        return;
+    }
+
+
+    const db =
+        getSupabaseClient();
+
+
+    if (!db) {
+
+        customerOrderStatus.innerHTML = `
+            <p>
+                Database connection is not available.
+            </p>
+        `;
+
+        return;
+    }
+
+
+    const orderId =
+        getCustomerOrderId();
+
+
+    if (!orderId) {
+
+        customerOrderStatus.innerHTML = `
+            <p>
+                No recent order found.
+            </p>
+        `;
+
+        return;
+    }
+
+
+    customerOrderStatus.innerHTML = `
+        <p>
+            Loading your order status...
+        </p>
+    `;
+
+
+    try {
+
+        const {
+            data,
+            error
+        } = await db
+            .from("orders")
+            .select("*")
+            .eq("id", orderId)
+            .maybeSingle();
+
+
+        if (error) {
+
+            console.error(
+                "Order status error:",
+                error
+            );
+
+            customerOrderStatus.innerHTML = `
+                <p>
+                    Unable to load order status.
+                </p>
+            `;
+
+            return;
+        }
+
+
+        if (!data) {
+
+            customerOrderStatus.innerHTML = `
+                <p>
+                    Order not found.
+                </p>
+            `;
+
+            return;
+        }
+
+
+        const status =
+            String(
+                data.status || "Pending"
+            );
+
+
+        const normalizedStatus =
+            status.toLowerCase();
+
+
+        let statusMessage =
+            "Your order has been received.";
+
+
+        if (normalizedStatus === "pending") {
+
+            statusMessage =
+                "Your order is pending.";
+
+        }
+        else if (
+            normalizedStatus === "confirm" ||
+            normalizedStatus === "confirmed"
+        ) {
+
+            statusMessage =
+                "Your order has been confirmed.";
+
+        }
+        else if (
+            normalizedStatus === "ship" ||
+            normalizedStatus === "shipped"
+        ) {
+
+            statusMessage =
+                "Your order has been shipped.";
+
+        }
+        else if (
+            normalizedStatus === "delivery" ||
+            normalizedStatus === "delivered"
+        ) {
+
+            statusMessage =
+                "Your order has been delivered.";
+
+        }
+        else if (
+            normalizedStatus === "cancel" ||
+            normalizedStatus === "cancelled" ||
+            normalizedStatus === "canceled"
+        ) {
+
+            statusMessage =
+                "Your order has been cancelled.";
+
+        }
+
+
+        customerOrderStatus.innerHTML = `
+
+            <div class="customer-order-status">
+
+                <h3>
+                    My Order Status
+                </h3>
+
+                <p>
+                    <strong>
+                        Order ID:
+                    </strong>
+
+                    ${escapeHTML(data.id)}
+                </p>
+
+                <p>
+                    <strong>
+                        Status:
+                    </strong>
+
+                    <span class="order-status-badge status-${escapeHTML(normalizedStatus)}">
+                        ${escapeHTML(status)}
+                    </span>
+                </p>
+
+                <p>
+                    ${escapeHTML(statusMessage)}
+                </p>
+
+                <p>
+                    <strong>
+                        Order Date:
+                    </strong>
+
+                    ${escapeHTML(
+                        formatOrderDate(
+                            data.created_at
+                        )
+                    )}
+                </p>
+
+                <p>
+                    <strong>
+                        Total:
+                    </strong>
+
+                    Rs.
+                    ${Number(data.total || 0).toLocaleString()}
+                </p>
+
+            </div>
+
+        `;
+
+
+    } catch (error) {
+
+        console.error(
+            "Customer status error:",
+            error
+        );
+
+        customerOrderStatus.innerHTML = `
+            <p>
+                Something went wrong while loading your order.
+            </p>
+        `;
+    }
+}
 
 
 // =====================================================
@@ -691,9 +982,6 @@ if (checkoutForm) {
 
             event.preventDefault();
 
-            // -----------------------------
-            // CHECK CART
-            // -----------------------------
 
             if (cart.length === 0) {
 
@@ -705,15 +993,12 @@ if (checkoutForm) {
             }
 
 
-            // -----------------------------
-            // CUSTOMER DATA
-            // -----------------------------
-
             const name =
                 document
                     .getElementById("name")
                     ?.value
                     .trim();
+
 
             const phone =
                 document
@@ -721,11 +1006,13 @@ if (checkoutForm) {
                     ?.value
                     .trim();
 
+
             const address =
                 document
                     .getElementById("address")
                     ?.value
                     .trim();
+
 
             const city =
                 document
@@ -733,10 +1020,6 @@ if (checkoutForm) {
                     ?.value
                     .trim();
 
-
-            // -----------------------------
-            // VALIDATION
-            // -----------------------------
 
             if (
                 !name ||
@@ -753,12 +1036,9 @@ if (checkoutForm) {
             }
 
 
-            // -----------------------------
-            // SUPABASE
-            // -----------------------------
-
             const db =
                 getSupabaseClient();
+
 
             if (!db) {
 
@@ -769,10 +1049,6 @@ if (checkoutForm) {
                 return;
             }
 
-
-            // -----------------------------
-            // TOTAL
-            // -----------------------------
 
             const total =
                 cart.reduce(
@@ -787,10 +1063,6 @@ if (checkoutForm) {
                     0
                 );
 
-
-            // -----------------------------
-            // PRODUCTS DATA
-            // -----------------------------
 
             const productsData =
                 cart.map(function(product) {
@@ -819,10 +1091,6 @@ if (checkoutForm) {
                     };
                 });
 
-
-            // -----------------------------
-            // SAVE ORDER
-            // -----------------------------
 
             try {
 
@@ -857,12 +1125,9 @@ if (checkoutForm) {
 
                         }
                     ])
-                    .select();
+                    .select()
+                    .single();
 
-
-                // -----------------------------
-                // ERROR
-                // -----------------------------
 
                 if (error) {
 
@@ -879,23 +1144,28 @@ if (checkoutForm) {
                 }
 
 
-                // -----------------------------
-                // SUCCESS
-                // -----------------------------
-
                 console.log(
                     "Order successfully saved:",
                     data
                 );
 
+
+                // IMPORTANT:
+                // Save the order ID so the customer
+                // can see the updated status later.
+
+                if (data && data.id) {
+
+                    saveCustomerOrderId(
+                        data.id
+                    );
+                }
+
+
                 alert(
                     `Thank you ${name}! Your order has been placed successfully.`
                 );
 
-
-                // -----------------------------
-                // CLEAR CART
-                // -----------------------------
 
                 cart = [];
 
@@ -908,6 +1178,12 @@ if (checkoutForm) {
                 displayCart();
 
                 displayCheckout();
+
+
+                // Load status immediately
+
+                loadCustomerOrderStatus();
+
 
             } catch (error) {
 
@@ -944,6 +1220,7 @@ if (checkoutButton) {
                 return;
             }
 
+
             window.location.href =
                 "checkout.html";
         }
@@ -952,7 +1229,7 @@ if (checkoutButton) {
 
 
 // =====================================================
-// INITIALIZE WEBSITE
+// INITIALIZE
 // =====================================================
 
 updateCartCount();
@@ -962,6 +1239,8 @@ displayProducts();
 displayCart();
 
 displayCheckout();
+
+loadCustomerOrderStatus();
 
 
 // =====================================================
