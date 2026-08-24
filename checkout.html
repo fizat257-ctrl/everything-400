@@ -5,18 +5,27 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>Checkout - Everything 400</title>
 
-    <link rel="stylesheet" href="style.css">
+    <link
+        rel="stylesheet"
+        href="./style.css"
+    >
 
 </head>
 
 
 <body>
 
-    <!-- Header -->
+
+    <!-- =========================
+         HEADER
+    ========================== -->
 
     <header>
 
@@ -24,37 +33,53 @@
 
         <nav>
 
-            <a href="index.html">Home</a>
+            <a href="./index.html">
+                Home
+            </a>
 
-            <a href="index.html#products">Shop</a>
+            <a href="./index.html#products">
+                Shop
+            </a>
 
-            <a href="cart.html">Cart</a>
+            <a href="./cart.html">
+                Cart
+            </a>
 
         </nav>
 
     </header>
 
 
-    <!-- Checkout -->
+
+    <!-- =========================
+         CHECKOUT
+    ========================== -->
 
     <main>
 
         <section class="checkout-section">
 
-            <h2>Checkout</h2>
+            <h2>
+                Checkout
+            </h2>
 
 
             <div class="checkout-container">
 
 
-                <!-- Customer Information -->
+                <!-- =========================
+                     CUSTOMER INFORMATION
+                ========================== -->
 
                 <div class="checkout-form">
 
-                    <h3>Customer Information</h3>
+                    <h3>
+                        Customer Information
+                    </h3>
 
 
                     <form id="checkout-form">
+
 
                         <label for="name">
                             Full Name
@@ -63,7 +88,9 @@
                         <input
                             type="text"
                             id="name"
+                            name="name"
                             placeholder="Enter your full name"
+                            autocomplete="name"
                             required
                         >
 
@@ -75,7 +102,9 @@
                         <input
                             type="tel"
                             id="phone"
+                            name="phone"
                             placeholder="Enter your phone number"
+                            autocomplete="tel"
                             required
                         >
 
@@ -86,7 +115,9 @@
 
                         <textarea
                             id="address"
+                            name="address"
                             placeholder="Enter your complete address"
+                            autocomplete="street-address"
                             required
                         ></textarea>
 
@@ -98,14 +129,19 @@
                         <input
                             type="text"
                             id="city"
+                            name="city"
                             placeholder="Enter your city"
+                            autocomplete="address-level2"
                             required
                         >
 
 
-                        <button type="submit">
+                        <button
+                            type="submit"
+                        >
                             Place Order
                         </button>
+
 
                     </form>
 
@@ -113,20 +149,36 @@
 
 
 
-                <!-- Order Summary -->
+                <!-- =========================
+                     ORDER SUMMARY
+                ========================== -->
 
                 <div class="order-summary">
 
-                    <h3>Order Summary</h3>
+                    <h3>
+                        Order Summary
+                    </h3>
 
-                    <div id="checkout-items"></div>
+
+                    <div id="checkout-items">
+
+                        <p>
+                            Loading order summary...
+                        </p>
+
+                    </div>
 
 
                     <div class="checkout-total">
 
                         <strong>
+
                             Total: Rs.
-                            <span id="checkout-total">0</span>
+
+                            <span id="checkout-total">
+                                0
+                            </span>
+
                         </strong>
 
                     </div>
@@ -141,7 +193,10 @@
     </main>
 
 
-    <!-- Footer -->
+
+    <!-- =========================
+         FOOTER
+    ========================== -->
 
     <footer>
 
@@ -152,7 +207,31 @@
     </footer>
 
 
-    <script src="script.js"></script>
+
+    <!-- =========================
+         SUPABASE LIBRARY
+    ========================== -->
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+    ></script>
+
+
+
+    <!-- =========================
+         SUPABASE CONNECTION
+    ========================== -->
+
+    <script src="./supabase.js"></script>
+
+
+
+    <!-- =========================
+         MAIN JAVASCRIPT
+    ========================== -->
+
+    <script src="./script.js"></script>
+
 
 </body>
 
