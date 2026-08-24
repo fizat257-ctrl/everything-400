@@ -93,7 +93,7 @@ nav a:hover {
     border-radius: 30px;
 
     background: #222;
-    color: white;
+    color: #fff;
 
     font-size: 16px;
     font-weight: 600;
@@ -104,7 +104,7 @@ nav a:hover {
 
 .hero button:hover {
     transform: translateY(-2px);
-    opacity: 0.9;
+    background: #444;
 }
 
 
@@ -140,7 +140,6 @@ nav a:hover {
 
 .search-box input {
     flex: 1;
-
     width: 100%;
     padding: 14px 18px;
 
@@ -173,7 +172,7 @@ nav a:hover {
     border-radius: 8px;
 
     background: #222;
-    color: white;
+    color: #fff;
 
     font-size: 15px;
     font-weight: 600;
@@ -325,7 +324,7 @@ nav a:hover {
     border-radius: 8px;
 
     background: #222;
-    color: white;
+    color: #fff;
 
     font-size: 15px;
     font-weight: 600;
@@ -397,7 +396,7 @@ nav a:hover {
 
     border: none;
 
-    color: white;
+    color: #fff;
 
     padding: 10px 18px;
 
@@ -436,8 +435,51 @@ nav a:hover {
     font-size: 23px;
 }
 
+
+/* =========================
+   PROCEED TO CHECKOUT
+========================= */
+
 #checkout-btn {
-    background: #222;
+    display: inline-block;
+
+    width: 100%;
+
+    padding: 14px 25px;
+
+    margin-top: 5px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background: #222 !important;
+
+    color: #fff !important;
+
+    font-size: 16px;
+
+    font-weight: 600;
+
+    text-align: center;
+
+    cursor: pointer;
+
+    text-decoration: none;
+
+    transition: 0.2s ease;
+}
+
+#checkout-btn:hover {
+    background: #444 !important;
+
+    color: #fff !important;
+
+    transform: translateY(-1px);
+}
+
+#checkout-btn:active {
+    transform: translateY(0);
 }
 
 
@@ -560,11 +602,19 @@ nav a:hover {
 
     background: #222;
 
-    color: white;
+    color: #fff;
 
     font-size: 16px;
 
+    font-weight: 600;
+
     cursor: pointer;
+
+    transition: 0.2s;
+}
+
+.checkout-form button:hover {
+    background: #444;
 }
 
 .checkout-item {
@@ -595,6 +645,8 @@ nav a:hover {
     border-top: 2px solid #222;
 
     font-size: 20px;
+
+    font-weight: 700;
 }
 
 
@@ -632,7 +684,6 @@ footer {
     .checkout-container {
         grid-template-columns: 1fr;
     }
-
 }
 
 
@@ -658,7 +709,6 @@ footer {
         justify-content: center;
     }
 
-
     .hero {
         min-height: 400px;
 
@@ -673,7 +723,6 @@ footer {
         font-size: 16px;
     }
 
-
     .products {
         padding: 45px 20px;
     }
@@ -681,7 +730,6 @@ footer {
     .products > h2 {
         font-size: 28px;
     }
-
 
     /* Search Mobile */
 
@@ -701,7 +749,6 @@ footer {
         width: 100%;
     }
 
-
     .product-container {
         grid-template-columns: 1fr;
     }
@@ -709,7 +756,6 @@ footer {
     .product-image {
         height: 300px;
     }
-
 
     /* Cart */
 
@@ -734,13 +780,15 @@ footer {
         text-align: center;
     }
 
-
     /* Checkout */
 
     .checkout-container {
         grid-template-columns: 1fr;
     }
 
+    #checkout-btn {
+        width: 100%;
+    }
 }
 
 
@@ -774,4 +822,8 @@ footer {
         padding: 9px 15px;
     }
 
+    #checkout-btn {
+        padding: 13px 20px;
+        font-size: 15px;
+    }
 }
