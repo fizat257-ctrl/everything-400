@@ -1285,6 +1285,12 @@ if (checkoutForm) {
                     ?.value
                     .trim();
 
+                    const email =
+    document
+        .getElementById("email")
+        ?.value
+        .trim();
+
 
             const address =
                 document
@@ -1303,6 +1309,7 @@ if (checkoutForm) {
             if (
                 !name ||
                 !phone ||
+                !email ||
                 !address ||
                 !city
             ) {
