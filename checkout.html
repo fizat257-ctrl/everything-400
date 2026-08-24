@@ -50,7 +50,6 @@
     </header>
 
 
-
     <!-- =========================
          CHECKOUT
     ========================== -->
@@ -81,6 +80,8 @@
                     <form id="checkout-form">
 
 
+                        <!-- FULL NAME -->
+
                         <label for="name">
                             Full Name
                         </label>
@@ -94,6 +95,8 @@
                             required
                         >
 
+
+                        <!-- PHONE -->
 
                         <label for="phone">
                             Phone Number
@@ -109,6 +112,24 @@
                         >
 
 
+                        <!-- EMAIL -->
+
+                        <label for="email">
+                            Email Address
+                        </label>
+
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="Enter your email address"
+                            autocomplete="email"
+                            required
+                        >
+
+
+                        <!-- ADDRESS -->
+
                         <label for="address">
                             Complete Address
                         </label>
@@ -121,6 +142,8 @@
                             required
                         ></textarea>
 
+
+                        <!-- CITY -->
 
                         <label for="city">
                             City
@@ -136,6 +159,8 @@
                         >
 
 
+                        <!-- PLACE ORDER -->
+
                         <button
                             type="submit"
                         >
@@ -146,7 +171,6 @@
                     </form>
 
                 </div>
-
 
 
                 <!-- =========================
@@ -193,7 +217,6 @@
     </main>
 
 
-
     <!-- =========================
          FOOTER
     ========================== -->
@@ -207,7 +230,6 @@
     </footer>
 
 
-
     <!-- =========================
          SUPABASE LIBRARY
     ========================== -->
@@ -217,13 +239,11 @@
     ></script>
 
 
-
     <!-- =========================
          SUPABASE CONNECTION
     ========================== -->
 
     <script src="./supabase.js"></script>
-
 
 
     <!-- =========================
