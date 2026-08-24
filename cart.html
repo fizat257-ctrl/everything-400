@@ -16,7 +16,10 @@
 
 <body>
 
-    <!-- Header -->
+
+    <!-- =========================
+         HEADER
+    ========================== -->
 
     <header>
 
@@ -24,34 +27,66 @@
 
         <nav>
 
-            <a href="index.html">Home</a>
+            <a href="index.html">
+                Home
+            </a>
 
-            <a href="index.html#products">Shop</a>
+            <a href="index.html#products">
+                Shop
+            </a>
 
-            <a href="index.html#products">Categories</a>
+            <a href="index.html#products">
+                Categories
+            </a>
 
-            <a href="cart.html">Cart</a>
+            <a href="cart.html">
+                Cart
+            </a>
 
         </nav>
 
     </header>
 
 
-    <!-- Cart -->
+
+    <!-- =========================
+         CART
+    ========================== -->
 
     <main>
 
         <section class="cart-section">
 
-            <h2>Your Shopping Cart</h2>
+            <h2>
+                Your Shopping Cart
+            </h2>
 
-            <div id="cart-items"></div>
+
+            <!-- CART ITEMS -->
+
+            <div id="cart-items">
+
+                <p>
+                    Loading cart...
+                </p>
+
+            </div>
+
+
+            <!-- CART SUMMARY -->
 
             <div class="cart-summary">
 
-                <h3>Total: Rs. <span id="cart-total">0</span></h3>
+                <h3>
+                    Total: Rs.
+                    <span id="cart-total">0</span>
+                </h3>
 
-                <button id="checkout-btn">
+
+                <button
+                    id="checkout-btn"
+                    type="button"
+                >
                     Proceed to Checkout
                 </button>
 
@@ -62,7 +97,10 @@
     </main>
 
 
-    <!-- Footer -->
+
+    <!-- =========================
+         FOOTER
+    ========================== -->
 
     <footer>
 
@@ -73,7 +111,31 @@
     </footer>
 
 
+
+    <!-- =========================
+         SUPABASE LIBRARY
+    ========================== -->
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+    ></script>
+
+
+
+    <!-- =========================
+         SUPABASE CONNECTION
+    ========================== -->
+
+    <script src="supabase.js"></script>
+
+
+
+    <!-- =========================
+         MAIN JAVASCRIPT
+    ========================== -->
+
     <script src="script.js"></script>
+
 
 </body>
 

@@ -8,8 +8,16 @@
 // CART DATA
 // =========================
 
-let cart =
-    JSON.parse(localStorage.getItem("cart")) || [];
+let cart = [];
+
+try {
+    cart = JSON.parse(
+        localStorage.getItem("cart")
+    ) || [];
+} catch (error) {
+    console.error("Cart loading error:", error);
+    cart = [];
+}
 
 
 // =========================
@@ -52,26 +60,46 @@ let selectedCategory = "all";
 
 
 // =========================
-// SUPABASE CHECK
+// SUPABASE CLIENT
+// =========================
+
+function getSupabaseClient() {
+
+    const db =
+        window.supabaseClient;
+
+    if (!db) {
+
+        console.error(
+            "Supabase client not found."
+        );
+
+        console.error(
+            "Make sure supabase.js is loaded BEFORE script.js."
+        );
+
+        return null;
+    }
+
+    return db;
+}
+
+
+// =========================
+// CHECK SUPABASE
 // =========================
 
 function checkSupabase() {
 
-    if (
-        typeof supabaseClient === "undefined" ||
-        !supabaseClient
-    ) {
+    const db =
+        getSupabaseClient();
 
-        console.error(
-            "Supabase client not found. Make sure supabase.js is loaded before script.js."
-        );
+    if (!db) {
 
         return false;
-
     }
 
     return true;
-
 }
 
 
@@ -85,7 +113,6 @@ function saveCart() {
         "cart",
         JSON.stringify(cart)
     );
-
 }
 
 
@@ -95,11 +122,12 @@ function saveCart() {
 
 function updateCartCount() {
 
-    if (!cartLink) return;
+    if (!cartLink) {
+        return;
+    }
 
     cartLink.textContent =
         `Cart (${cart.length})`;
-
 }
 
 
@@ -109,22 +137,25 @@ function updateCartCount() {
 
 async function getProducts() {
 
-    if (!checkSupabase()) {
+    const db =
+        getSupabaseClient();
+
+    if (!db) {
 
         return [];
-
     }
-
 
     try {
 
-        const { data, error } =
-            await supabaseClient
-                .from("products")
-                .select("*")
-                .order("id", {
-                    ascending: true
-                });
+        const {
+            data,
+            error
+        } = await db
+            .from("products")
+            .select("*")
+            .order("id", {
+                ascending: true
+            });
 
 
         if (error) {
@@ -135,7 +166,6 @@ async function getProducts() {
             );
 
             return [];
-
         }
 
 
@@ -149,9 +179,7 @@ async function getProducts() {
         );
 
         return [];
-
     }
-
 }
 
 
@@ -168,17 +196,19 @@ function addToCart(product) {
         );
 
         return;
-
     }
 
 
     cart.push({
 
-        id: product.id,
+        id:
+            product.id,
 
-        name: product.name,
+        name:
+            product.name,
 
-        price: Number(product.price) || 0,
+        price:
+            Number(product.price) || 0,
 
         category:
             product.category || "other",
@@ -197,7 +227,6 @@ function addToCart(product) {
     alert(
         `${product.name} added to cart!`
     );
-
 }
 
 
@@ -207,7 +236,9 @@ function addToCart(product) {
 
 async function displayProducts() {
 
-    if (!productContainer) return;
+    if (!productContainer) {
+        return;
+    }
 
 
     productContainer.innerHTML = `
@@ -219,7 +250,6 @@ async function displayProducts() {
             </p>
 
         </div>
-
     `;
 
 
@@ -227,7 +257,8 @@ async function displayProducts() {
         await getProducts();
 
 
-    productContainer.innerHTML = "";
+    productContainer.innerHTML =
+        "";
 
 
     if (products.length === 0) {
@@ -241,11 +272,9 @@ async function displayProducts() {
                 </p>
 
             </div>
-
         `;
 
         return;
-
     }
 
 
@@ -264,10 +293,6 @@ async function displayProducts() {
                 product.category || "other"
             ).toLowerCase();
 
-
-        // =========================
-        // PRODUCT IMAGE
-        // =========================
 
         let imageHTML = "";
 
@@ -292,13 +317,8 @@ async function displayProducts() {
                 </span>
 
             `;
-
         }
 
-
-        // =========================
-        // PRODUCT CARD
-        // =========================
 
         card.innerHTML = `
 
@@ -321,11 +341,10 @@ async function displayProducts() {
 
             <button
                 class="add-cart-btn"
-                data-id="${product.id}"
+                data-id="${escapeHTML(product.id)}"
+                type="button"
             >
-
                 Add to Cart
-
             </button>
 
         `;
@@ -334,13 +353,8 @@ async function displayProducts() {
         productContainer.appendChild(
             card
         );
-
     });
 
-
-    // =========================
-    // ADD TO CART BUTTONS
-    // =========================
 
     const addButtons =
         productContainer.querySelectorAll(
@@ -371,15 +385,12 @@ async function displayProducts() {
 
 
                 addToCart(product);
-
             }
         );
-
     });
 
 
     filterProducts();
-
 }
 
 
@@ -389,28 +400,12 @@ async function displayProducts() {
 
 function escapeHTML(value) {
 
-    return String(value || "")
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-        .replace(
-            /</g,
-            "&lt;"
-        )
-        .replace(
-            />/g,
-            "&gt;"
-        )
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-        .replace(
-            /'/g,
-            "&#039;"
-        );
-
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
 
 
@@ -466,21 +461,12 @@ function filterProducts() {
             );
 
 
-        if (
+        card.style.display =
             matchesCategory &&
             matchesSearch
-        ) {
-
-            card.style.display = "";
-
-        } else {
-
-            card.style.display = "none";
-
-        }
-
+                ? ""
+                : "none";
     });
-
 }
 
 
@@ -505,7 +491,6 @@ categoryButtons.forEach((button) => {
                     btn.classList.remove(
                         "active"
                     );
-
                 }
             );
 
@@ -516,10 +501,8 @@ categoryButtons.forEach((button) => {
 
 
             filterProducts();
-
         }
     );
-
 });
 
 
@@ -533,7 +516,6 @@ if (searchInput) {
         "input",
         filterProducts
     );
-
 }
 
 
@@ -547,7 +529,6 @@ if (searchButton) {
         "click",
         filterProducts
     );
-
 }
 
 
@@ -580,14 +561,10 @@ if (shopNowButton) {
                     behavior: "smooth",
 
                     block: "start"
-
                 });
-
             }
-
         }
     );
-
 }
 
 
@@ -619,14 +596,15 @@ function displayCart() {
 
                 <a href="index.html">
 
-                    <button>
+                    <button
+                        type="button"
+                    >
                         Continue Shopping
                     </button>
 
                 </a>
 
             </div>
-
         `;
 
 
@@ -634,11 +612,9 @@ function displayCart() {
 
             cartTotalElement.textContent =
                 "0";
-
         }
 
         return;
-
     }
 
 
@@ -687,11 +663,10 @@ function displayCart() {
 
                 <button
                     class="remove-btn"
+                    type="button"
                     onclick="removeFromCart(${index})"
                 >
-
                     Remove
-
                 </button>
 
             `;
@@ -700,7 +675,6 @@ function displayCart() {
             cartItemsContainer.appendChild(
                 cartItem
             );
-
         }
     );
 
@@ -709,9 +683,7 @@ function displayCart() {
 
         cartTotalElement.textContent =
             total;
-
     }
-
 }
 
 
@@ -727,7 +699,6 @@ function removeFromCart(index) {
     ) {
 
         return;
-
     }
 
 
@@ -744,7 +715,6 @@ function removeFromCart(index) {
     displayCart();
 
     displayCheckout();
-
 }
 
 
@@ -787,11 +757,9 @@ function displayCheckout() {
 
             checkoutTotalElement.textContent =
                 "0";
-
         }
 
         return;
-
     }
 
 
@@ -842,7 +810,6 @@ function displayCheckout() {
         checkoutItemsContainer.appendChild(
             item
         );
-
     });
 
 
@@ -850,9 +817,7 @@ function displayCheckout() {
 
         checkoutTotalElement.textContent =
             total;
-
     }
-
 }
 
 
@@ -887,7 +852,6 @@ if (checkoutForm) {
                 );
 
                 return;
-
             }
 
 
@@ -939,22 +903,24 @@ if (checkoutForm) {
                 );
 
                 return;
-
             }
 
 
             // =========================
-            // CHECK SUPABASE
+            // SUPABASE CONNECTION
             // =========================
 
-            if (!checkSupabase()) {
+            const db =
+                getSupabaseClient();
+
+
+            if (!db) {
 
                 alert(
-                    "Database connection is not available."
+                    "Database connection is not available. Please make sure supabase.js is loaded before script.js."
                 );
 
                 return;
-
             }
 
 
@@ -977,38 +943,71 @@ if (checkoutForm) {
 
 
             // =========================
+            // PREPARE PRODUCTS
+            // =========================
+
+            const productsData =
+                cart.map(
+                    product => ({
+
+                        id:
+                            product.id,
+
+                        name:
+                            product.name,
+
+                        price:
+                            Number(
+                                product.price
+                            ) || 0,
+
+                        category:
+                            product.category ||
+                            "other",
+
+                        image:
+                            product.image ||
+                            ""
+
+                    })
+                );
+
+
+            // =========================
             // SAVE ORDER
             // =========================
 
             try {
 
-                const { data, error } =
-                    await supabaseClient
-                        .from("orders")
-                        .insert([
-                            {
+                const {
+                    data,
+                    error
+                } = await db
+                    .from("orders")
+                    .insert([
+                        {
 
-                                customer_name:
-                                    name,
+                            customer_name:
+                                name,
 
-                                customer_phone:
-                                    phone,
+                            customer_phone:
+                                phone,
 
-                                customer_address:
-                                    address,
+                            customer_address:
+                                address,
 
-                                customer_city:
-                                    city,
+                            customer_city:
+                                city,
 
-                                total:
-                                    total,
+                            total:
+                                total,
 
-                                products:
-                                    cart
+                            products:
+                                productsData
 
-                            }
-                        ])
-                        .select();
+                        }
+                    ])
+                    .select();
 
 
                 // =========================
@@ -1024,11 +1023,10 @@ if (checkoutForm) {
 
 
                     alert(
-                        "Order could not be placed. Please try again."
+                        `Order could not be placed: ${error.message}`
                     );
 
                     return;
-
                 }
 
 
@@ -1047,9 +1045,11 @@ if (checkoutForm) {
                 );
 
 
-                // Clear cart
-                cart = [];
+                // =========================
+                // CLEAR CART
+                // =========================
 
+                cart = [];
 
                 saveCart();
 
@@ -1060,7 +1060,6 @@ if (checkoutForm) {
                 displayCart();
 
                 displayCheckout();
-
 
             } catch (error) {
 
@@ -1073,12 +1072,9 @@ if (checkoutForm) {
                 alert(
                     "Something went wrong while placing the order."
                 );
-
             }
-
         }
     );
-
 }
 
 
@@ -1105,16 +1101,13 @@ if (checkoutButton) {
                 );
 
                 return;
-
             }
 
 
             window.location.href =
                 "checkout.html";
-
         }
     );
-
 }
 
 
