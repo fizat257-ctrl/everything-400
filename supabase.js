@@ -15,28 +15,45 @@ const SUPABASE_KEY =
 
 
 // =====================================================
-// CREATE SUPABASE CLIENT
+// CHECK SUPABASE LIBRARY
 // =====================================================
 
-const supabaseClient =
-    window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_KEY
+if (
+    !window.supabase ||
+    typeof window.supabase.createClient !== "function"
+) {
+
+    console.error(
+        "Supabase library is not loaded. Make sure the Supabase CDN script is before supabase.js."
     );
 
+} else {
 
-// =====================================================
-// MAKE CLIENT AVAILABLE TO ALL JAVASCRIPT FILES
-// =====================================================
+    // =================================================
+    // CREATE SUPABASE CLIENT
+    // =================================================
 
-window.supabaseClient =
-    supabaseClient;
+    const supabaseClient =
+        window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_KEY
+        );
 
 
-// =====================================================
-// CONNECTION CHECK
-// =====================================================
+    // =================================================
+    // MAKE CLIENT AVAILABLE GLOBALLY
+    // =================================================
 
-console.log(
-    "Everything 400: Supabase client connected successfully."
-);
+    window.supabaseClient =
+        supabaseClient;
+
+
+    // =================================================
+    // CONNECTION CHECK
+    // =================================================
+
+    console.log(
+        "Everything 400: Supabase client connected successfully."
+    );
+
+}
