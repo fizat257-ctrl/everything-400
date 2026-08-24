@@ -19,9 +19,7 @@
 
 </head>
 
-
 <body>
-
 
     <!-- =========================
          HEADER
@@ -55,7 +53,7 @@
 
 
     <!-- =========================
-         TRACK ORDER
+         MAIN
     ========================== -->
 
     <main>
@@ -67,14 +65,11 @@
             </h2>
 
             <p>
-                Enter your Order ID to check your
-                latest order status.
+                Enter your Order ID to check your latest order status.
             </p>
 
 
-            <!-- =========================
-                 ORDER ID FORM
-            ========================== -->
+            <!-- ORDER ID FORM -->
 
             <form id="track-order-form">
 
@@ -98,9 +93,7 @@
             </form>
 
 
-            <!-- =========================
-                 ORDER RESULT
-            ========================== -->
+            <!-- RESULT -->
 
             <div
                 id="track-order-result"
@@ -108,8 +101,7 @@
             >
 
                 <p>
-                    Enter your Order ID to see
-                    your order status.
+                    Enter your Order ID to see your order status.
                 </p>
 
             </div>
@@ -126,8 +118,7 @@
     <footer>
 
         <p>
-            © 2026 Everything 400.
-            All Rights Reserved.
+            © 2026 Everything 400. All Rights Reserved.
         </p>
 
     </footer>
@@ -137,16 +128,14 @@
          SUPABASE LIBRARY
     ========================== -->
 
-    <script
-        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
-    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 
     <!-- =========================
          SUPABASE CONNECTION
     ========================== -->
 
-    <script src="./supabase.js"></script>
+    <script src="supabase.js"></script>
 
 
     <!-- =========================
@@ -155,41 +144,25 @@
 
     <script>
 
-        // =====================================================
-        // SUPABASE
-        // =====================================================
-
-        const db =
-            window.supabaseClient;
-
-
-        // =====================================================
-        // ELEMENTS
-        // =====================================================
+        const db = window.supabaseClient;
 
         const trackForm =
-            document.getElementById(
-                "track-order-form"
-            );
+            document.getElementById("track-order-form");
 
         const orderIdInput =
-            document.getElementById(
-                "order-id"
-            );
+            document.getElementById("order-id");
 
         const resultContainer =
-            document.getElementById(
-                "track-order-result"
-            );
+            document.getElementById("track-order-result");
 
 
-        // =====================================================
+        // =========================
         // ESCAPE HTML
-        // =====================================================
+        // =========================
 
         function escapeHTML(value) {
 
-            return String(value ?? "")
+            return String(value || "")
                 .replace(/&/g, "&amp;")
                 .replace(/</g, "&lt;")
                 .replace(/>/g, "&gt;")
@@ -199,19 +172,19 @@
         }
 
 
-        // =====================================================
+        // =========================
         // STATUS MESSAGE
-        // =====================================================
+        // =========================
 
         function getStatusMessage(status) {
 
-            const value =
+            const currentStatus =
                 String(status || "Pending")
                     .toLowerCase()
                     .trim();
 
 
-            if (value === "pending") {
+            if (currentStatus === "pending") {
 
                 return "Your order is pending.";
 
@@ -219,8 +192,8 @@
 
 
             if (
-                value === "confirm" ||
-                value === "confirmed"
+                currentStatus === "confirm" ||
+                currentStatus === "confirmed"
             ) {
 
                 return "Your order has been confirmed.";
@@ -229,8 +202,8 @@
 
 
             if (
-                value === "ship" ||
-                value === "shipped"
+                currentStatus === "ship" ||
+                currentStatus === "shipped"
             ) {
 
                 return "Your order has been shipped.";
@@ -239,8 +212,8 @@
 
 
             if (
-                value === "delivery" ||
-                value === "delivered"
+                currentStatus === "delivery" ||
+                currentStatus === "delivered"
             ) {
 
                 return "Your order has been delivered.";
@@ -249,9 +222,9 @@
 
 
             if (
-                value === "cancel" ||
-                value === "cancelled" ||
-                value === "canceled"
+                currentStatus === "cancel" ||
+                currentStatus === "cancelled" ||
+                currentStatus === "canceled"
             ) {
 
                 return "Your order has been cancelled.";
@@ -264,9 +237,9 @@
         }
 
 
-        // =====================================================
+        // =========================
         // TRACK ORDER
-        // =====================================================
+        // =========================
 
         if (trackForm) {
 
@@ -278,16 +251,13 @@
 
 
                     const orderId =
-                        orderIdInput
-                            .value
-                            .trim();
+                        orderIdInput.value.trim();
 
 
                     if (!orderId) {
 
-                        alert(
-                            "Please enter your Order ID."
-                        );
+                        resultContainer.innerHTML =
+                            "<p>Please enter your Order ID.</p>";
 
                         return;
 
@@ -296,98 +266,76 @@
 
                     if (!db) {
 
-                        resultContainer.innerHTML = `
-
-                            <p>
-                                Database connection is not available.
-                            </p>
-
-                        `;
+                        resultContainer.innerHTML =
+                            "<p>Database connection is not available.</p>";
 
                         return;
 
                     }
 
 
-                    resultContainer.innerHTML = `
-
-                        <p>
-                            Loading order...
-                        </p>
-
-                    `;
+                    resultContainer.innerHTML =
+                        "<p>Loading order...</p>";
 
 
                     try {
 
-                        const {
-                            data,
-                            error
-                        } = await db
-                            .from("orders")
-                            .select("*")
-                            .eq("id", orderId)
-                            .maybeSingle();
+                        const result =
+                            await db
+                                .from("orders")
+                                .select("*")
+                                .eq("id", orderId)
+                                .maybeSingle();
 
 
-                        if (error) {
+                        if (result.error) {
 
                             console.error(
                                 "Track order error:",
-                                error
+                                result.error
                             );
 
-
-                            resultContainer.innerHTML = `
-
-                                <p>
-                                    Unable to find this order.
-                                </p>
-
-                            `;
+                            resultContainer.innerHTML =
+                                "<p>Unable to find this order.</p>";
 
                             return;
 
                         }
 
 
-                        if (!data) {
+                        if (!result.data) {
 
-                            resultContainer.innerHTML = `
-
-                                <p>
-                                    No order found with this Order ID.
-                                </p>
-
-                            `;
+                            resultContainer.innerHTML =
+                                "<p>No order found with this Order ID.</p>";
 
                             return;
 
                         }
+
+
+                        const order =
+                            result.data;
 
 
                         const status =
-                            data.status ||
-                            "Pending";
+                            order.status || "Pending";
 
 
                         const message =
-                            getStatusMessage(
-                                status
-                            );
+                            getStatusMessage(status);
 
 
                         const orderDate =
-                            data.created_at
+                            order.created_at
                                 ? new Date(
-                                    data.created_at
+                                    order.created_at
                                 ).toLocaleString()
                                 : "Not available";
 
 
                         const total =
                             Number(
-                                data.total || 0
+                                order.total || 0
                             ).toLocaleString();
 
 
@@ -401,141 +349,116 @@
 
 
                                 <p>
-
                                     <strong>
                                         Order ID:
                                     </strong>
 
-                                    ${escapeHTML(
-                                        data.id
-                                    )}
-
+                                    ${escapeHTML(order.id)}
                                 </p>
 
 
                                 <p>
-
                                     <strong>
                                         Customer:
                                     </strong>
 
                                     ${escapeHTML(
-                                        data.customer_name ||
+                                        order.customer_name ||
                                         "Customer"
                                     )}
-
                                 </p>
 
 
                                 <p>
-
                                     <strong>
                                         Phone:
                                     </strong>
 
                                     ${escapeHTML(
-                                        data.customer_phone ||
+                                        order.customer_phone ||
                                         "Not available"
                                     )}
-
                                 </p>
 
 
                                 <p>
+                                    <strong>
+                                        Address:
+                                    </strong>
 
+                                    ${escapeHTML(
+                                        order.customer_address ||
+                                        "Not available"
+                                    )}
+                                </p>
+
+
+                                <p>
                                     <strong>
                                         City:
                                     </strong>
 
                                     ${escapeHTML(
-                                        data.customer_city ||
+                                        order.customer_city ||
                                         "Not available"
                                     )}
-
                                 </p>
 
 
                                 <p>
-
                                     <strong>
                                         Order Date:
                                     </strong>
 
-                                    ${escapeHTML(
-                                        orderDate
-                                    )}
-
+                                    ${escapeHTML(orderDate)}
                                 </p>
 
 
-                                <div class="order-status">
-
+                                <p>
                                     <strong>
                                         Current Status:
                                     </strong>
 
                                     <span>
-                                        ${escapeHTML(
-                                            status
-                                        )}
+                                        ${escapeHTML(status)}
                                     </span>
-
-                                </div>
+                                </p>
 
 
                                 <p class="status-message">
-
-                                    ${escapeHTML(
-                                        message
-                                    )}
-
+                                    ${escapeHTML(message)}
                                 </p>
 
 
                                 <p>
-
                                     <strong>
                                         Total:
                                     </strong>
 
                                     Rs. ${total}
-
                                 </p>
 
 
                                 <div class="tracking-steps">
 
-                                    <div class="${
-                                        ["pending",
-                                         "confirm",
-                                         "confirmed",
-                                         "ship",
-                                         "shipped",
-                                         "delivery",
-                                         "delivered"]
-                                        .includes(
-                                            String(status)
-                                                .toLowerCase()
-                                        )
-                                        ? "completed"
-                                        : ""
-                                    }">
+                                    <div class="tracking-step">
                                         1. Pending
                                     </div>
 
-
-                                    <div>
-                                        2. Confirm
+                                    <div class="tracking-step">
+                                        2. Confirmed
                                     </div>
 
-
-                                    <div>
-                                        3. Ship
+                                    <div class="tracking-step">
+                                        3. Shipped
                                     </div>
 
+                                    <div class="tracking-step">
+                                        4. Delivered
+                                    </div>
 
-                                    <div>
-                                        4. Delivery
+                                    <div class="tracking-step">
+                                        5. Cancelled
                                     </div>
 
                                 </div>
@@ -552,14 +475,8 @@
                         );
 
 
-                        resultContainer.innerHTML = `
-
-                            <p>
-                                Something went wrong while
-                                tracking your order.
-                            </p>
-
-                        `;
+                        resultContainer.innerHTML =
+                            "<p>Something went wrong while tracking your order.</p>";
 
                     }
 
