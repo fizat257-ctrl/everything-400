@@ -1,28 +1,21 @@
-// =========================
-// EVERYTHING 400 - MAIN SCRIPT
-// SUPABASE VERSION
-// =========================
-
-
-// =========================
-// CART DATA
-// =========================
+// =====================================================
+// EVERYTHING 400 - SCRIPT.JS
+// PART 1 - SUPABASE + CART + PRODUCTS
+// =====================================================
 
 let cart = [];
 
 try {
-    cart = JSON.parse(
-        localStorage.getItem("cart")
-    ) || [];
+    cart = JSON.parse(localStorage.getItem("cart")) || [];
 } catch (error) {
     console.error("Cart loading error:", error);
     cart = [];
 }
 
 
-// =========================
+// =====================================================
 // ELEMENTS
-// =========================
+// =====================================================
 
 const cartLink =
     document.getElementById("cart-link");
@@ -51,22 +44,22 @@ const searchButton =
 const productContainer =
     document.querySelector(".product-container");
 
+const checkoutForm =
+    document.getElementById("checkout-form");
 
-// =========================
-// CURRENT CATEGORY
-// =========================
+const checkoutButton =
+    document.getElementById("checkout-btn");
 
 let selectedCategory = "all";
 
 
-// =========================
-// SUPABASE CLIENT
-// =========================
+// =====================================================
+// SUPABASE
+// =====================================================
 
 function getSupabaseClient() {
 
-    const db =
-        window.supabaseClient;
+    const db = window.supabaseClient;
 
     if (!db) {
 
@@ -85,27 +78,31 @@ function getSupabaseClient() {
 }
 
 
-// =========================
-// CHECK SUPABASE
-// =========================
-
 function checkSupabase() {
 
-    const db =
-        getSupabaseClient();
+    return !!getSupabaseClient();
 
-    if (!db) {
-
-        return false;
-    }
-
-    return true;
 }
 
 
-// =========================
+// =====================================================
+// ESCAPE HTML
+// =====================================================
+
+function escapeHTML(value) {
+
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+
+// =====================================================
 // SAVE CART
-// =========================
+// =====================================================
 
 function saveCart() {
 
@@ -116,34 +113,28 @@ function saveCart() {
 }
 
 
-// =========================
-// UPDATE CART COUNT
-// =========================
+// =====================================================
+// CART COUNT
+// =====================================================
 
 function updateCartCount() {
 
-    if (!cartLink) {
-        return;
-    }
+    if (!cartLink) return;
 
     cartLink.textContent =
         `Cart (${cart.length})`;
 }
 
 
-// =========================
-// GET PRODUCTS FROM SUPABASE
-// =========================
+// =====================================================
+// GET PRODUCTS
+// =====================================================
 
 async function getProducts() {
 
-    const db =
-        getSupabaseClient();
+    const db = getSupabaseClient();
 
-    if (!db) {
-
-        return [];
-    }
+    if (!db) return [];
 
     try {
 
@@ -157,7 +148,6 @@ async function getProducts() {
                 ascending: true
             });
 
-
         if (error) {
 
             console.error(
@@ -167,7 +157,6 @@ async function getProducts() {
 
             return [];
         }
-
 
         return data || [];
 
@@ -183,9 +172,9 @@ async function getProducts() {
 }
 
 
-// =========================
-// ADD PRODUCT TO CART
-// =========================
+// =====================================================
+// ADD TO CART
+// =====================================================
 
 function addToCart(product) {
 
@@ -198,14 +187,11 @@ function addToCart(product) {
         return;
     }
 
-
     cart.push({
 
-        id:
-            product.id,
+        id: product.id,
 
-        name:
-            product.name,
+        name: product.name,
 
         price:
             Number(product.price) || 0,
@@ -218,11 +204,9 @@ function addToCart(product) {
 
     });
 
-
     saveCart();
 
     updateCartCount();
-
 
     alert(
         `${product.name} added to cart!`
@@ -230,114 +214,80 @@ function addToCart(product) {
 }
 
 
-// =========================
+// =====================================================
 // DISPLAY PRODUCTS
-// =========================
+// =====================================================
 
 async function displayProducts() {
 
-    if (!productContainer) {
-        return;
-    }
-
+    if (!productContainer) return;
 
     productContainer.innerHTML = `
-
         <div class="loading-products">
-
-            <p>
-                Loading products...
-            </p>
-
+            <p>Loading products...</p>
         </div>
     `;
-
 
     const products =
         await getProducts();
 
-
-    productContainer.innerHTML =
-        "";
-
+    productContainer.innerHTML = "";
 
     if (products.length === 0) {
 
         productContainer.innerHTML = `
-
             <div class="empty-products">
-
-                <p>
-                    No products available.
-                </p>
-
+                <p>No products available.</p>
             </div>
         `;
 
         return;
     }
 
-
-    products.forEach((product) => {
+    products.forEach(function(product) {
 
         const card =
             document.createElement("div");
 
-
         card.className =
             "product-card";
-
 
         card.dataset.category =
             String(
                 product.category || "other"
             ).toLowerCase();
 
-
         let imageHTML = "";
-
 
         if (product.image) {
 
             imageHTML = `
-
                 <img
                     src="${escapeHTML(product.image)}"
                     alt="${escapeHTML(product.name)}"
                 >
-
             `;
 
         } else {
 
             imageHTML = `
-
-                <span>
-                    🛍️
-                </span>
-
+                <span>🛍️</span>
             `;
         }
-
 
         card.innerHTML = `
 
             <div class="product-image">
-
                 ${imageHTML}
-
             </div>
-
 
             <h3>
                 ${escapeHTML(product.name)}
             </h3>
 
-
             <p>
                 Rs. ${Number(product.price) || 0}
             </p>
-
 
             <button
                 class="add-cart-btn"
@@ -349,69 +299,50 @@ async function displayProducts() {
 
         `;
 
-
-        productContainer.appendChild(
-            card
-        );
+        productContainer.appendChild(card);
     });
-
 
     const addButtons =
         productContainer.querySelectorAll(
             ".add-cart-btn"
         );
 
-
-    addButtons.forEach((button) => {
+    addButtons.forEach(function(button) {
 
         button.addEventListener(
             "click",
-            async function () {
+            async function() {
 
                 const productId =
                     this.dataset.id;
 
-
                 const products =
                     await getProducts();
 
-
                 const product =
-                    products.find(
-                        item =>
-                            String(item.id) ===
-                            String(productId)
-                    );
+                    products.find(function(item) {
 
+                        return String(item.id) ===
+                            String(productId);
+
+                    });
 
                 addToCart(product);
             }
         );
     });
 
-
     filterProducts();
 }
+// =====================================================
+// EVERYTHING 400 - SCRIPT.JS
+// PART 2 - SEARCH + CATEGORY + CART
+// =====================================================
 
 
-// =========================
-// ESCAPE HTML
-// =========================
-
-function escapeHTML(value) {
-
-    return String(value ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-}
-
-
-// =========================
+// =====================================================
 // FILTER PRODUCTS
-// =========================
+// =====================================================
 
 function filterProducts() {
 
@@ -420,7 +351,6 @@ function filterProducts() {
             ".product-card"
         );
 
-
     const searchText =
         searchInput
             ? searchInput.value
@@ -428,18 +358,15 @@ function filterProducts() {
                 .trim()
             : "";
 
-
-    productCards.forEach((card) => {
+    productCards.forEach(function(card) {
 
         const category =
             String(
                 card.dataset.category || ""
             ).toLowerCase();
 
-
         const title =
             card.querySelector("h3");
-
 
         const productName =
             title
@@ -448,18 +375,15 @@ function filterProducts() {
                     .trim()
                 : "";
 
-
         const matchesCategory =
             selectedCategory === "all" ||
             category ===
             selectedCategory.toLowerCase();
 
-
         const matchesSearch =
             productName.includes(
                 searchText
             );
-
 
         card.style.display =
             matchesCategory &&
@@ -470,23 +394,22 @@ function filterProducts() {
 }
 
 
-// =========================
+// =====================================================
 // CATEGORY BUTTONS
-// =========================
+// =====================================================
 
-categoryButtons.forEach((button) => {
+categoryButtons.forEach(function(button) {
 
     button.addEventListener(
         "click",
-        function () {
+        function() {
 
             selectedCategory =
                 this.dataset.filter ||
                 "all";
 
-
             categoryButtons.forEach(
-                (btn) => {
+                function(btn) {
 
                     btn.classList.remove(
                         "active"
@@ -494,11 +417,9 @@ categoryButtons.forEach((button) => {
                 }
             );
 
-
             this.classList.add(
                 "active"
             );
-
 
             filterProducts();
         }
@@ -506,9 +427,9 @@ categoryButtons.forEach((button) => {
 });
 
 
-// =========================
-// SEARCH INPUT
-// =========================
+// =====================================================
+// SEARCH
+// =====================================================
 
 if (searchInput) {
 
@@ -519,10 +440,6 @@ if (searchInput) {
 }
 
 
-// =========================
-// SEARCH BUTTON
-// =========================
-
 if (searchButton) {
 
     searchButton.addEventListener(
@@ -532,34 +449,28 @@ if (searchButton) {
 }
 
 
-// =========================
-// SHOP NOW BUTTON
-// =========================
+// =====================================================
+// SHOP NOW
+// =====================================================
 
 const shopNowButton =
-    document.getElementById(
-        "shop-now"
-    );
-
+    document.getElementById("shop-now");
 
 if (shopNowButton) {
 
     shopNowButton.addEventListener(
         "click",
-        function () {
+        function() {
 
             const productsSection =
                 document.getElementById(
                     "products"
                 );
 
-
             if (productsSection) {
 
                 productsSection.scrollIntoView({
-
                     behavior: "smooth",
-
                     block: "start"
                 });
             }
@@ -568,20 +479,15 @@ if (shopNowButton) {
 }
 
 
-// =========================
+// =====================================================
 // DISPLAY CART
-// =========================
+// =====================================================
 
 function displayCart() {
 
-    if (!cartItemsContainer) {
-        return;
-    }
+    if (!cartItemsContainer) return;
 
-
-    cartItemsContainer.innerHTML =
-        "";
-
+    cartItemsContainer.innerHTML = "";
 
     if (cart.length === 0) {
 
@@ -590,23 +496,18 @@ function displayCart() {
             <div class="empty-cart">
 
                 <p>
-                    Your cart is empty.
+                    Your shopping cart is empty.
                 </p>
 
-
                 <a href="index.html">
-
-                    <button
-                        type="button"
-                    >
+                    <button type="button">
                         Continue Shopping
                     </button>
-
                 </a>
 
             </div>
-        `;
 
+        `;
 
         if (cartTotalElement) {
 
@@ -617,67 +518,49 @@ function displayCart() {
         return;
     }
 
-
     let total = 0;
 
+    cart.forEach(function(product, index) {
 
-    cart.forEach(
-        (product, index) => {
+        const price =
+            Number(product.price) || 0;
 
-            const price =
-                Number(
-                    product.price
-                ) || 0;
+        total += price;
 
+        const cartItem =
+            document.createElement("div");
 
-            total += price;
+        cartItem.className =
+            "cart-item";
 
+        cartItem.innerHTML = `
 
-            const cartItem =
-                document.createElement(
-                    "div"
-                );
+            <div>
 
+                <h3>
+                    ${escapeHTML(product.name)}
+                </h3>
 
-            cartItem.className =
-                "cart-item";
+                <p>
+                    Rs. ${price}
+                </p>
 
+            </div>
 
-            cartItem.innerHTML = `
+            <button
+                class="remove-btn"
+                type="button"
+                onclick="removeFromCart(${index})"
+            >
+                Remove
+            </button>
 
-                <div>
+        `;
 
-                    <h3>
-                        ${escapeHTML(
-                            product.name
-                        )}
-                    </h3>
-
-
-                    <p>
-                        Rs. ${price}
-                    </p>
-
-                </div>
-
-
-                <button
-                    class="remove-btn"
-                    type="button"
-                    onclick="removeFromCart(${index})"
-                >
-                    Remove
-                </button>
-
-            `;
-
-
-            cartItemsContainer.appendChild(
-                cartItem
-            );
-        }
-    );
-
+        cartItemsContainer.appendChild(
+            cartItem
+        );
+    });
 
     if (cartTotalElement) {
 
@@ -687,9 +570,9 @@ function displayCart() {
 }
 
 
-// =========================
+// =====================================================
 // REMOVE FROM CART
-// =========================
+// =====================================================
 
 function removeFromCart(index) {
 
@@ -697,16 +580,10 @@ function removeFromCart(index) {
         index < 0 ||
         index >= cart.length
     ) {
-
         return;
     }
 
-
-    cart.splice(
-        index,
-        1
-    );
-
+    cart.splice(index, 1);
 
     saveCart();
 
@@ -717,25 +594,19 @@ function removeFromCart(index) {
     displayCheckout();
 }
 
-
 window.removeFromCart =
     removeFromCart;
 
 
-// =========================
+// =====================================================
 // DISPLAY CHECKOUT
-// =========================
+// =====================================================
 
 function displayCheckout() {
 
-    if (!checkoutItemsContainer) {
-        return;
-    }
+    if (!checkoutItemsContainer) return;
 
-
-    checkoutItemsContainer.innerHTML =
-        "";
-
+    checkoutItemsContainer.innerHTML = "";
 
     if (cart.length === 0) {
 
@@ -745,13 +616,11 @@ function displayCheckout() {
                 Your cart is empty.
             </p>
 
-
             <a href="index.html">
                 Continue Shopping
             </a>
 
         `;
-
 
         if (checkoutTotalElement) {
 
@@ -762,41 +631,28 @@ function displayCheckout() {
         return;
     }
 
-
     let total = 0;
 
-
-    cart.forEach((product) => {
+    cart.forEach(function(product) {
 
         const price =
-            Number(
-                product.price
-            ) || 0;
-
+            Number(product.price) || 0;
 
         total += price;
 
-
         const item =
-            document.createElement(
-                "div"
-            );
-
+            document.createElement("div");
 
         item.className =
             "checkout-item";
-
 
         item.innerHTML = `
 
             <div>
 
                 <h4>
-                    ${escapeHTML(
-                        product.name
-                    )}
+                    ${escapeHTML(product.name)}
                 </h4>
-
 
                 <p>
                     Rs. ${price}
@@ -806,12 +662,10 @@ function displayCheckout() {
 
         `;
 
-
         checkoutItemsContainer.appendChild(
             item
         );
     });
-
 
     if (checkoutTotalElement) {
 
@@ -819,31 +673,27 @@ function displayCheckout() {
             total;
     }
 }
+// =====================================================
+// EVERYTHING 400 - SCRIPT.JS
+// PART 3 - CHECKOUT + SUPABASE ORDERS
+// =====================================================
 
 
-// =========================
+// =====================================================
 // CHECKOUT FORM
-// SAVE ORDER TO SUPABASE
-// =========================
-
-const checkoutForm =
-    document.getElementById(
-        "checkout-form"
-    );
-
+// =====================================================
 
 if (checkoutForm) {
 
     checkoutForm.addEventListener(
         "submit",
-        async function (event) {
+        async function(event) {
 
             event.preventDefault();
 
-
-            // =========================
+            // -----------------------------
             // CHECK CART
-            // =========================
+            // -----------------------------
 
             if (cart.length === 0) {
 
@@ -855,9 +705,9 @@ if (checkoutForm) {
             }
 
 
-            // =========================
+            // -----------------------------
             // CUSTOMER DATA
-            // =========================
+            // -----------------------------
 
             const name =
                 document
@@ -865,20 +715,17 @@ if (checkoutForm) {
                     ?.value
                     .trim();
 
-
             const phone =
                 document
                     .getElementById("phone")
                     ?.value
                     .trim();
 
-
             const address =
                 document
                     .getElementById("address")
                     ?.value
                     .trim();
-
 
             const city =
                 document
@@ -887,9 +734,9 @@ if (checkoutForm) {
                     .trim();
 
 
-            // =========================
+            // -----------------------------
             // VALIDATION
-            // =========================
+            // -----------------------------
 
             if (
                 !name ||
@@ -906,49 +753,49 @@ if (checkoutForm) {
             }
 
 
-            // =========================
-            // SUPABASE CONNECTION
-            // =========================
+            // -----------------------------
+            // SUPABASE
+            // -----------------------------
 
             const db =
                 getSupabaseClient();
 
-
             if (!db) {
 
                 alert(
-                    "Database connection is not available. Please make sure supabase.js is loaded before script.js."
+                    "Database connection is not available."
                 );
 
                 return;
             }
 
 
-            // =========================
-            // CALCULATE TOTAL
-            // =========================
+            // -----------------------------
+            // TOTAL
+            // -----------------------------
 
             const total =
                 cart.reduce(
-                    (
-                        sum,
-                        product
-                    ) =>
-                        sum +
-                        Number(
-                            product.price || 0
-                        ),
+                    function(sum, product) {
+
+                        return sum +
+                            Number(
+                                product.price || 0
+                            );
+
+                    },
                     0
                 );
 
 
-            // =========================
-            // PREPARE PRODUCTS
-            // =========================
+            // -----------------------------
+            // PRODUCTS DATA
+            // -----------------------------
 
             const productsData =
-                cart.map(
-                    product => ({
+                cart.map(function(product) {
+
+                    return {
 
                         id:
                             product.id,
@@ -969,13 +816,13 @@ if (checkoutForm) {
                             product.image ||
                             ""
 
-                    })
-                );
+                    };
+                });
 
 
-            // =========================
+            // -----------------------------
             // SAVE ORDER
-            // =========================
+            // -----------------------------
 
             try {
 
@@ -1002,6 +849,9 @@ if (checkoutForm) {
                             total:
                                 total,
 
+                            status:
+                                "Pending",
+
                             products:
                                 productsData
 
@@ -1010,17 +860,16 @@ if (checkoutForm) {
                     .select();
 
 
-                // =========================
-                // SUPABASE ERROR
-                // =========================
+                // -----------------------------
+                // ERROR
+                // -----------------------------
 
                 if (error) {
 
                     console.error(
-                        "Order save error:",
+                        "ORDER ERROR:",
                         error
                     );
-
 
                     alert(
                         `Order could not be placed: ${error.message}`
@@ -1030,24 +879,23 @@ if (checkoutForm) {
                 }
 
 
-                // =========================
+                // -----------------------------
                 // SUCCESS
-                // =========================
+                // -----------------------------
 
                 console.log(
-                    "Order saved:",
+                    "Order successfully saved:",
                     data
                 );
-
 
                 alert(
                     `Thank you ${name}! Your order has been placed successfully.`
                 );
 
 
-                // =========================
+                // -----------------------------
                 // CLEAR CART
-                // =========================
+                // -----------------------------
 
                 cart = [];
 
@@ -1068,9 +916,8 @@ if (checkoutForm) {
                     error
                 );
 
-
                 alert(
-                    "Something went wrong while placing the order."
+                    `Something went wrong: ${error.message || error}`
                 );
             }
         }
@@ -1078,21 +925,15 @@ if (checkoutForm) {
 }
 
 
-// =========================
+// =====================================================
 // CHECKOUT BUTTON
-// =========================
-
-const checkoutButton =
-    document.getElementById(
-        "checkout-btn"
-    );
-
+// =====================================================
 
 if (checkoutButton) {
 
     checkoutButton.addEventListener(
         "click",
-        function () {
+        function() {
 
             if (cart.length === 0) {
 
@@ -1103,7 +944,6 @@ if (checkoutButton) {
                 return;
             }
 
-
             window.location.href =
                 "checkout.html";
         }
@@ -1111,9 +951,9 @@ if (checkoutButton) {
 }
 
 
-// =========================
+// =====================================================
 // INITIALIZE WEBSITE
-// =========================
+// =====================================================
 
 updateCartCount();
 
@@ -1122,3 +962,17 @@ displayProducts();
 displayCart();
 
 displayCheckout();
+
+
+// =====================================================
+// DEBUG
+// =====================================================
+
+console.log(
+    "Everything 400 script.js loaded."
+);
+
+console.log(
+    "Supabase available:",
+    !!window.supabaseClient
+);
