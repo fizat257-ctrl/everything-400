@@ -903,8 +903,7 @@ async function loadOrders() {
             return;
         }
 
-        orders =
-            data || [];
+        orders = data || [];
 
         displayOrders();
 
@@ -989,7 +988,7 @@ function getCustomerData(order) {
                     order.customer
                 );
 
-        } catch {
+        } catch (error) {
 
             customer = {};
 
@@ -1008,6 +1007,12 @@ function getCustomerData(order) {
             order.customer_phone ||
             order.phone ||
             customer.phone ||
+            "Not provided",
+
+        email:
+            order.customer_email ||
+            order.email ||
+            customer.email ||
             "Not provided",
 
         address:
@@ -1048,7 +1053,7 @@ function getOrderProducts(order) {
                     orderProducts
                 );
 
-        } catch {
+        } catch (error) {
 
             orderProducts = [];
 
@@ -1068,7 +1073,7 @@ function getOrderProducts(order) {
 function getStatusClass(status) {
 
     return String(
-        status || "Pending"
+        status || "pending"
     )
         .toLowerCase()
         .replace(/\s+/g, "-");
@@ -1114,31 +1119,40 @@ function displayOrders() {
         card.className =
             "admin-order-card";
 
+
         const customer =
             getCustomerData(order);
 
+
         const total =
             Number(order.total || 0);
+
 
         const createdAt =
             order.created_at ||
             order.createdAt;
 
+
         const orderDate =
             formatDate(createdAt);
+
 
         const status =
             String(
                 order.status || "Pending"
             );
 
+
         const statusClass =
             getStatusClass(status);
+
 
         const orderProducts =
             getOrderProducts(order);
 
+
         let productsHTML = "";
+
 
         if (orderProducts.length > 0) {
 
@@ -1152,50 +1166,51 @@ function displayOrders() {
 
                     <ul>
 
-                        ${orderProducts.map(
-                            function(item) {
+                        ${orderProducts.map(function(item) {
 
-                                const itemName =
-                                    item.name ||
-                                    item.product_name ||
-                                    "Product";
+                            const itemName =
+                                item.name ||
+                                item.product_name ||
+                                "Product";
 
-                                const quantity =
-                                    Number(
-                                        item.quantity || 1
-                                    );
+                            const quantity =
+                                Number(
+                                    item.quantity || 1
+                                );
 
-                                const itemPrice =
-                                    Number(
-                                        item.price || 0
-                                    );
+                            const itemPrice =
+                                Number(
+                                    item.price || 0
+                                );
 
-                                return `
+                            return `
 
-                                    <li>
+                                <li>
 
-                                        ${escapeHTML(itemName)}
-                                        × ${quantity}
+                                    ${escapeHTML(itemName)}
 
-                                        ${
-                                            itemPrice
-                                                ? ` - Rs. ${formatPrice(itemPrice)}`
-                                                : ""
-                                        }
+                                    × ${quantity}
 
-                                    </li>
+                                    ${
+                                        itemPrice
+                                            ? ` - Rs. ${formatPrice(itemPrice)}`
+                                            : ""
+                                    }
 
-                                `;
+                                </li>
 
-                            }
-                        ).join("")}
+                            `;
+
+                        }).join("")}
 
                     </ul>
 
                 </div>
 
             `;
+
         }
+
 
         card.innerHTML = `
 
@@ -1205,27 +1220,39 @@ function displayOrders() {
                     ${escapeHTML(customer.name)}
                 </h3>
 
+
                 <p>
                     <strong>Phone:</strong>
                     ${escapeHTML(customer.phone)}
                 </p>
+
+
+                <p>
+                    <strong>Email:</strong>
+                    ${escapeHTML(customer.email)}
+                </p>
+
 
                 <p>
                     <strong>Address:</strong>
                     ${escapeHTML(customer.address)}
                 </p>
 
+
                 <p>
                     <strong>City:</strong>
                     ${escapeHTML(customer.city)}
                 </p>
+
 
                 <p>
                     <strong>Order Date:</strong>
                     ${escapeHTML(orderDate)}
                 </p>
 
+
                 ${productsHTML}
+
 
                 <p class="order-total">
 
@@ -1237,11 +1264,13 @@ function displayOrders() {
 
                 </p>
 
+
                 <div class="order-status-section">
 
                     <strong>
                         Status:
                     </strong>
+
 
                     <span
                         class="order-status ${statusClass}"
@@ -1249,47 +1278,52 @@ function displayOrders() {
                         ${escapeHTML(status)}
                     </span>
 
+
                     <div class="order-status-buttons">
 
                         <button
                             type="button"
-                            class="status-btn"
+                            class="status-btn pending-btn"
                             data-id="${escapeHTML(order.id)}"
                             data-status="Pending"
                         >
                             Pending
                         </button>
 
+
                         <button
                             type="button"
-                            class="status-btn"
+                            class="status-btn confirm-btn"
                             data-id="${escapeHTML(order.id)}"
                             data-status="Confirmed"
                         >
                             Confirm
                         </button>
 
+
                         <button
                             type="button"
-                            class="status-btn"
+                            class="status-btn ship-btn"
                             data-id="${escapeHTML(order.id)}"
                             data-status="Shipped"
                         >
                             Ship
                         </button>
 
-                        <button
-                            type="button"
-                            class="status-btn"
-                            data-id="${escapeHTML(order.id)}"
-                            data-status="Delivered"
-                        >
-                            Delivery
-                        </button>
 
                         <button
                             type="button"
-                            class="status-btn"
+                            class="status-btn delivered-btn"
+                            data-id="${escapeHTML(order.id)}"
+                            data-status="Delivered"
+                        >
+                            Delivered
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="status-btn cancel-btn"
                             data-id="${escapeHTML(order.id)}"
                             data-status="Cancelled"
                         >
@@ -1301,46 +1335,51 @@ function displayOrders() {
                 </div>
 
             </div>
+
         `;
+
 
         const statusButtons =
             card.querySelectorAll(
                 ".status-btn"
             );
 
-        statusButtons.forEach(
-            function(button) {
 
-                button.addEventListener(
-                    "click",
-                    function() {
+        statusButtons.forEach(function(button) {
 
-                        const orderId =
-                            this.dataset.id;
+            button.addEventListener(
+                "click",
+                function() {
 
-                        const newStatus =
-                            this.dataset.status;
+                    const orderId =
+                        this.dataset.id;
 
-                        updateOrderStatus(
-                            orderId,
-                            newStatus
-                        );
+                    const newStatus =
+                        this.dataset.status;
 
-                    }
-                );
 
-            }
-        );
+                    updateOrderStatus(
+                        orderId,
+                        newStatus
+                    );
+
+                }
+            );
+
+        });
+
 
         ordersContainer.appendChild(card);
 
     });
 
+
     updateOrderCount();
+
 }
 // =====================================================
 // EVERYTHING 400 - ADMIN.JS
-// PART 3 - STATUS + LOGOUT + INITIALIZE
+// PART 3 - ORDER STATUS + LOGOUT + INITIALIZE
 // =====================================================
 
 
@@ -1362,6 +1401,7 @@ async function updateOrderStatus(
         return;
     }
 
+
     if (!orderId) {
 
         alert(
@@ -1371,6 +1411,7 @@ async function updateOrderStatus(
         return;
     }
 
+
     const allowedStatuses = [
         "Pending",
         "Confirmed",
@@ -1378,6 +1419,7 @@ async function updateOrderStatus(
         "Delivered",
         "Cancelled"
     ];
+
 
     if (
         !allowedStatuses.includes(
@@ -1392,29 +1434,24 @@ async function updateOrderStatus(
         return;
     }
 
+
     const confirmChange =
         confirm(
             `Change order status to "${newStatus}"?`
         );
 
+
     if (!confirmChange) return;
+
 
     try {
 
         console.log(
-            "Updating order ID:",
-            orderId
-        );
-
-        console.log(
-            "New status:",
+            "Updating order:",
+            orderId,
             newStatus
         );
 
-
-        // =================================================
-        // UPDATE SUPABASE
-        // =================================================
 
         const {
             data,
@@ -1422,101 +1459,61 @@ async function updateOrderStatus(
         } = await db
             .from("orders")
             .update({
-                status: newStatus
+
+                status:
+                    newStatus
+
             })
             .eq(
                 "id",
                 orderId
             )
-            .select("*");
+            .select();
 
-
-        // =================================================
-        // SUPABASE ERROR
-        // =================================================
 
         if (error) {
 
             console.error(
-                "ORDER STATUS UPDATE ERROR:",
+                "Order status update error:",
                 error
             );
 
+
             alert(
-                "Status update failed:\n\n" +
-                error.message
+                `Status update failed:\n\n${error.message}`
             );
 
             return;
         }
 
-
-        // =================================================
-        // IMPORTANT: CHECK ACTUAL UPDATED ROW
-        // =================================================
-
-        if (
-            !data ||
-            data.length === 0
-        ) {
-
-            console.error(
-                "No order row was updated.",
-                {
-                    orderId: orderId,
-                    newStatus: newStatus
-                }
-            );
-
-            alert(
-                "Status was not updated in the database.\n\n" +
-                "Please check the UPDATE policy for the orders table in Supabase."
-            );
-
-            return;
-        }
-
-
-        // =================================================
-        // VERIFY DATABASE VALUE
-        // =================================================
-
-        const updatedOrder =
-            data[0];
 
         console.log(
-            "Updated order from database:",
-            updatedOrder
+            "Order status updated:",
+            data
         );
 
 
-        if (
-            String(
-                updatedOrder.status
-            ).toLowerCase() !==
-            String(
-                newStatus
-            ).toLowerCase()
-        ) {
+        const order =
+            orders.find(function(item) {
 
-            alert(
-                "The database did not save the new status."
-            );
+                return String(item.id) ===
+                    String(orderId);
 
-            return;
+            });
+
+
+        if (order) {
+
+            order.status =
+                newStatus;
+
         }
 
 
-        // =================================================
-        // RELOAD ORDERS FROM DATABASE
-        // =================================================
+        displayOrders();
 
-        await loadOrders();
+        updateDashboardSummary();
 
-
-        // =================================================
-        // SUCCESS
-        // =================================================
 
         alert(
             `Order status changed to ${newStatus}.`
@@ -1530,11 +1527,13 @@ async function updateOrderStatus(
             error
         );
 
+
         alert(
-            "Something went wrong:\n\n" +
-            (error.message || error)
+            `Something went wrong:\n\n${error.message}`
         );
+
     }
+
 }
 
 
@@ -1547,6 +1546,7 @@ const logoutButton =
         "admin-logout"
     );
 
+
 if (logoutButton) {
 
     logoutButton.addEventListener(
@@ -1558,6 +1558,7 @@ if (logoutButton) {
 
         }
     );
+
 }
 
 
@@ -1573,10 +1574,12 @@ document.addEventListener(
             "Everything 400 admin.js loaded."
         );
 
+
         console.log(
             "Supabase available:",
             !!window.supabaseClient
         );
+
 
         await loadProducts();
 
