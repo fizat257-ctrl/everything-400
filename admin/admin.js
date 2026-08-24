@@ -1,7 +1,17 @@
+// =====================================================
+// EVERYTHING 400 - ADMIN.JS
+// PART 1 - SUPABASE + PRODUCTS
+// =====================================================
+
 const db = window.supabaseClient;
 
 let products = [];
 let orders = [];
+
+
+// =====================================================
+// ELEMENTS
+// =====================================================
 
 const productForm =
     document.getElementById("product-form");
@@ -22,9 +32,9 @@ const orderCount =
     document.getElementById("order-count");
 
 
-// =========================
-// DASHBOARD SUMMARY ELEMENTS
-// =========================
+// =====================================================
+// DASHBOARD
+// =====================================================
 
 const dashboardProductCount =
     document.getElementById("dashboard-product-count");
@@ -39,6 +49,10 @@ const dashboardTotalSales =
     document.getElementById("dashboard-total-sales");
 
 
+// =====================================================
+// SUPABASE CHECK
+// =====================================================
+
 if (!db) {
 
     console.error(
@@ -48,9 +62,9 @@ if (!db) {
 }
 
 
-// =========================
+// =====================================================
 // ESCAPE HTML
-// =========================
+// =====================================================
 
 function escapeHTML(value) {
 
@@ -64,9 +78,9 @@ function escapeHTML(value) {
 }
 
 
-// =========================
+// =====================================================
 // FORMAT PRICE
-// =========================
+// =====================================================
 
 function formatPrice(price) {
 
@@ -75,9 +89,9 @@ function formatPrice(price) {
 }
 
 
-// =========================
+// =====================================================
 // FORMAT DATE
-// =========================
+// =====================================================
 
 function formatDate(dateValue) {
 
@@ -97,9 +111,9 @@ function formatDate(dateValue) {
 }
 
 
-// =========================
+// =====================================================
 // UPDATE DASHBOARD
-// =========================
+// =====================================================
 
 function updateDashboardSummary() {
 
@@ -110,7 +124,6 @@ function updateDashboardSummary() {
 
     }
 
-
     if (dashboardOrderCount) {
 
         dashboardOrderCount.textContent =
@@ -118,9 +131,8 @@ function updateDashboardSummary() {
 
     }
 
-
     const pendingOrders =
-        orders.filter(function (order) {
+        orders.filter(function(order) {
 
             return String(
                 order.status || "pending"
@@ -139,7 +151,7 @@ function updateDashboardSummary() {
 
     let totalSales = 0;
 
-    orders.forEach(function (order) {
+    orders.forEach(function(order) {
 
         totalSales +=
             Number(order.total || 0);
@@ -157,9 +169,9 @@ function updateDashboardSummary() {
 }
 
 
-// =========================
+// =====================================================
 // LOAD PRODUCTS
-// =========================
+// =====================================================
 
 async function loadProducts() {
 
@@ -228,7 +240,6 @@ async function loadProducts() {
 
         updateDashboardSummary();
 
-
     } catch (error) {
 
         console.error(
@@ -245,14 +256,13 @@ async function loadProducts() {
 }
 
 
-// =========================
+// =====================================================
 // PRODUCT ERROR
-// =========================
+// =====================================================
 
 function showProductError(message) {
 
     if (!productsContainer) return;
-
 
     productsContainer.innerHTML = `
         <p class="no-products">
@@ -260,24 +270,21 @@ function showProductError(message) {
         </p>
     `;
 
-
     updateProductCount();
 
 }
 
 
-// =========================
+// =====================================================
 // PRODUCT COUNT
-// =========================
+// =====================================================
 
 function updateProductCount() {
 
     if (!productCount) return;
 
-
     const count =
         products.length;
-
 
     productCount.textContent =
         `${count} Product${count !== 1 ? "s" : ""}`;
@@ -285,14 +292,13 @@ function updateProductCount() {
 }
 
 
-// =========================
+// =====================================================
 // DISPLAY PRODUCTS
-// =========================
+// =====================================================
 
 function displayProducts() {
 
     if (!productsContainer) return;
-
 
     productsContainer.innerHTML = "";
 
@@ -320,11 +326,10 @@ function displayProducts() {
     }
 
 
-    products.forEach(function (product) {
+    products.forEach(function(product) {
 
         const card =
             document.createElement("div");
-
 
         card.className =
             "admin-product-card";
@@ -369,7 +374,7 @@ function displayProducts() {
                     </p>
 
                     <small class="admin-product-category">
-                        ${escapeHTML(product.category)}
+                        ${escapeHTML(product.category || "other")}
                     </small>
 
                 </div>
@@ -387,7 +392,6 @@ function displayProducts() {
                     Edit
                 </button>
 
-
                 <button
                     type="button"
                     class="delete-product"
@@ -404,7 +408,6 @@ function displayProducts() {
         const editButton =
             card.querySelector(".edit-product");
 
-
         const deleteButton =
             card.querySelector(".delete-product");
 
@@ -413,7 +416,7 @@ function displayProducts() {
 
             editButton.addEventListener(
                 "click",
-                function () {
+                function() {
 
                     editProduct(product.id);
 
@@ -427,7 +430,7 @@ function displayProducts() {
 
             deleteButton.addEventListener(
                 "click",
-                function () {
+                function() {
 
                     deleteProduct(product.id);
 
@@ -445,15 +448,53 @@ function displayProducts() {
     updateProductCount();
 
 }
-// =========================
+
+
+// =====================================================
+// IMAGE TO BASE64
+// =====================================================
+
+function convertImageToBase64(file) {
+
+    return new Promise(function(resolve, reject) {
+
+        const reader =
+            new FileReader();
+
+        reader.onload =
+            function() {
+
+                resolve(
+                    reader.result
+                );
+
+            };
+
+        reader.onerror =
+            function() {
+
+                reject(
+                    reader.error
+                );
+
+            };
+
+        reader.readAsDataURL(file);
+
+    });
+
+}
+
+
+// =====================================================
 // ADD PRODUCT
-// =========================
+// =====================================================
 
 if (productForm) {
 
     productForm.addEventListener(
         "submit",
-        async function (event) {
+        async function(event) {
 
             event.preventDefault();
 
@@ -530,10 +571,6 @@ if (productForm) {
             }
 
 
-            // =========================
-            // IMAGE
-            // =========================
-
             let image = null;
 
 
@@ -547,10 +584,7 @@ if (productForm) {
                     imageInput.files[0];
 
 
-                if (
-                    file.size >
-                    2 * 1024 * 1024
-                ) {
+                if (file.size > 2 * 1024 * 1024) {
 
                     alert(
                         "Image size must be less than 2MB."
@@ -561,9 +595,7 @@ if (productForm) {
                 }
 
 
-                if (
-                    !file.type.startsWith("image/")
-                ) {
+                if (!file.type.startsWith("image/")) {
 
                     alert(
                         "Please select a valid image file."
@@ -577,9 +609,7 @@ if (productForm) {
                 try {
 
                     image =
-                        await convertImageToBase64(
-                            file
-                        );
+                        await convertImageToBase64(file);
 
                 } catch (error) {
 
@@ -599,10 +629,6 @@ if (productForm) {
             }
 
 
-            // =========================
-            // INSERT
-            // =========================
-
             try {
 
                 const productData = {
@@ -618,12 +644,6 @@ if (productForm) {
                 };
 
 
-                console.log(
-                    "Sending product to Supabase:",
-                    productData
-                );
-
-
                 const {
                     data,
                     error
@@ -636,21 +656,13 @@ if (productForm) {
                 if (error) {
 
                     console.error(
-                        "FULL SUPABASE INSERT ERROR:",
+                        "Product insert error:",
                         error
                     );
 
-
                     alert(
-                        "Supabase Error:\n\n" +
-                        "Message: " +
-                        (error.message || "Unknown error") +
-                        "\n\nCode: " +
-                        (error.code || "N/A") +
-                        "\n\nDetails: " +
-                        (error.details || "N/A")
+                        `Supabase Error:\n\n${error.message}`
                     );
-
 
                     return;
 
@@ -658,13 +670,12 @@ if (productForm) {
 
 
                 console.log(
-                    "Product added successfully:",
+                    "Product added:",
                     data
                 );
 
 
                 productForm.reset();
-
 
                 await loadProducts();
 
@@ -676,14 +687,12 @@ if (productForm) {
             } catch (error) {
 
                 console.error(
-                    "Add product exception:",
+                    "Add product error:",
                     error
                 );
 
-
                 alert(
-                    "Unexpected error:\n\n" +
-                    error.message
+                    `Unexpected error:\n\n${error.message}`
                 );
 
             }
@@ -694,50 +703,9 @@ if (productForm) {
 }
 
 
-// =========================
-// IMAGE TO BASE64
-// =========================
-
-function convertImageToBase64(file) {
-
-    return new Promise(
-        function (resolve, reject) {
-
-            const reader =
-                new FileReader();
-
-
-            reader.onload =
-                function () {
-
-                    resolve(
-                        reader.result
-                    );
-
-                };
-
-
-            reader.onerror =
-                function () {
-
-                    reject(
-                        reader.error
-                    );
-
-                };
-
-
-            reader.readAsDataURL(file);
-
-        }
-    );
-
-}
-
-
-// =========================
+// =====================================================
 // EDIT PRODUCT
-// =========================
+// =====================================================
 
 async function editProduct(id) {
 
@@ -753,14 +721,12 @@ async function editProduct(id) {
 
 
     const product =
-        products.find(
-            function (item) {
+        products.find(function(item) {
 
-                return String(item.id) ===
-                    String(id);
+            return String(item.id) ===
+                String(id);
 
-            }
-        );
+        });
 
 
     if (!product) {
@@ -847,12 +813,9 @@ async function editProduct(id) {
                 error
             );
 
-
             alert(
-                "Update failed:\n\n" +
-                error.message
+                `Update failed:\n\n${error.message}`
             );
-
 
             return;
 
@@ -866,7 +829,6 @@ async function editProduct(id) {
             "Product updated successfully!"
         );
 
-
     } catch (error) {
 
         console.error(
@@ -874,10 +836,8 @@ async function editProduct(id) {
             error
         );
 
-
         alert(
-            "Something went wrong:\n\n" +
-            error.message
+            `Something went wrong:\n\n${error.message}`
         );
 
     }
@@ -885,9 +845,9 @@ async function editProduct(id) {
 }
 
 
-// =========================
+// =====================================================
 // DELETE PRODUCT
-// =========================
+// =====================================================
 
 async function deleteProduct(id) {
 
@@ -903,14 +863,12 @@ async function deleteProduct(id) {
 
 
     const product =
-        products.find(
-            function (item) {
+        products.find(function(item) {
 
-                return String(item.id) ===
-                    String(id);
+            return String(item.id) ===
+                String(id);
 
-            }
-        );
+        });
 
 
     if (!product) {
@@ -950,12 +908,9 @@ async function deleteProduct(id) {
                 error
             );
 
-
             alert(
-                "Delete failed:\n\n" +
-                error.message
+                `Delete failed:\n\n${error.message}`
             );
-
 
             return;
 
@@ -969,7 +924,6 @@ async function deleteProduct(id) {
             "Product deleted successfully!"
         );
 
-
     } catch (error) {
 
         console.error(
@@ -977,41 +931,22 @@ async function deleteProduct(id) {
             error
         );
 
-
         alert(
-            "Something went wrong:\n\n" +
-            error.message
+            `Something went wrong:\n\n${error.message}`
         );
 
     }
 
 }
+// =====================================================
+// EVERYTHING 400 - ADMIN.JS
+// PART 2 - ORDERS
+// =====================================================
 
 
-// =========================
-// LOGOUT
-// =========================
-
-const logoutButton =
-    document.getElementById("admin-logout");
-
-
-if (logoutButton) {
-
-    logoutButton.addEventListener(
-        "click",
-        function () {
-
-            window.location.href =
-                "../index.html";
-
-        }
-    );
-
-}
-// =========================
+// =====================================================
 // LOAD ORDERS
-// =========================
+// =====================================================
 
 async function loadOrders() {
 
@@ -1098,9 +1033,9 @@ async function loadOrders() {
 }
 
 
-// =========================
+// =====================================================
 // ORDER ERROR
-// =========================
+// =====================================================
 
 function showOrderError(message) {
 
@@ -1119,9 +1054,9 @@ function showOrderError(message) {
 }
 
 
-// =========================
+// =====================================================
 // ORDER COUNT
-// =========================
+// =====================================================
 
 function updateOrderCount() {
 
@@ -1138,9 +1073,132 @@ function updateOrderCount() {
 }
 
 
-// =========================
+// =====================================================
+// GET CUSTOMER DATA
+// =====================================================
+
+function getCustomerData(order) {
+
+    let customer = {};
+
+
+    if (
+        order.customer &&
+        typeof order.customer === "object"
+    ) {
+
+        customer =
+            order.customer;
+
+    }
+    else if (
+        typeof order.customer === "string"
+    ) {
+
+        try {
+
+            customer =
+                JSON.parse(
+                    order.customer
+                );
+
+        } catch {
+
+            customer = {};
+
+        }
+
+    }
+
+
+    return {
+
+        name:
+            order.customer_name ||
+            order.name ||
+            customer.name ||
+            "Unknown Customer",
+
+        phone:
+            order.customer_phone ||
+            order.phone ||
+            customer.phone ||
+            "Not provided",
+
+        address:
+            order.customer_address ||
+            order.address ||
+            customer.address ||
+            "Not provided",
+
+        city:
+            order.customer_city ||
+            order.city ||
+            customer.city ||
+            "Not provided"
+
+    };
+
+}
+
+
+// =====================================================
+// GET ORDER PRODUCTS
+// =====================================================
+
+function getOrderProducts(order) {
+
+    let orderProducts =
+        order.products ||
+        order.items ||
+        [];
+
+
+    if (
+        typeof orderProducts === "string"
+    ) {
+
+        try {
+
+            orderProducts =
+                JSON.parse(
+                    orderProducts
+                );
+
+        } catch {
+
+            orderProducts = [];
+
+        }
+
+    }
+
+
+    return Array.isArray(orderProducts)
+        ? orderProducts
+        : [];
+
+}
+
+
+// =====================================================
+// STATUS CLASS
+// =====================================================
+
+function getStatusClass(status) {
+
+    return String(
+        status || "pending"
+    )
+        .toLowerCase()
+        .replace(/\s+/g, "-");
+
+}
+
+
+// =====================================================
 // DISPLAY ORDERS
-// =========================
+// =====================================================
 
 function displayOrders() {
 
@@ -1173,7 +1231,7 @@ function displayOrders() {
     }
 
 
-    orders.forEach(function (order) {
+    orders.forEach(function(order) {
 
         const card =
             document.createElement("div");
@@ -1183,64 +1241,8 @@ function displayOrders() {
             "admin-order-card";
 
 
-        let customer = {};
-
-
-        if (
-            order.customer &&
-            typeof order.customer === "object"
-        ) {
-
-            customer =
-                order.customer;
-
-        }
-        else if (
-            typeof order.customer === "string"
-        ) {
-
-            try {
-
-                customer =
-                    JSON.parse(
-                        order.customer
-                    );
-
-            } catch {
-
-                customer = {};
-
-            }
-
-        }
-
-
-        const customerName =
-            order.name ||
-            order.customer_name ||
-            customer.name ||
-            "Unknown Customer";
-
-
-        const phone =
-            order.phone ||
-            order.customer_phone ||
-            customer.phone ||
-            "Not provided";
-
-
-        const address =
-            order.address ||
-            order.customer_address ||
-            customer.address ||
-            "Not provided";
-
-
-        const city =
-            order.city ||
-            order.customer_city ||
-            customer.city ||
-            "Not provided";
+        const customer =
+            getCustomerData(order);
 
 
         const total =
@@ -1257,43 +1259,23 @@ function displayOrders() {
 
 
         const status =
-            order.status ||
-            "pending";
+            String(
+                order.status || "Pending"
+            );
 
 
-        let orderProducts =
-            order.products ||
-            order.items ||
-            [];
+        const statusClass =
+            getStatusClass(status);
 
 
-        if (
-            typeof orderProducts === "string"
-        ) {
-
-            try {
-
-                orderProducts =
-                    JSON.parse(
-                        orderProducts
-                    );
-
-            } catch {
-
-                orderProducts = [];
-
-            }
-
-        }
+        const orderProducts =
+            getOrderProducts(order);
 
 
         let productsHTML = "";
 
 
-        if (
-            Array.isArray(orderProducts) &&
-            orderProducts.length > 0
-        ) {
+        if (orderProducts.length > 0) {
 
             productsHTML = `
 
@@ -1305,7 +1287,7 @@ function displayOrders() {
 
                     <ul>
 
-                        ${orderProducts.map(function (item) {
+                        ${orderProducts.map(function(item) {
 
                             const itemName =
                                 item.name ||
@@ -1317,11 +1299,28 @@ function displayOrders() {
                                     item.quantity || 1
                                 );
 
+                            const itemPrice =
+                                Number(
+                                    item.price || 0
+                                );
+
+
                             return `
+
                                 <li>
+
                                     ${escapeHTML(itemName)}
+
                                     × ${quantity}
+
+                                    ${
+                                        itemPrice
+                                            ? ` - Rs. ${formatPrice(itemPrice)}`
+                                            : ""
+                                    }
+
                                 </li>
+
                             `;
 
                         }).join("")}
@@ -1340,46 +1339,150 @@ function displayOrders() {
             <div class="admin-order-info">
 
                 <h3>
-                    ${escapeHTML(customerName)}
+                    ${escapeHTML(customer.name)}
                 </h3>
+
 
                 <p>
                     <strong>Phone:</strong>
-                    ${escapeHTML(phone)}
+                    ${escapeHTML(customer.phone)}
                 </p>
+
 
                 <p>
                     <strong>Address:</strong>
-                    ${escapeHTML(address)}
+                    ${escapeHTML(customer.address)}
                 </p>
+
 
                 <p>
                     <strong>City:</strong>
-                    ${escapeHTML(city)}
+                    ${escapeHTML(customer.city)}
                 </p>
 
-                <p>
-                    <strong>Status:</strong>
-                    ${escapeHTML(status)}
-                </p>
 
                 <p>
                     <strong>Order Date:</strong>
                     ${escapeHTML(orderDate)}
                 </p>
 
+
                 ${productsHTML}
 
+
                 <p class="order-total">
+
                     <strong>
                         Total:
                     </strong>
+
                     Rs. ${formatPrice(total)}
+
                 </p>
+
+
+                <div class="order-status-section">
+
+                    <strong>
+                        Status:
+                    </strong>
+
+
+                    <span
+                        class="order-status ${statusClass}"
+                    >
+                        ${escapeHTML(status)}
+                    </span>
+
+
+                    <div class="order-status-buttons">
+
+                        <button
+                            type="button"
+                            class="status-btn pending-btn"
+                            data-id="${escapeHTML(order.id)}"
+                            data-status="Pending"
+                        >
+                            Pending
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="status-btn confirm-btn"
+                            data-id="${escapeHTML(order.id)}"
+                            data-status="Confirmed"
+                        >
+                            Confirm
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="status-btn ship-btn"
+                            data-id="${escapeHTML(order.id)}"
+                            data-status="Shipped"
+                        >
+                            Ship
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="status-btn delivered-btn"
+                            data-id="${escapeHTML(order.id)}"
+                            data-status="Delivered"
+                        >
+                            Delivered
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="status-btn cancel-btn"
+                            data-id="${escapeHTML(order.id)}"
+                            data-status="Cancelled"
+                        >
+                            Cancel
+                        </button>
+
+                    </div>
+
+                </div>
 
             </div>
 
         `;
+
+
+        const statusButtons =
+            card.querySelectorAll(
+                ".status-btn"
+            );
+
+
+        statusButtons.forEach(function(button) {
+
+            button.addEventListener(
+                "click",
+                function() {
+
+                    const orderId =
+                        this.dataset.id;
+
+                    const newStatus =
+                        this.dataset.status;
+
+
+                    updateOrderStatus(
+                        orderId,
+                        newStatus
+                    );
+
+                }
+            );
+
+        });
 
 
         ordersContainer.appendChild(card);
@@ -1390,15 +1493,214 @@ function displayOrders() {
     updateOrderCount();
 
 }
+// =====================================================
+// EVERYTHING 400 - ADMIN.JS
+// PART 3 - ORDER STATUS + LOGOUT + INITIALIZE
+// =====================================================
 
 
-// =========================
+// =====================================================
+// UPDATE ORDER STATUS
+// =====================================================
+
+async function updateOrderStatus(
+    orderId,
+    newStatus
+) {
+
+    if (!db) {
+
+        alert(
+            "Supabase connection is not available."
+        );
+
+        return;
+
+    }
+
+
+    if (!orderId) {
+
+        alert(
+            "Order ID is missing."
+        );
+
+        return;
+
+    }
+
+
+    const allowedStatuses = [
+        "Pending",
+        "Confirmed",
+        "Shipped",
+        "Delivered",
+        "Cancelled"
+    ];
+
+
+    if (
+        !allowedStatuses.includes(
+            newStatus
+        )
+    ) {
+
+        alert(
+            "Invalid order status."
+        );
+
+        return;
+
+    }
+
+
+    const confirmChange =
+        confirm(
+            `Change order status to "${newStatus}"?`
+        );
+
+
+    if (!confirmChange) return;
+
+
+    try {
+
+        console.log(
+            "Updating order:",
+            orderId,
+            newStatus
+        );
+
+
+        const {
+            data,
+            error
+        } = await db
+            .from("orders")
+            .update({
+
+                status:
+                    newStatus
+
+            })
+            .eq(
+                "id",
+                orderId
+            )
+            .select();
+
+
+        if (error) {
+
+            console.error(
+                "Order status update error:",
+                error
+            );
+
+
+            alert(
+                `Status update failed:\n\n${error.message}`
+            );
+
+            return;
+
+        }
+
+
+        console.log(
+            "Order status updated:",
+            data
+        );
+
+
+        // Update local order
+        const order =
+            orders.find(function(item) {
+
+                return String(item.id) ===
+                    String(orderId);
+
+            });
+
+
+        if (order) {
+
+            order.status =
+                newStatus;
+
+        }
+
+
+        displayOrders();
+
+        updateDashboardSummary();
+
+
+        alert(
+            `Order status changed to ${newStatus}.`
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Status update exception:",
+            error
+        );
+
+
+        alert(
+            `Something went wrong:\n\n${error.message}`
+        );
+
+    }
+
+}
+
+
+// =====================================================
+// LOGOUT
+// =====================================================
+
+const logoutButton =
+    document.getElementById(
+        "admin-logout"
+    );
+
+
+if (logoutButton) {
+
+    logoutButton.addEventListener(
+        "click",
+        function() {
+
+            window.location.href =
+                "../index.html";
+
+        }
+    );
+
+}
+
+
+// =====================================================
 // INITIAL LOAD
-// =========================
+// =====================================================
 
 document.addEventListener(
     "DOMContentLoaded",
-    async function () {
+    async function() {
+
+        console.log(
+            "Everything 400 admin.js loaded."
+        );
+
+
+        console.log(
+            "Supabase available:",
+            !!window.supabaseClient
+        );
+
 
         await loadProducts();
 
