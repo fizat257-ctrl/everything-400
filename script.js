@@ -6,17 +6,9 @@
 let cart = [];
 
 try {
-    cart =
-        JSON.parse(
-            localStorage.getItem("cart")
-        ) || [];
+    cart = JSON.parse(localStorage.getItem("cart")) || [];
 } catch (error) {
-
-    console.error(
-        "Cart loading error:",
-        error
-    );
-
+    console.error("Cart loading error:", error);
     cart = [];
 }
 
@@ -59,9 +51,7 @@ const checkoutButton =
     document.getElementById("checkout-btn");
 
 const customerOrderStatus =
-    document.getElementById(
-        "customer-order-status"
-    );
+    document.getElementById("customer-order-status");
 
 let selectedCategory = "all";
 
@@ -72,15 +62,12 @@ let selectedCategory = "all";
 
 function getSupabaseClient() {
 
-    const db =
-        window.supabaseClient;
+    const db = window.supabaseClient;
 
     if (!db) {
-
         console.error(
             "Supabase client not found."
         );
-
         return null;
     }
 
@@ -95,26 +82,11 @@ function getSupabaseClient() {
 function escapeHTML(value) {
 
     return String(value ?? "")
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-        .replace(
-            /</g,
-            "&lt;"
-        )
-        .replace(
-            />/g,
-            "&gt;"
-        )
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-        .replace(
-            /'/g,
-            "&#039;"
-        );
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
 
 
@@ -150,8 +122,7 @@ function updateCartCount() {
 
 async function getProducts() {
 
-    const db =
-        getSupabaseClient();
+    const db = getSupabaseClient();
 
     if (!db) return [];
 
@@ -208,24 +179,18 @@ function addToCart(product) {
 
     cart.push({
 
-        id:
-            product.id,
+        id: product.id,
 
-        name:
-            product.name,
+        name: product.name,
 
         price:
-            Number(
-                product.price
-            ) || 0,
+            Number(product.price) || 0,
 
         category:
-            product.category ||
-            "other",
+            product.category || "other",
 
         image:
-            product.image ||
-            ""
+            product.image || ""
 
     });
 
@@ -253,8 +218,7 @@ async function displayProducts() {
         </div>
     `;
 
-    const products =
-        await getProducts();
+    const products = await getProducts();
 
     productContainer.innerHTML = "";
 
@@ -269,83 +233,67 @@ async function displayProducts() {
         return;
     }
 
-    products.forEach(
-        function(product) {
+    products.forEach(function(product) {
 
-            const card =
-                document.createElement(
-                    "div"
-                );
+        const card =
+            document.createElement("div");
 
-            card.className =
-                "product-card";
+        card.className =
+            "product-card";
 
-            card.dataset.category =
-                String(
-                    product.category ||
-                    "other"
-                ).toLowerCase();
+        card.dataset.category =
+            String(
+                product.category || "other"
+            ).toLowerCase();
 
 
-            let imageHTML = "";
+        let imageHTML = "";
 
-            if (product.image) {
+        if (product.image) {
 
-                imageHTML = `
-                    <img
-                        src="${escapeHTML(
-                            product.image
-                        )}"
-                        alt="${escapeHTML(
-                            product.name
-                        )}"
-                    >
-                `;
-
-            } else {
-
-                imageHTML = `
-                    <span>🛍️</span>
-                `;
-            }
-
-
-            card.innerHTML = `
-
-                <div class="product-image">
-                    ${imageHTML}
-                </div>
-
-                <h3>
-                    ${escapeHTML(
-                        product.name
-                    )}
-                </h3>
-
-                <p>
-                    Rs.
-                    ${Number(
-                        product.price
-                    ) || 0}
-                </p>
-
-                <button
-                    class="add-cart-btn"
-                    data-id="${escapeHTML(
-                        product.id
-                    )}"
-                    type="button"
+            imageHTML = `
+                <img
+                    src="${escapeHTML(product.image)}"
+                    alt="${escapeHTML(product.name)}"
                 >
-                    Add to Cart
-                </button>
-
             `;
 
-            productContainer.appendChild(
-                card
-            );
+        } else {
+
+            imageHTML = `
+                <span>🛍️</span>
+            `;
         }
-    );
+
+
+        card.innerHTML = `
+
+            <div class="product-image">
+                ${imageHTML}
+            </div>
+
+            <h3>
+                ${escapeHTML(product.name)}
+            </h3>
+
+            <p>
+                Rs.
+                ${Number(product.price) || 0}
+            </p>
+
+            <button
+                class="add-cart-btn"
+                data-id="${escapeHTML(product.id)}"
+                type="button"
+            >
+                Add to Cart
+            </button>
+
+        `;
+
+        productContainer.appendChild(card);
+
+    });
 
 
     const addButtons =
@@ -354,40 +302,32 @@ async function displayProducts() {
         );
 
 
-    addButtons.forEach(
-        function(button) {
+    addButtons.forEach(function(button) {
 
-            button.addEventListener(
-                "click",
-                async function() {
+        button.addEventListener(
+            "click",
+            async function() {
 
-                    const productId =
-                        this.dataset.id;
+                const productId =
+                    this.dataset.id;
 
-                    const products =
-                        await getProducts();
+                const products =
+                    await getProducts();
 
-                    const product =
-                        products.find(
-                            function(item) {
+                const product =
+                    products.find(function(item) {
 
-                                return String(
-                                    item.id
-                                ) ===
-                                String(
-                                    productId
-                                );
+                        return String(item.id) ===
+                            String(productId);
 
-                            }
-                        );
+                    });
 
-                    addToCart(product);
+                addToCart(product);
 
-                }
-            );
+            }
+        );
 
-        }
-    );
+    });
 
 
     filterProducts();
@@ -416,43 +356,38 @@ function filterProducts() {
                 .trim()
             : "";
 
-    productCards.forEach(
-        function(card) {
+    productCards.forEach(function(card) {
 
-            const category =
-                String(
-                    card.dataset.category ||
-                    ""
-                ).toLowerCase();
+        const category =
+            String(
+                card.dataset.category || ""
+            ).toLowerCase();
 
-            const title =
-                card.querySelector("h3");
+        const title =
+            card.querySelector("h3");
 
-            const productName =
-                title
-                    ? title.textContent
-                        .toLowerCase()
-                        .trim()
-                    : "";
+        const productName =
+            title
+                ? title.textContent
+                    .toLowerCase()
+                    .trim()
+                : "";
 
-            const matchesCategory =
-                selectedCategory === "all" ||
-                category ===
+        const matchesCategory =
+            selectedCategory === "all" ||
+            category ===
                 selectedCategory.toLowerCase();
 
-            const matchesSearch =
-                productName.includes(
-                    searchText
-                );
+        const matchesSearch =
+            productName.includes(searchText);
 
-            card.style.display =
-                matchesCategory &&
-                matchesSearch
-                    ? ""
-                    : "none";
+        card.style.display =
+            matchesCategory &&
+            matchesSearch
+                ? ""
+                : "none";
 
-        }
-    );
+    });
 }
 
 
@@ -460,41 +395,31 @@ function filterProducts() {
 // CATEGORY BUTTONS
 // =====================================================
 
-categoryButtons.forEach(
-    function(button) {
+categoryButtons.forEach(function(button) {
 
-        button.addEventListener(
-            "click",
-            function() {
+    button.addEventListener(
+        "click",
+        function() {
 
-                selectedCategory =
-                    this.dataset.filter ||
-                    "all";
+            selectedCategory =
+                this.dataset.filter || "all";
 
 
-                categoryButtons.forEach(
-                    function(btn) {
+            categoryButtons.forEach(function(btn) {
 
-                        btn.classList.remove(
-                            "active"
-                        );
+                btn.classList.remove("active");
 
-                    }
-                );
+            });
 
 
-                this.classList.add(
-                    "active"
-                );
+            this.classList.add("active");
 
+            filterProducts();
 
-                filterProducts();
+        }
+    );
 
-            }
-        );
-
-    }
-);
+});
 
 
 // =====================================================
@@ -524,9 +449,7 @@ if (searchButton) {
 // =====================================================
 
 const shopNowButton =
-    document.getElementById(
-        "shop-now"
-    );
+    document.getElementById("shop-now");
 
 
 if (shopNowButton) {
@@ -536,9 +459,7 @@ if (shopNowButton) {
         function() {
 
             const productsSection =
-                document.getElementById(
-                    "products"
-                );
+                document.getElementById("products");
 
             if (productsSection) {
 
@@ -588,8 +509,7 @@ function displayCart() {
 
         if (cartTotalElement) {
 
-            cartTotalElement.textContent =
-                "0";
+            cartTotalElement.textContent = "0";
 
         }
 
@@ -600,59 +520,51 @@ function displayCart() {
     let total = 0;
 
 
-    cart.forEach(
-        function(product, index) {
+    cart.forEach(function(product, index) {
 
-            const price =
-                Number(
-                    product.price
-                ) || 0;
+        const price =
+            Number(product.price) || 0;
 
-            total += price;
+        total += price;
 
 
-            const cartItem =
-                document.createElement(
-                    "div"
-                );
+        const cartItem =
+            document.createElement("div");
 
-            cartItem.className =
-                "cart-item";
+        cartItem.className =
+            "cart-item";
 
 
-            cartItem.innerHTML = `
+        cartItem.innerHTML = `
 
-                <div>
+            <div>
 
-                    <h3>
-                        ${escapeHTML(
-                            product.name
-                        )}
-                    </h3>
+                <h3>
+                    ${escapeHTML(product.name)}
+                </h3>
 
-                    <p>
-                        Rs. ${price}
-                    </p>
+                <p>
+                    Rs. ${price}
+                </p>
 
-                </div>
+            </div>
 
-                <button
-                    class="remove-btn"
-                    type="button"
-                    onclick="removeFromCart(${index})"
-                >
-                    Remove
-                </button>
+            <button
+                class="remove-btn"
+                type="button"
+                onclick="removeFromCart(${index})"
+            >
+                Remove
+            </button>
 
-            `;
+        `;
 
 
-            cartItemsContainer.appendChild(
-                cartItem
-            );
+        cartItemsContainer.appendChild(
+            cartItem
+        );
 
-        }
-    );
+    });
 
 
     if (cartTotalElement) {
@@ -678,11 +590,7 @@ function removeFromCart(index) {
     }
 
 
-    cart.splice(
-        index,
-        1
-    );
-
+    cart.splice(index, 1);
 
     saveCart();
 
@@ -709,8 +617,7 @@ function displayCheckout() {
     }
 
 
-    checkoutItemsContainer.innerHTML =
-        "";
+    checkoutItemsContainer.innerHTML = "";
 
 
     if (cart.length === 0) {
@@ -730,8 +637,7 @@ function displayCheckout() {
 
         if (checkoutTotalElement) {
 
-            checkoutTotalElement.textContent =
-                "0";
+            checkoutTotalElement.textContent = "0";
 
         }
 
@@ -742,52 +648,41 @@ function displayCheckout() {
     let total = 0;
 
 
-    cart.forEach(
-        function(product) {
+    cart.forEach(function(product) {
 
-            const price =
-                Number(
-                    product.price
-                ) || 0;
+        const price =
+            Number(product.price) || 0;
 
-            total += price;
+        total += price;
 
 
-            const item =
-                document.createElement(
-                    "div"
-                );
+        const item =
+            document.createElement("div");
+
+        item.className =
+            "checkout-item";
 
 
-            item.className =
-                "checkout-item";
+        item.innerHTML = `
+
+            <div>
+
+                <h4>
+                    ${escapeHTML(product.name)}
+                </h4>
+
+                <p>
+                    Rs. ${price}
+                </p>
+
+            </div>
+
+        `;
 
 
-            item.innerHTML = `
+        checkoutItemsContainer.appendChild(item);
 
-                <div>
-
-                    <h4>
-                        ${escapeHTML(
-                            product.name
-                        )}
-                    </h4>
-
-                    <p>
-                        Rs. ${price}
-                    </p>
-
-                </div>
-
-            `;
-
-
-            checkoutItemsContainer.appendChild(
-                item
-            );
-
-        }
-    );
+    });
 
 
     if (checkoutTotalElement) {
@@ -799,7 +694,7 @@ function displayCheckout() {
 }
 // =====================================================
 // EVERYTHING 400 - SCRIPT.JS
-// PART 3 - CHECKOUT + EMAIL + ORDER STATUS
+// PART 3 - CHECKOUT + ORDER STATUS
 // =====================================================
 
 
@@ -837,33 +732,22 @@ function getCustomerOrderId() {
 function formatOrderDate(dateValue) {
 
     if (!dateValue) {
-
         return "Date not available";
-
     }
-
 
     const date =
         new Date(dateValue);
 
-
-    if (
-        Number.isNaN(
-            date.getTime()
-        )
-    ) {
-
+    if (Number.isNaN(date.getTime())) {
         return "Date not available";
-
     }
-
 
     return date.toLocaleString();
 }
 
 
 // =====================================================
-// SHOW CUSTOMER ORDER STATUS
+// LOAD CUSTOMER ORDER STATUS
 // =====================================================
 
 async function loadCustomerOrderStatus() {
@@ -920,10 +804,7 @@ async function loadCustomerOrderStatus() {
         } = await db
             .from("orders")
             .select("*")
-            .eq(
-                "id",
-                orderId
-            )
+            .eq("id", orderId)
             .maybeSingle();
 
 
@@ -933,7 +814,6 @@ async function loadCustomerOrderStatus() {
                 "Order status error:",
                 error
             );
-
 
             customerOrderStatus.innerHTML = `
                 <p>
@@ -959,8 +839,7 @@ async function loadCustomerOrderStatus() {
 
         const status =
             String(
-                data.status ||
-                "Pending"
+                data.status || "Pending"
             );
 
 
@@ -972,55 +851,47 @@ async function loadCustomerOrderStatus() {
             "Your order has been received.";
 
 
-        if (
-            normalizedStatus ===
-            "pending"
-        ) {
+        if (normalizedStatus === "pending") {
 
             statusMessage =
                 "Your order is pending.";
 
         }
+
         else if (
-            normalizedStatus ===
-                "confirm" ||
-            normalizedStatus ===
-                "confirmed"
+            normalizedStatus === "confirm" ||
+            normalizedStatus === "confirmed"
         ) {
 
             statusMessage =
                 "Your order has been confirmed.";
 
         }
+
         else if (
-            normalizedStatus ===
-                "ship" ||
-            normalizedStatus ===
-                "shipped"
+            normalizedStatus === "ship" ||
+            normalizedStatus === "shipped"
         ) {
 
             statusMessage =
                 "Your order has been shipped.";
 
         }
+
         else if (
-            normalizedStatus ===
-                "delivery" ||
-            normalizedStatus ===
-                "delivered"
+            normalizedStatus === "delivery" ||
+            normalizedStatus === "delivered"
         ) {
 
             statusMessage =
                 "Your order has been delivered.";
 
         }
+
         else if (
-            normalizedStatus ===
-                "cancel" ||
-            normalizedStatus ===
-                "cancelled" ||
-            normalizedStatus ===
-                "canceled"
+            normalizedStatus === "cancel" ||
+            normalizedStatus === "cancelled" ||
+            normalizedStatus === "canceled"
         ) {
 
             statusMessage =
@@ -1037,15 +908,15 @@ async function loadCustomerOrderStatus() {
                     My Order Status
                 </h3>
 
+
                 <p>
                     <strong>
                         Order ID:
                     </strong>
 
-                    ${escapeHTML(
-                        data.id
-                    )}
+                    ${escapeHTML(data.id)}
                 </p>
+
 
                 <p>
                     <strong>
@@ -1057,17 +928,15 @@ async function loadCustomerOrderStatus() {
                             normalizedStatus
                         )}"
                     >
-                        ${escapeHTML(
-                            status
-                        )}
+                        ${escapeHTML(status)}
                     </span>
                 </p>
 
+
                 <p>
-                    ${escapeHTML(
-                        statusMessage
-                    )}
+                    ${escapeHTML(statusMessage)}
                 </p>
+
 
                 <p>
                     <strong>
@@ -1080,6 +949,7 @@ async function loadCustomerOrderStatus() {
                         )
                     )}
                 </p>
+
 
                 <p>
                     <strong>
@@ -1096,7 +966,6 @@ async function loadCustomerOrderStatus() {
 
         `;
 
-
     } catch (error) {
 
         console.error(
@@ -1104,13 +973,11 @@ async function loadCustomerOrderStatus() {
             error
         );
 
-
         customerOrderStatus.innerHTML = `
             <p>
                 Something went wrong while loading your order.
             </p>
         `;
-
     }
 }
 
@@ -1139,33 +1006,19 @@ if (checkoutForm) {
 
 
             const nameInput =
-                document.getElementById(
-                    "name"
-                );
-
+                document.getElementById("name");
 
             const emailInput =
-                document.getElementById(
-                    "email"
-                );
-
+                document.getElementById("email");
 
             const phoneInput =
-                document.getElementById(
-                    "phone"
-                );
-
+                document.getElementById("phone");
 
             const addressInput =
-                document.getElementById(
-                    "address"
-                );
-
+                document.getElementById("address");
 
             const cityInput =
-                document.getElementById(
-                    "city"
-                );
+                document.getElementById("city");
 
 
             const name =
@@ -1173,24 +1026,20 @@ if (checkoutForm) {
                     ? nameInput.value.trim()
                     : "";
 
-
             const email =
                 emailInput
                     ? emailInput.value.trim()
                     : "";
-
 
             const phone =
                 phoneInput
                     ? phoneInput.value.trim()
                     : "";
 
-
             const address =
                 addressInput
                     ? addressInput.value.trim()
                     : "";
-
 
             const city =
                 cityInput
@@ -1230,15 +1079,11 @@ if (checkoutForm) {
 
             const total =
                 cart.reduce(
-                    function(
-                        sum,
-                        product
-                    ) {
+                    function(sum, product) {
 
                         return sum +
                             Number(
-                                product.price ||
-                                0
+                                product.price || 0
                             );
 
                     },
@@ -1247,34 +1092,30 @@ if (checkoutForm) {
 
 
             const productsData =
-                cart.map(
-                    function(product) {
+                cart.map(function(product) {
 
-                        return {
+                    return {
 
-                            id:
-                                product.id,
+                        id:
+                            product.id,
 
-                            name:
-                                product.name,
+                        name:
+                            product.name,
 
-                            price:
-                                Number(
-                                    product.price
-                                ) || 0,
+                        price:
+                            Number(
+                                product.price
+                            ) || 0,
 
-                            category:
-                                product.category ||
-                                "other",
+                        category:
+                            product.category || "other",
 
-                            image:
-                                product.image ||
-                                ""
+                        image:
+                            product.image || ""
 
-                        };
+                    };
 
-                    }
-                );
+                });
 
 
             try {
@@ -1324,7 +1165,6 @@ if (checkoutForm) {
                         error
                     );
 
-
                     alert(
                         `Order could not be placed: ${error.message}`
                     );
@@ -1371,7 +1211,6 @@ if (checkoutForm) {
 
                 loadCustomerOrderStatus();
 
-
             } catch (error) {
 
                 console.error(
@@ -1379,14 +1218,11 @@ if (checkoutForm) {
                     error
                 );
 
-
                 alert(
                     `Something went wrong: ${
-                        error.message ||
-                        error
+                        error.message || error
                     }`
                 );
-
             }
 
         }

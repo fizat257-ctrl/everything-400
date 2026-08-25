@@ -29,7 +29,9 @@
 
     <header>
 
-        <h1>Everything 400</h1>
+        <h1>
+            Everything 400
+        </h1>
 
 
         <nav>
@@ -56,10 +58,6 @@
                 Cart (0)
             </a>
 
-
-            <!-- =========================
-                 TRACK ORDER
-            ========================== -->
 
             <a href="track-order.html">
                 Track Order
@@ -117,6 +115,7 @@
             <h2>
                 Shop Our Products
             </h2>
+
 
 
             <!-- =========================
@@ -199,7 +198,7 @@
 
 
             <!-- =========================
-                 PRODUCTS
+                 PRODUCT CONTAINER
             ========================== -->
 
             <div
@@ -213,8 +212,96 @@
 
             </div>
 
+        </section>
+
+
+
+        <!-- =========================
+             PRODUCT DETAILS
+             This section will be filled
+             by script.js when a product
+             is selected.
+        ========================== -->
+
+        <section
+            class="product-details-section"
+            id="product-details-section"
+            hidden
+        >
+
+            <div
+                id="product-details"
+                class="product-details"
+            >
+
+                <!-- Product details will appear here -->
+
+            </div>
 
         </section>
+
+
+
+        <!-- =========================
+             PRODUCT ACTIONS
+             Ready for script.js
+        ========================== -->
+
+        <div
+            id="product-action-area"
+            class="product-action-area"
+            hidden
+        >
+
+            <div class="quantity-control">
+
+                <button
+                    type="button"
+                    id="quantity-decrease"
+                >
+                    -
+                </button>
+
+
+                <span id="product-quantity">
+                    1
+                </span>
+
+
+                <button
+                    type="button"
+                    id="quantity-increase"
+                >
+                    +
+                </button>
+
+            </div>
+
+
+            <p
+                id="product-stock"
+                class="product-stock"
+            >
+                Stock available
+            </p>
+
+
+            <button
+                type="button"
+                id="add-to-cart-detail"
+            >
+                Add to Cart
+            </button>
+
+
+            <button
+                type="button"
+                id="buy-now-detail"
+            >
+                Buy Now
+            </button>
+
+        </div>
 
 
     </main>
