@@ -1646,18 +1646,68 @@ function displayOrders() {
 </p>
 
 
-<p class="order-payment-status">
+<div class="order-payment-section">
 
-    <strong>
-        Payment Status:
-    </strong>
+    <p>
+        <strong>
+            Payment Method:
+        </strong>
 
-    ${escapeHTML(
-        order.payment_status || "Pending"
-    )}
+        ${escapeHTML(
+            order.payment_method || "Not selected"
+        )}
+    </p>
 
-</p>
 
+    <p>
+        <strong>
+            Payment Status:
+        </strong>
+
+        <span class="payment-status-badge">
+
+            ${escapeHTML(
+                order.payment_status || "Pending"
+            )}
+
+        </span>
+    </p>
+
+
+    <div class="payment-status-buttons">
+
+        <button
+            type="button"
+            class="payment-status-btn"
+            data-id="${escapeHTML(order.id)}"
+            data-payment-status="Pending"
+        >
+            Pending
+        </button>
+
+
+        <button
+            type="button"
+            class="payment-status-btn"
+            data-id="${escapeHTML(order.id)}"
+            data-payment-status="Paid"
+        >
+            Paid
+        </button>
+
+
+        <button
+            type="button"
+            class="payment-status-btn"
+            data-id="${escapeHTML(order.id)}"
+            data-payment-status="Failed"
+        >
+            Failed
+        </button>
+
+    </div>
+
+</div>
 
                 <div class="order-status-section">
 
