@@ -49,7 +49,11 @@
                 href="./cart.html"
                 id="cart-link"
             >
-                Cart
+                Cart (0)
+            </a>
+
+            <a href="./track-order.html">
+                Track Order
             </a>
 
         </nav>
@@ -59,7 +63,7 @@
 
 
     <!-- =========================
-         CART
+         MAIN
     ========================== -->
 
     <main>
@@ -71,9 +75,14 @@
             </h2>
 
 
-            <!-- CART ITEMS -->
+            <!-- =========================
+                 CART ITEMS
+            ========================== -->
 
-            <div id="cart-items">
+            <div
+                id="cart-items"
+                class="cart-items"
+            >
 
                 <p>
                     Loading cart...
@@ -82,13 +91,21 @@
             </div>
 
 
-            <!-- CART SUMMARY -->
+
+            <!-- =========================
+                 CART SUMMARY
+            ========================== -->
 
             <div class="cart-summary">
 
                 <h3>
+
                     Total: Rs.
-                    <span id="cart-total">0</span>
+
+                    <span id="cart-total">
+                        0
+                    </span>
+
                 </h3>
 
 
@@ -130,11 +147,13 @@
     ></script>
 
 
+
     <!-- =========================
          SUPABASE CONNECTION
     ========================== -->
 
     <script src="./supabase.js"></script>
+
 
 
     <!-- =========================

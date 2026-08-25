@@ -852,12 +852,16 @@ if (shopNowButton) {
 // DISPLAY CART
 // =====================================================
 
+// =====================================================
+// DISPLAY CART - UPDATED
+// Quantity Increase / Decrease
+// =====================================================
+
 function displayCart() {
 
     if (!cartItemsContainer) return;
 
     cartItemsContainer.innerHTML = "";
-
 
     if (cart.length === 0) {
 
@@ -879,11 +883,8 @@ function displayCart() {
 
         `;
 
-
         if (cartTotalElement) {
-
             cartTotalElement.textContent = "0";
-
         }
 
         return;
@@ -893,44 +894,371 @@ function displayCart() {
     let total = 0;
 
 
-    cart.forEach(function(product, index) {
+    // Group products by ID
+    const groupedCart = [];
+
+    cart.forEach(function(product) {
+
+        const existing =
+            groupedCart.find(function(item) {
+
+                return String(item.id) ===
+                    String(product.id);
+
+            });
+
+
+        if (existing) {
+
+            existing.quantity += 1;
+
+        } else {
+
+            groupedCart.push({
+
+                ...product,
+
+                quantity: 1
+
+            });
+
+        }
+
+    });
+
+
+    // Rebuild cart with quantities
+    cart = [];
+
+    groupedCart.forEach(function(item) {
+
+        for (
+            let i = 0;
+            i < item.quantity;
+            i++
+        ) {
+
+            cart.push({
+
+                id: item.id,
+
+                name: item.name,
+
+                price: Number(item.price) || 0,
+
+                category: item.category || "other",
+
+                image: item.image || "",
+
+                description:
+                    item.description || ""
+
+            });
+
+        }
+
+    });
+
+
+    groupedCart.forEach(function(product) {
 
         const price =
             Number(product.price) || 0;
 
-        total += price;
+        const quantity =
+            Number(product.quantity) || 1;
+
+
+        const itemTotal =
+            price * quantity;
+
+
+        total += itemTotal;
 
 
         const cartItem =
             document.createElement("div");
 
+
         cartItem.className =
             "cart-item";
 
 
+        const imageHTML =
+            product.image
+                ? `
+                    <img
+                        src="${escapeHTML(product.image)}"
+                        alt="${escapeHTML(product.name)}"
+                        class="cart-product-image"
+                    >
+                `
+                : `
+                    <div class="cart-product-placeholder">
+                        🛍️
+                    </div>
+                `;
+
+
         cartItem.innerHTML = `
 
-            <div>
+            <div class="cart-product-info">
 
-                <h3>
-                    ${escapeHTML(product.name)}
-                </h3>
+                ${imageHTML}
 
-                <p>
-                    Rs. ${price}
-                </p>
+                <div>
+
+                    <h3>
+                        ${escapeHTML(product.name)}
+                    </h3>
+
+                    <p>
+                        Rs. ${price.toLocaleString()}
+                    </p>
+
+                </div>
 
             </div>
 
+
+            <div class="cart-quantity-controls">
+
+                <button
+                    type="button"
+                    class="quantity-btn decrease-btn"
+                    data-id="${escapeHTML(product.id)}"
+                >
+                    −
+                </button>
+
+
+                <span class="cart-quantity">
+                    ${quantity}
+                </span>
+
+
+                <button
+                    type="button"
+                    class="quantity-btn increase-btn"
+                    data-id="${escapeHTML(product.id)}"
+                >
+                    +
+                </button>
+
+            </div>
+
+
+            <div class="cart-item-total">
+
+                <strong>
+                    Rs. ${itemTotal.toLocaleString()}
+                </strong>
+
+            </div>
+
+
             <button
-                class="remove-btn"
                 type="button"
-                onclick="removeFromCart(${index})"
+                class="remove-btn"
+                data-id="${escapeHTML(product.id)}"
             >
                 Remove
             </button>
 
         `;
+
+
+        // ================================
+        // INCREASE
+        // ================================
+
+        const increaseButton =
+            cartItem.querySelector(
+                ".increase-btn"
+            );
+
+
+        if (increaseButton) {
+
+            increaseButton.addEventListener(
+                "click",
+                function() {
+
+                    const productId =
+                        this.dataset.id;
+
+
+                    const productIndex =
+                        cart.findIndex(
+                            function(item) {
+
+                                return String(
+                                    item.id
+                                ) ===
+                                String(
+                                    productId
+                                );
+
+                            }
+                        );
+
+
+                    if (productIndex !== -1) {
+
+                        const productToAdd =
+                            cart[productIndex];
+
+
+                        cart.push({
+
+                            id:
+                                productToAdd.id,
+
+                            name:
+                                productToAdd.name,
+
+                            price:
+                                Number(
+                                    productToAdd.price
+                                ) || 0,
+
+                            category:
+                                productToAdd.category ||
+                                "other",
+
+                            image:
+                                productToAdd.image ||
+                                "",
+
+                            description:
+                                productToAdd.description ||
+                                ""
+
+                        });
+
+
+                        saveCart();
+
+                        updateCartCount();
+
+                        displayCart();
+
+                        displayCheckout();
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        // ================================
+        // DECREASE
+        // ================================
+
+        const decreaseButton =
+            cartItem.querySelector(
+                ".decrease-btn"
+            );
+
+
+        if (decreaseButton) {
+
+            decreaseButton.addEventListener(
+                "click",
+                function() {
+
+                    const productId =
+                        this.dataset.id;
+
+
+                    const productIndex =
+                        cart.findIndex(
+                            function(item) {
+
+                                return String(
+                                    item.id
+                                ) ===
+                                String(
+                                    productId
+                                );
+
+                            }
+                        );
+
+
+                    if (productIndex !== -1) {
+
+                        cart.splice(
+                            productIndex,
+                            1
+                        );
+
+
+                        saveCart();
+
+                        updateCartCount();
+
+                        displayCart();
+
+                        displayCheckout();
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        // ================================
+        // REMOVE
+        // ================================
+
+        const removeButton =
+            cartItem.querySelector(
+                ".remove-btn"
+            );
+
+
+        if (removeButton) {
+
+            removeButton.addEventListener(
+                "click",
+                function() {
+
+                    const productId =
+                        this.dataset.id;
+
+
+                    cart =
+                        cart.filter(
+                            function(item) {
+
+                                return String(
+                                    item.id
+                                ) !==
+                                String(
+                                    productId
+                                );
+
+                            }
+                        );
+
+
+                    saveCart();
+
+                    updateCartCount();
+
+                    displayCart();
+
+                    displayCheckout();
+
+                }
+            );
+
+        }
 
 
         cartItemsContainer.appendChild(
@@ -940,12 +1268,20 @@ function displayCart() {
     });
 
 
+    // ================================
+    // UPDATE TOTAL
+    // ================================
+
     if (cartTotalElement) {
 
         cartTotalElement.textContent =
-            total;
+            total.toLocaleString();
 
     }
+
+
+    saveCart();
+
 }
 
 
