@@ -1,6 +1,6 @@
 // =====================================================
 // EVERYTHING 400 - ADMIN.JS
-// PART 1 - SUPABASE + PRODUCTS
+// PART 1 - SUPABASE + PRODUCTS + STOCK
 // =====================================================
 
 const db = window.supabaseClient;
@@ -54,9 +54,11 @@ const dashboardTotalSales =
 // =====================================================
 
 if (!db) {
+
     console.error(
         "Supabase client not found. Make sure supabase.js is loaded before admin.js."
     );
+
 }
 
 
@@ -72,6 +74,7 @@ function escapeHTML(value) {
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
+
 }
 
 
@@ -82,6 +85,7 @@ function escapeHTML(value) {
 function formatPrice(price) {
 
     return Number(price || 0).toLocaleString();
+
 }
 
 
@@ -92,16 +96,26 @@ function formatPrice(price) {
 function formatDate(dateValue) {
 
     if (!dateValue) {
+
         return "Date not available";
+
     }
 
-    const date = new Date(dateValue);
+    const date =
+        new Date(dateValue);
 
-    if (Number.isNaN(date.getTime())) {
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
+
         return "Date not available";
+
     }
 
     return date.toLocaleString();
+
 }
 
 
@@ -112,14 +126,20 @@ function formatDate(dateValue) {
 function updateDashboardSummary() {
 
     if (dashboardProductCount) {
+
         dashboardProductCount.textContent =
             products.length;
+
     }
 
+
     if (dashboardOrderCount) {
+
         dashboardOrderCount.textContent =
             orders.length;
+
     }
+
 
     const pendingOrders =
         orders.filter(function(order) {
@@ -130,12 +150,17 @@ function updateDashboardSummary() {
 
         }).length;
 
+
     if (dashboardPendingCount) {
+
         dashboardPendingCount.textContent =
             pendingOrders;
+
     }
 
+
     let totalSales = 0;
+
 
     orders.forEach(function(order) {
 
@@ -144,12 +169,14 @@ function updateDashboardSummary() {
 
     });
 
+
     if (dashboardTotalSales) {
 
         dashboardTotalSales.textContent =
             `Rs. ${formatPrice(totalSales)}`;
 
     }
+
 }
 
 
@@ -166,7 +193,9 @@ async function loadProducts() {
         );
 
         return;
+
     }
+
 
     if (productsContainer) {
 
@@ -177,6 +206,7 @@ async function loadProducts() {
         `;
 
     }
+
 
     try {
 
@@ -189,6 +219,7 @@ async function loadProducts() {
             .order("id", {
                 ascending: true
             });
+
 
         if (error) {
 
@@ -206,16 +237,20 @@ async function loadProducts() {
             updateDashboardSummary();
 
             return;
+
         }
+
 
         products =
             data || [];
+
 
         displayProducts();
 
         updateProductCount();
 
         updateDashboardSummary();
+
 
     } catch (error) {
 
@@ -224,10 +259,14 @@ async function loadProducts() {
             error
         );
 
+        products = [];
+
         showProductError(
             "Something went wrong while loading products."
         );
+
     }
+
 }
 
 
@@ -239,13 +278,16 @@ function showProductError(message) {
 
     if (!productsContainer) return;
 
+
     productsContainer.innerHTML = `
         <p class="no-products">
             ${escapeHTML(message)}
         </p>
     `;
 
+
     updateProductCount();
+
 }
 
 
@@ -257,11 +299,14 @@ function updateProductCount() {
 
     if (!productCount) return;
 
+
     const count =
         products.length;
 
+
     productCount.textContent =
         `${count} Product${count !== 1 ? "s" : ""}`;
+
 }
 
 
@@ -273,7 +318,9 @@ function displayProducts() {
 
     if (!productsContainer) return;
 
+
     productsContainer.innerHTML = "";
+
 
     if (products.length === 0) {
 
@@ -294,15 +341,23 @@ function displayProducts() {
         updateProductCount();
 
         return;
+
     }
+
 
     products.forEach(function(product) {
 
         const card =
             document.createElement("div");
 
+
         card.className =
             "admin-product-card";
+
+
+        const stock =
+            Number(product.stock ?? 0);
+
 
         const imageHTML =
             product.image
@@ -319,6 +374,25 @@ function displayProducts() {
                     </div>
                 `;
 
+
+        let stockText =
+            "Out of stock";
+
+
+        if (stock > 0 && stock <= 5) {
+
+            stockText =
+                `Only ${stock} left`;
+
+        }
+        else if (stock > 5) {
+
+            stockText =
+                `${stock} in stock`;
+
+        }
+
+
         card.innerHTML = `
 
             <div class="admin-product-info">
@@ -327,15 +401,18 @@ function displayProducts() {
                     ${imageHTML}
                 </div>
 
+
                 <div class="admin-product-details">
 
                     <h3>
                         ${escapeHTML(product.name)}
                     </h3>
 
+
                     <p class="admin-product-price">
                         Rs. ${formatPrice(product.price)}
                     </p>
+
 
                     <small class="admin-product-category">
                         ${escapeHTML(
@@ -343,9 +420,21 @@ function displayProducts() {
                         )}
                     </small>
 
+
+                    <p class="admin-product-stock">
+
+                        <strong>
+                            Stock:
+                        </strong>
+
+                        ${escapeHTML(stockText)}
+
+                    </p>
+
                 </div>
 
             </div>
+
 
             <div class="admin-product-actions">
 
@@ -357,6 +446,7 @@ function displayProducts() {
                     Edit
                 </button>
 
+
                 <button
                     type="button"
                     class="delete-product"
@@ -366,13 +456,21 @@ function displayProducts() {
                 </button>
 
             </div>
+
         `;
 
+
         const editButton =
-            card.querySelector(".edit-product");
+            card.querySelector(
+                ".edit-product"
+            );
+
 
         const deleteButton =
-            card.querySelector(".delete-product");
+            card.querySelector(
+                ".delete-product"
+            );
+
 
         if (editButton) {
 
@@ -380,12 +478,15 @@ function displayProducts() {
                 "click",
                 function() {
 
-                    editProduct(product.id);
+                    editProduct(
+                        product.id
+                    );
 
                 }
             );
 
         }
+
 
         if (deleteButton) {
 
@@ -393,18 +494,25 @@ function displayProducts() {
                 "click",
                 function() {
 
-                    deleteProduct(product.id);
+                    deleteProduct(
+                        product.id
+                    );
 
                 }
             );
 
         }
 
-        productsContainer.appendChild(card);
+
+        productsContainer.appendChild(
+            card
+        );
 
     });
 
+
     updateProductCount();
+
 }
 
 
@@ -420,6 +528,7 @@ function convertImageToBase64(file) {
             const reader =
                 new FileReader();
 
+
             reader.onload =
                 function() {
 
@@ -428,6 +537,7 @@ function convertImageToBase64(file) {
                     );
 
                 };
+
 
             reader.onerror =
                 function() {
@@ -438,10 +548,12 @@ function convertImageToBase64(file) {
 
                 };
 
+
             reader.readAsDataURL(file);
 
         }
     );
+
 }
 
 
@@ -457,6 +569,7 @@ if (productForm) {
 
             event.preventDefault();
 
+
             if (!db) {
 
                 alert(
@@ -464,32 +577,47 @@ if (productForm) {
                 );
 
                 return;
+
             }
+
 
             const nameInput =
                 document.getElementById(
                     "product-name"
                 );
 
+
             const priceInput =
                 document.getElementById(
                     "product-price"
                 );
+
 
             const categoryInput =
                 document.getElementById(
                     "product-category"
                 );
 
+
+            const stockInput =
+                document.getElementById(
+                    "product-stock"
+                );
+
+
             const name =
                 nameInput
                     ? nameInput.value.trim()
                     : "";
 
+
             const price =
                 priceInput
-                    ? Number(priceInput.value)
+                    ? Number(
+                        priceInput.value
+                    )
                     : 0;
+
 
             const category =
                 categoryInput
@@ -498,6 +626,15 @@ if (productForm) {
                         .toLowerCase()
                     : "";
 
+
+            const stock =
+                stockInput
+                    ? Number(
+                        stockInput.value
+                    )
+                    : 0;
+
+
             if (!name) {
 
                 alert(
@@ -505,7 +642,9 @@ if (productForm) {
                 );
 
                 return;
+
             }
+
 
             if (!category) {
 
@@ -514,7 +653,9 @@ if (productForm) {
                 );
 
                 return;
+
             }
+
 
             if (!price || price <= 0) {
 
@@ -523,9 +664,26 @@ if (productForm) {
                 );
 
                 return;
+
             }
 
+
+            if (
+                Number.isNaN(stock) ||
+                stock < 0
+            ) {
+
+                alert(
+                    "Please enter a valid stock quantity."
+                );
+
+                return;
+
+            }
+
+
             let image = null;
+
 
             if (
                 imageInput &&
@@ -535,6 +693,7 @@ if (productForm) {
 
                 const file =
                     imageInput.files[0];
+
 
                 if (
                     file.size >
@@ -546,10 +705,14 @@ if (productForm) {
                     );
 
                     return;
+
                 }
 
+
                 if (
-                    !file.type.startsWith("image/")
+                    !file.type.startsWith(
+                        "image/"
+                    )
                 ) {
 
                     alert(
@@ -557,7 +720,9 @@ if (productForm) {
                     );
 
                     return;
+
                 }
+
 
                 try {
 
@@ -578,30 +743,44 @@ if (productForm) {
                     );
 
                     return;
+
                 }
+
             }
+
 
             try {
 
                 const productData = {
 
-                    name: name,
+                    name:
+                        name,
 
-                    price: price,
+                    price:
+                        price,
 
-                    category: category,
+                    category:
+                        category,
 
-                    image: image
+                    image:
+                        image,
+
+                    stock:
+                        stock
 
                 };
+
 
                 const {
                     data,
                     error
                 } = await db
                     .from("products")
-                    .insert(productData)
+                    .insert(
+                        productData
+                    )
                     .select();
+
 
                 if (error) {
 
@@ -615,20 +794,26 @@ if (productForm) {
                     );
 
                     return;
+
                 }
+
 
                 console.log(
                     "Product added:",
                     data
                 );
 
+
                 productForm.reset();
 
+
                 await loadProducts();
+
 
                 alert(
                     "Product added successfully!"
                 );
+
 
             } catch (error) {
 
@@ -640,9 +825,12 @@ if (productForm) {
                 alert(
                     `Unexpected error:\n\n${error.message}`
                 );
+
             }
+
         }
     );
+
 }
 
 
@@ -659,7 +847,9 @@ async function editProduct(id) {
         );
 
         return;
+
     }
+
 
     const product =
         products.find(function(item) {
@@ -669,6 +859,7 @@ async function editProduct(id) {
 
         });
 
+
     if (!product) {
 
         alert(
@@ -676,7 +867,9 @@ async function editProduct(id) {
         );
 
         return;
+
     }
+
 
     const newName =
         prompt(
@@ -684,10 +877,13 @@ async function editProduct(id) {
             product.name
         );
 
+
     if (newName === null) return;
+
 
     const cleanName =
         newName.trim();
+
 
     if (!cleanName) {
 
@@ -696,7 +892,9 @@ async function editProduct(id) {
         );
 
         return;
+
     }
+
 
     const newPrice =
         prompt(
@@ -704,10 +902,13 @@ async function editProduct(id) {
             product.price
         );
 
+
     if (newPrice === null) return;
+
 
     const price =
         Number(newPrice);
+
 
     if (!price || price <= 0) {
 
@@ -716,7 +917,37 @@ async function editProduct(id) {
         );
 
         return;
+
     }
+
+
+    const newStock =
+        prompt(
+            "Enter stock quantity:",
+            Number(product.stock ?? 0)
+        );
+
+
+    if (newStock === null) return;
+
+
+    const stock =
+        Number(newStock);
+
+
+    if (
+        Number.isNaN(stock) ||
+        stock < 0
+    ) {
+
+        alert(
+            "Please enter a valid stock quantity."
+        );
+
+        return;
+
+    }
+
 
     try {
 
@@ -725,10 +956,22 @@ async function editProduct(id) {
         } = await db
             .from("products")
             .update({
-                name: cleanName,
-                price: price
+
+                name:
+                    cleanName,
+
+                price:
+                    price,
+
+                stock:
+                    stock
+
             })
-            .eq("id", id);
+            .eq(
+                "id",
+                id
+            );
+
 
         if (error) {
 
@@ -742,13 +985,17 @@ async function editProduct(id) {
             );
 
             return;
+
         }
 
+
         await loadProducts();
+
 
         alert(
             "Product updated successfully!"
         );
+
 
     } catch (error) {
 
@@ -760,7 +1007,9 @@ async function editProduct(id) {
         alert(
             `Something went wrong:\n\n${error.message}`
         );
+
     }
+
 }
 
 
@@ -777,7 +1026,9 @@ async function deleteProduct(id) {
         );
 
         return;
+
     }
+
 
     const product =
         products.find(function(item) {
@@ -787,6 +1038,7 @@ async function deleteProduct(id) {
 
         });
 
+
     if (!product) {
 
         alert(
@@ -794,14 +1046,18 @@ async function deleteProduct(id) {
         );
 
         return;
+
     }
+
 
     const confirmDelete =
         confirm(
             `Are you sure you want to delete "${product.name}"?`
         );
 
+
     if (!confirmDelete) return;
+
 
     try {
 
@@ -810,7 +1066,11 @@ async function deleteProduct(id) {
         } = await db
             .from("products")
             .delete()
-            .eq("id", id);
+            .eq(
+                "id",
+                id
+            );
+
 
         if (error) {
 
@@ -824,13 +1084,17 @@ async function deleteProduct(id) {
             );
 
             return;
+
         }
 
+
         await loadProducts();
+
 
         alert(
             "Product deleted successfully!"
         );
+
 
     } catch (error) {
 
@@ -842,7 +1106,9 @@ async function deleteProduct(id) {
         alert(
             `Something went wrong:\n\n${error.message}`
         );
+
     }
+
 }
 // =====================================================
 // EVERYTHING 400 - ADMIN.JS
@@ -863,15 +1129,19 @@ async function loadOrders() {
         );
 
         return;
+
     }
 
+
     if (!ordersContainer) return;
+
 
     ordersContainer.innerHTML = `
         <p class="loading-orders">
             Loading orders...
         </p>
     `;
+
 
     try {
 
@@ -881,9 +1151,13 @@ async function loadOrders() {
         } = await db
             .from("orders")
             .select("*")
-            .order("created_at", {
-                ascending: false
-            });
+            .order(
+                "created_at",
+                {
+                    ascending: false
+                }
+            );
+
 
         if (error) {
 
@@ -894,22 +1168,29 @@ async function loadOrders() {
 
             orders = [];
 
+
             showOrderError(
                 "Orders could not be loaded."
             );
 
+
             updateDashboardSummary();
 
             return;
+
         }
 
-        orders = data || [];
+
+        orders =
+            data || [];
+
 
         displayOrders();
 
         updateOrderCount();
 
         updateDashboardSummary();
+
 
     } catch (error) {
 
@@ -918,12 +1199,16 @@ async function loadOrders() {
             error
         );
 
+
         orders = [];
+
 
         showOrderError(
             "Something went wrong while loading orders."
         );
+
     }
+
 }
 
 
@@ -935,13 +1220,16 @@ function showOrderError(message) {
 
     if (!ordersContainer) return;
 
+
     ordersContainer.innerHTML = `
         <p class="no-orders">
             ${escapeHTML(message)}
         </p>
     `;
 
+
     updateOrderCount();
+
 }
 
 
@@ -953,11 +1241,14 @@ function updateOrderCount() {
 
     if (!orderCount) return;
 
+
     const count =
         orders.length;
 
+
     orderCount.textContent =
         `${count} Order${count !== 1 ? "s" : ""}`;
+
 }
 
 
@@ -969,6 +1260,7 @@ function getCustomerData(order) {
 
     let customer = {};
 
+
     if (
         order.customer &&
         typeof order.customer === "object"
@@ -977,7 +1269,8 @@ function getCustomerData(order) {
         customer =
             order.customer;
 
-    } else if (
+    }
+    else if (
         typeof order.customer === "string"
     ) {
 
@@ -993,7 +1286,9 @@ function getCustomerData(order) {
             customer = {};
 
         }
+
     }
+
 
     return {
 
@@ -1003,11 +1298,13 @@ function getCustomerData(order) {
             customer.name ||
             "Unknown Customer",
 
+
         phone:
             order.customer_phone ||
             order.phone ||
             customer.phone ||
             "Not provided",
+
 
         email:
             order.customer_email ||
@@ -1015,11 +1312,13 @@ function getCustomerData(order) {
             customer.email ||
             "Not provided",
 
+
         address:
             order.customer_address ||
             order.address ||
             customer.address ||
             "Not provided",
+
 
         city:
             order.customer_city ||
@@ -1028,6 +1327,7 @@ function getCustomerData(order) {
             "Not provided"
 
     };
+
 }
 
 
@@ -1041,6 +1341,7 @@ function getOrderProducts(order) {
         order.products ||
         order.items ||
         [];
+
 
     if (
         typeof orderProducts === "string"
@@ -1058,11 +1359,16 @@ function getOrderProducts(order) {
             orderProducts = [];
 
         }
+
     }
 
-    return Array.isArray(orderProducts)
+
+    return Array.isArray(
+        orderProducts
+    )
         ? orderProducts
         : [];
+
 }
 
 
@@ -1076,7 +1382,11 @@ function getStatusClass(status) {
         status || "pending"
     )
         .toLowerCase()
-        .replace(/\s+/g, "-");
+        .replace(
+            /\s+/g,
+            "-"
+        );
+
 }
 
 
@@ -1088,7 +1398,9 @@ function displayOrders() {
 
     if (!ordersContainer) return;
 
+
     ordersContainer.innerHTML = "";
+
 
     if (orders.length === 0) {
 
@@ -1106,15 +1418,19 @@ function displayOrders() {
             </div>
         `;
 
+
         updateOrderCount();
 
         return;
+
     }
+
 
     orders.forEach(function(order) {
 
         const card =
             document.createElement("div");
+
 
         card.className =
             "admin-order-card";
@@ -1125,7 +1441,9 @@ function displayOrders() {
 
 
         const total =
-            Number(order.total || 0);
+            Number(
+                order.total || 0
+            );
 
 
         const createdAt =
@@ -1134,7 +1452,9 @@ function displayOrders() {
 
 
         const orderDate =
-            formatDate(createdAt);
+            formatDate(
+                createdAt
+            );
 
 
         const status =
@@ -1144,17 +1464,23 @@ function displayOrders() {
 
 
         const statusClass =
-            getStatusClass(status);
+            getStatusClass(
+                status
+            );
 
 
         const orderProducts =
-            getOrderProducts(order);
+            getOrderProducts(
+                order
+            );
 
 
         let productsHTML = "";
 
 
-        if (orderProducts.length > 0) {
+        if (
+            orderProducts.length > 0
+        ) {
 
             productsHTML = `
 
@@ -1173,21 +1499,26 @@ function displayOrders() {
                                 item.product_name ||
                                 "Product";
 
+
                             const quantity =
                                 Number(
                                     item.quantity || 1
                                 );
+
 
                             const itemPrice =
                                 Number(
                                     item.price || 0
                                 );
 
+
                             return `
 
                                 <li>
 
-                                    ${escapeHTML(itemName)}
+                                    ${escapeHTML(
+                                        itemName
+                                    )}
 
                                     × ${quantity}
 
@@ -1217,37 +1548,75 @@ function displayOrders() {
             <div class="admin-order-info">
 
                 <h3>
-                    ${escapeHTML(customer.name)}
+                    ${escapeHTML(
+                        customer.name
+                    )}
                 </h3>
 
 
                 <p>
-                    <strong>Phone:</strong>
-                    ${escapeHTML(customer.phone)}
+                    <strong>
+                        Order ID:
+                    </strong>
+
+                    ${escapeHTML(
+                        order.id
+                    )}
                 </p>
 
 
                 <p>
-                    <strong>Email:</strong>
-                    ${escapeHTML(customer.email)}
+                    <strong>
+                        Phone:
+                    </strong>
+
+                    ${escapeHTML(
+                        customer.phone
+                    )}
                 </p>
 
 
                 <p>
-                    <strong>Address:</strong>
-                    ${escapeHTML(customer.address)}
+                    <strong>
+                        Email:
+                    </strong>
+
+                    ${escapeHTML(
+                        customer.email
+                    )}
                 </p>
 
 
                 <p>
-                    <strong>City:</strong>
-                    ${escapeHTML(customer.city)}
+                    <strong>
+                        Address:
+                    </strong>
+
+                    ${escapeHTML(
+                        customer.address
+                    )}
                 </p>
 
 
                 <p>
-                    <strong>Order Date:</strong>
-                    ${escapeHTML(orderDate)}
+                    <strong>
+                        City:
+                    </strong>
+
+                    ${escapeHTML(
+                        customer.city
+                    )}
+                </p>
+
+
+                <p>
+                    <strong>
+                        Order Date:
+                    </strong>
+
+                    ${escapeHTML(
+                        orderDate
+                    )}
                 </p>
 
 
@@ -1260,7 +1629,8 @@ function displayOrders() {
                         Total:
                     </strong>
 
-                    Rs. ${formatPrice(total)}
+                    Rs.
+                    ${formatPrice(total)}
 
                 </p>
 
@@ -1345,31 +1715,36 @@ function displayOrders() {
             );
 
 
-        statusButtons.forEach(function(button) {
+        statusButtons.forEach(
+            function(button) {
 
-            button.addEventListener(
-                "click",
-                function() {
+                button.addEventListener(
+                    "click",
+                    function() {
 
-                    const orderId =
-                        this.dataset.id;
-
-                    const newStatus =
-                        this.dataset.status;
+                        const orderId =
+                            this.dataset.id;
 
 
-                    updateOrderStatus(
-                        orderId,
-                        newStatus
-                    );
-
-                }
-            );
-
-        });
+                        const newStatus =
+                            this.dataset.status;
 
 
-        ordersContainer.appendChild(card);
+                        updateOrderStatus(
+                            orderId,
+                            newStatus
+                        );
+
+                    }
+                );
+
+            }
+        );
+
+
+        ordersContainer.appendChild(
+            card
+        );
 
     });
 
@@ -1379,8 +1754,120 @@ function displayOrders() {
 }
 // =====================================================
 // EVERYTHING 400 - ADMIN.JS
-// PART 3 - ORDER STATUS + LOGOUT + INITIALIZE
+// PART 3 - ORDER STATUS + EMAIL + LOGOUT + INITIALIZE
 // =====================================================
+
+
+// =====================================================
+// SEND STATUS EMAIL
+// =====================================================
+
+async function sendStatusEmail(
+    order,
+    newStatus
+) {
+
+    if (!db) {
+
+        console.error(
+            "Cannot send email: Supabase unavailable."
+        );
+
+        return false;
+
+    }
+
+
+    const customer =
+        getCustomerData(order);
+
+
+    if (
+        !customer.email ||
+        customer.email === "Not provided"
+    ) {
+
+        console.warn(
+            "Customer email is not available."
+        );
+
+        return false;
+
+    }
+
+
+    try {
+
+        console.log(
+            "Sending status email:",
+            customer.email,
+            newStatus
+        );
+
+
+        const {
+            data,
+            error
+        } = await db.functions.invoke(
+            "send-status-email",
+            {
+                body: {
+
+                    orderId:
+                        order.id,
+
+                    customerName:
+                        customer.name,
+
+                    customerEmail:
+                        customer.email,
+
+                    status:
+                        newStatus,
+
+                    total:
+                        Number(
+                            order.total || 0
+                        )
+
+                }
+            }
+        );
+
+
+        if (error) {
+
+            console.error(
+                "Status email error:",
+                error
+            );
+
+            return false;
+
+        }
+
+
+        console.log(
+            "Status email sent:",
+            data
+        );
+
+
+        return true;
+
+
+    } catch (error) {
+
+        console.error(
+            "Status email exception:",
+            error
+        );
+
+        return false;
+
+    }
+
+}
 
 
 // =====================================================
@@ -1399,6 +1886,7 @@ async function updateOrderStatus(
         );
 
         return;
+
     }
 
 
@@ -1409,15 +1897,22 @@ async function updateOrderStatus(
         );
 
         return;
+
     }
 
 
     const allowedStatuses = [
+
         "Pending",
+
         "Confirmed",
+
         "Shipped",
+
         "Delivered",
+
         "Cancelled"
+
     ];
 
 
@@ -1432,6 +1927,47 @@ async function updateOrderStatus(
         );
 
         return;
+
+    }
+
+
+    const order =
+        orders.find(function(item) {
+
+            return String(item.id) ===
+                String(orderId);
+
+        });
+
+
+    if (!order) {
+
+        alert(
+            "Order not found."
+        );
+
+        return;
+
+    }
+
+
+    const oldStatus =
+        String(
+            order.status || "Pending"
+        );
+
+
+    if (
+        oldStatus.toLowerCase() ===
+        newStatus.toLowerCase()
+    ) {
+
+        alert(
+            `Order is already ${newStatus}.`
+        );
+
+        return;
+
     }
 
 
@@ -1468,7 +2004,8 @@ async function updateOrderStatus(
                 "id",
                 orderId
             )
-            .select();
+            .select()
+            .single();
 
 
         if (error) {
@@ -1484,6 +2021,7 @@ async function updateOrderStatus(
             );
 
             return;
+
         }
 
 
@@ -1493,16 +2031,15 @@ async function updateOrderStatus(
         );
 
 
-        const order =
-            orders.find(function(item) {
+        if (data) {
 
-                return String(item.id) ===
-                    String(orderId);
+            Object.assign(
+                order,
+                data
+            );
 
-            });
-
-
-        if (order) {
+        }
+        else {
 
             order.status =
                 newStatus;
@@ -1515,9 +2052,31 @@ async function updateOrderStatus(
         updateDashboardSummary();
 
 
-        alert(
-            `Order status changed to ${newStatus}.`
-        );
+        // =================================================
+        // SEND EMAIL AFTER SUCCESSFUL STATUS UPDATE
+        // =================================================
+
+        const emailSent =
+            await sendStatusEmail(
+                order,
+                newStatus
+            );
+
+
+        if (emailSent) {
+
+            alert(
+                `Order status changed to ${newStatus}.\n\nCustomer email sent successfully.`
+            );
+
+        }
+        else {
+
+            alert(
+                `Order status changed to ${newStatus}.\n\nHowever, the customer email could not be sent.`
+            );
+
+        }
 
 
     } catch (error) {
