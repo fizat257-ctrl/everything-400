@@ -1657,3 +1657,465 @@ console.log(
     "Supabase available:",
     !!window.supabaseClient
 );
+// =====================================================
+// PRODUCT DETAILS PAGE
+// =====================================================
+
+async function loadProductDetails() {
+
+    const detailsContainer =
+        document.getElementById("product-details");
+
+    if (!detailsContainer) return;
+
+
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+
+    const productId =
+        params.get("id");
+
+
+    if (!productId) {
+
+        detailsContainer.innerHTML = `
+            <div class="empty-products">
+
+                <h2>
+                    Product not found
+                </h2>
+
+                <p>
+                    No product was selected.
+                </p>
+
+                <a href="index.html#products">
+                    Back to Shop
+                </a>
+
+            </div>
+        `;
+
+        return;
+    }
+
+
+    const db =
+        getSupabaseClient();
+
+
+    if (!db) {
+
+        detailsContainer.innerHTML = `
+            <p>
+                Database connection is not available.
+            </p>
+        `;
+
+        return;
+    }
+
+
+    detailsContainer.innerHTML = `
+        <p>
+            Loading product details...
+        </p>
+    `;
+
+
+    try {
+
+        const {
+            data: product,
+            error
+        } = await db
+            .from("products")
+            .select("*")
+            .eq("id", productId)
+            .maybeSingle();
+
+
+        if (error) {
+
+            console.error(
+                "Product details error:",
+                error
+            );
+
+            detailsContainer.innerHTML = `
+                <p>
+                    Unable to load product.
+                </p>
+            `;
+
+            return;
+        }
+
+
+        if (!product) {
+
+            detailsContainer.innerHTML = `
+                <div class="empty-products">
+
+                    <h2>
+                        Product not found
+                    </h2>
+
+                    <a href="index.html#products">
+                        Back to Shop
+                    </a>
+
+                </div>
+            `;
+
+            return;
+        }
+
+
+        const stock =
+            Number(
+                product.stock || 0
+            );
+
+
+        const price =
+            Number(
+                product.price || 0
+            );
+
+
+        const description =
+            product.description ||
+            "No description available.";
+
+
+        let stockMessage = "";
+
+
+        if (stock <= 0) {
+
+            stockMessage =
+                "Out of Stock";
+
+        }
+        else if (stock === 1) {
+
+            stockMessage =
+                "Only 1 left in stock";
+
+        }
+        else if (stock <= 5) {
+
+            stockMessage =
+                `Only ${stock} left in stock`;
+
+        }
+        else {
+
+            stockMessage =
+                `${stock} available in stock`;
+
+        }
+
+
+        const imageHTML =
+            product.image
+                ? `
+                    <img
+                        src="${escapeHTML(
+                            product.image
+                        )}"
+                        alt="${escapeHTML(
+                            product.name
+                        )}"
+                    >
+                `
+                : `
+                    <div>
+                        🛍️
+                    </div>
+                `;
+
+
+        detailsContainer.innerHTML = `
+
+            <div class="product-detail-card">
+
+
+                <div class="product-detail-image">
+
+                    ${imageHTML}
+
+                </div>
+
+
+                <div class="product-detail-info">
+
+
+                    <h2>
+
+                        ${escapeHTML(
+                            product.name
+                        )}
+
+                    </h2>
+
+
+                    <p class="product-detail-price">
+
+                        Rs.
+                        ${price.toLocaleString()}
+
+                    </p>
+
+
+                    <p class="product-detail-category">
+
+                        Category:
+                        ${escapeHTML(
+                            product.category ||
+                            "Other"
+                        )}
+
+                    </p>
+
+
+                    <div class="product-detail-description">
+
+                        <h3>
+                            Description
+                        </h3>
+
+                        <p>
+                            ${escapeHTML(
+                                description
+                            )}
+                        </p>
+
+                    </div>
+
+
+                    <p class="product-detail-stock">
+
+                        📦
+                        ${escapeHTML(
+                            stockMessage
+                        )}
+
+                    </p>
+
+
+                    <div class="detail-quantity">
+
+                        <button
+                            type="button"
+                            id="detail-minus"
+                            ${stock <= 0 ? "disabled" : ""}
+                        >
+                            −
+                        </button>
+
+
+                        <span id="detail-quantity">
+                            1
+                        </span>
+
+
+                        <button
+                            type="button"
+                            id="detail-plus"
+                            ${stock <= 0 ? "disabled" : ""}
+                        >
+                            +
+                        </button>
+
+                    </div>
+
+
+                    <div class="detail-buttons">
+
+                        <button
+                            type="button"
+                            id="detail-add-cart"
+                            ${stock <= 0 ? "disabled" : ""}
+                        >
+                            Add to Cart
+                        </button>
+
+
+                        <button
+                            type="button"
+                            id="detail-buy-now"
+                            ${stock <= 0 ? "disabled" : ""}
+                        >
+                            Buy Now
+                        </button>
+
+                    </div>
+
+
+                    <div class="product-reviews">
+
+                        <h3>
+                            Reviews
+                        </h3>
+
+                        <p>
+                            No reviews yet.
+                        </p>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+        `;
+
+
+        let quantity = 1;
+
+
+        const quantityElement =
+            document.getElementById(
+                "detail-quantity"
+            );
+
+
+        const minusButton =
+            document.getElementById(
+                "detail-minus"
+            );
+
+
+        const plusButton =
+            document.getElementById(
+                "detail-plus"
+            );
+
+
+        const addCartButton =
+            document.getElementById(
+                "detail-add-cart"
+            );
+
+
+        const buyNowButton =
+            document.getElementById(
+                "detail-buy-now"
+            );
+
+
+        if (minusButton) {
+
+            minusButton.addEventListener(
+                "click",
+                function() {
+
+                    if (quantity > 1) {
+
+                        quantity--;
+
+                        quantityElement.textContent =
+                            quantity;
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        if (plusButton) {
+
+            plusButton.addEventListener(
+                "click",
+                function() {
+
+                    if (quantity < stock) {
+
+                        quantity++;
+
+                        quantityElement.textContent =
+                            quantity;
+
+                    }
+                    else {
+
+                        alert(
+                            `Only ${stock} item(s) are available.`
+                        );
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        if (addCartButton) {
+
+            addCartButton.addEventListener(
+                "click",
+                function() {
+
+                    addToCart(
+                        product,
+                        quantity
+                    );
+
+                }
+            );
+
+        }
+
+
+        if (buyNowButton) {
+
+            buyNowButton.addEventListener(
+                "click",
+                function() {
+
+                    addToCart(
+                        product,
+                        quantity
+                    );
+
+                    window.location.href =
+                        "checkout.html";
+
+                }
+            );
+
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Product details exception:",
+            error
+        );
+
+
+        detailsContainer.innerHTML = `
+            <p>
+                Something went wrong while loading this product.
+            </p>
+        `;
+
+    }
+
+}
+
+
+// =====================================================
+// LOAD PRODUCT DETAILS
+// =====================================================
+
+loadProductDetails();
