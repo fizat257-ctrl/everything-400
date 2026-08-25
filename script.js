@@ -473,21 +473,21 @@ async function displayProducts() {
 
             card.innerHTML = `
 
-                <div
-                    class="product-image product-details-trigger"
-                    data-id="${escapeHTML(
-                        product.id
-                    )}"
-                >
-                    ${imageHTML}
-                </div>
+              <div
+    class="product-image product-details-trigger"
+    data-id="${escapeHTML(product.id)}"
+    style="cursor: pointer;"
+>
+    ${imageHTML}
+</div>
 
-
-                <h3>
-                    ${escapeHTML(
-                        product.name
-                    )}
-                </h3>
+               <h3
+    class="product-details-trigger"
+    data-id="${escapeHTML(product.id)}"
+    style="cursor: pointer;"
+>
+    ${escapeHTML(product.name)}
+</h3>
 
 
                 <p class="product-price">
@@ -2119,3 +2119,23 @@ async function loadProductDetails() {
 // =====================================================
 
 loadProductDetails();
+// =====================================================
+// OPEN PRODUCT DETAILS PAGE
+// =====================================================
+
+document.addEventListener("click", function(event) {
+
+    const trigger =
+        event.target.closest(".product-details-trigger");
+
+    if (!trigger) return;
+
+    const productId =
+        trigger.dataset.id;
+
+    if (!productId) return;
+
+    window.location.href =
+        `product-details.html?id=${encodeURIComponent(productId)}`;
+
+});
