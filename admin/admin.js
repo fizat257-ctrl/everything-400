@@ -1787,6 +1787,30 @@ function displayOrders() {
             card.querySelectorAll(
                 ".status-btn"
             );
+            const paymentStatusButtons =
+    card.querySelectorAll(".payment-status-btn");
+
+paymentStatusButtons.forEach(function(button) {
+
+    button.addEventListener(
+        "click",
+        function() {
+
+            const orderId =
+                this.dataset.id;
+
+            const newPaymentStatus =
+                this.dataset.paymentStatus;
+
+            updatePaymentStatus(
+                orderId,
+                newPaymentStatus
+            );
+
+        }
+    );
+
+});
 
 
         statusButtons.forEach(
@@ -2220,3 +2244,89 @@ document.addEventListener(
 
     }
 );
+// =====================================================
+// UPDATE PAYMENT STATUS
+// =====================================================
+
+async function updatePaymentStatus(orderId, newPaymentStatus) {
+
+    if (!db) {
+        alert("Supabase connection is not available.");
+        return;
+    }
+
+    const allowedPaymentStatuses = [
+        "Pending",
+        "Paid",
+        "Failed"
+    ];
+
+    if (!allowedPaymentStatuses.includes(newPaymentStatus)) {
+        alert("Invalid payment status.");
+        return;
+    }
+
+    const confirmChange = confirm(
+        `Change payment status to "${newPaymentStatus}"?`
+    );
+
+    if (!confirmChange) return;
+
+    try {
+
+        const {
+            data,
+            error
+        } = await db
+            .from("orders")
+            .update({
+                payment_status: newPaymentStatus
+            })
+            .eq("id", orderId)
+            .select();
+
+        if (error) {
+
+            console.error(
+                "Payment status update error:",
+                error
+            );
+
+            alert(
+                `Payment status update failed:\n\n${error.message}`
+            );
+
+            return;
+        }
+
+        console.log(
+            "Payment status updated:",
+            data
+        );
+
+        const order = orders.find(function(item) {
+            return String(item.id) === String(orderId);
+        });
+
+        if (order) {
+            order.payment_status = newPaymentStatus;
+        }
+
+        displayOrders();
+
+        alert(
+            `Payment status changed to ${newPaymentStatus}.`
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Payment status exception:",
+            error
+        );
+
+        alert(
+            `Something went wrong:\n\n${error.message}`
+        );
+    }
+}
