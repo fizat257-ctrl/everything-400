@@ -1633,6 +1633,30 @@ function displayOrders() {
                     ${formatPrice(total)}
 
                 </p>
+                <p class="order-payment-method">
+
+    <strong>
+        Payment Method:
+    </strong>
+
+    ${escapeHTML(
+        order.payment_method || "Not selected"
+    )}
+
+</p>
+
+
+<p class="order-payment-status">
+
+    <strong>
+        Payment Status:
+    </strong>
+
+    ${escapeHTML(
+        order.payment_status || "Pending"
+    )}
+
+</p>
 
 
                 <div class="order-status-section">
