@@ -1754,6 +1754,28 @@ if (checkoutForm) {
                 cityInput
                     ? cityInput.value.trim()
                     : "";
+                    // =====================================================
+// PAYMENT METHOD
+// =====================================================
+
+const paymentMethodInput =
+    document.querySelector(
+        'input[name="payment_method"]:checked'
+    );
+
+const paymentMethod =
+    paymentMethodInput
+        ? paymentMethodInput.value
+        : "";
+
+if (!paymentMethod) {
+
+    alert(
+        "Please select a payment method."
+    );
+
+    return;
+}
 
 
             if (
@@ -1857,6 +1879,12 @@ if (checkoutForm) {
 
                             status:
                                 "Pending",
+
+                                payment_method:
+    paymentMethod,
+
+payment_status:
+    "Pending",
 
                             products:
                                 productsData
