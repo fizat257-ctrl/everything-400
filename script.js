@@ -932,9 +932,236 @@ async function displayProducts() {
     filterProducts();
 }
 // =====================================================
-// EVERYTHING 400 - SCRIPT.JS
-// PART 2 - SEARCH + CATEGORY + CART
+// SEARCH + CATEGORY FILTER
 // =====================================================
+
+const categoryFilter =
+    document.getElementById("category-filter");
+
+const filterStatus =
+    document.getElementById("filter-status");
+
+
+// =====================================================
+// FILTER PRODUCTS
+// =====================================================
+
+function filterProducts() {
+
+    const productCards =
+        document.querySelectorAll(
+            ".product-card"
+        );
+
+
+    const searchText =
+        searchInput
+            ? searchInput.value
+                .toLowerCase()
+                .trim()
+            : "";
+
+
+    const selectedCategory =
+        categoryFilter
+            ? categoryFilter.value.toLowerCase()
+            : "all";
+
+
+    let visibleCount = 0;
+
+
+    productCards.forEach(function(card) {
+
+        const category =
+            String(
+                card.dataset.category || ""
+            ).toLowerCase();
+
+
+        const title =
+            card.querySelector("h3");
+
+
+        const descriptionElement =
+            card.querySelector(
+                ".product-description"
+            );
+
+
+        const productName =
+            title
+                ? title.textContent
+                    .toLowerCase()
+                    .trim()
+                : "";
+
+
+        const productDescription =
+            descriptionElement
+                ? descriptionElement.textContent
+                    .toLowerCase()
+                    .trim()
+                : "";
+
+
+        const matchesCategory =
+            selectedCategory === "all" ||
+            category === selectedCategory;
+
+
+        const matchesSearch =
+            !searchText ||
+            productName.includes(searchText) ||
+            productDescription.includes(searchText);
+
+
+        if (
+            matchesCategory &&
+            matchesSearch
+        ) {
+
+            card.style.display = "";
+
+            visibleCount++;
+
+        }
+        else {
+
+            card.style.display = "none";
+
+        }
+
+    });
+
+
+    updateFilterStatus(
+        visibleCount
+    );
+
+}
+
+
+// =====================================================
+// FILTER STATUS
+// =====================================================
+
+function updateFilterStatus(
+    visibleCount
+) {
+
+    if (!filterStatus) return;
+
+
+    if (visibleCount === 0) {
+
+        filterStatus.textContent =
+            "No products found.";
+
+        return;
+
+    }
+
+
+    filterStatus.textContent =
+        `Showing ${visibleCount} product${
+            visibleCount === 1
+                ? ""
+                : "s"
+        }.`;
+
+}
+
+
+// =====================================================
+// SEARCH INPUT
+// =====================================================
+
+if (searchInput) {
+
+    searchInput.addEventListener(
+        "input",
+        function() {
+
+            filterProducts();
+
+        }
+    );
+
+}
+
+
+// =====================================================
+// SEARCH BUTTON
+// =====================================================
+
+if (searchButton) {
+
+    searchButton.addEventListener(
+        "click",
+        function() {
+
+            filterProducts();
+
+        }
+    );
+
+}
+
+
+// =====================================================
+// CATEGORY DROPDOWN
+// =====================================================
+
+if (categoryFilter) {
+
+    categoryFilter.addEventListener(
+        "change",
+        function() {
+
+            filterProducts();
+
+        }
+    );
+
+}
+
+
+// =====================================================
+// CLEAR FILTERS
+// =====================================================
+
+// IMPORTANT:
+// clearFiltersButton is already declared above
+// in your script.js, so DO NOT declare it again.
+
+if (clearFiltersButton) {
+
+    clearFiltersButton.addEventListener(
+        "click",
+        function() {
+
+            if (searchInput) {
+
+                searchInput.value = "";
+
+            }
+
+
+            if (categoryFilter) {
+
+                categoryFilter.value =
+                    "all";
+
+            }
+
+
+            filterProducts();
+
+        }
+    );
+
+}
 
 
 
