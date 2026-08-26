@@ -1023,3 +1023,176 @@ footer {
     font-size: 17px;
     font-weight: 600;
 }
+/* =====================================================
+   PRODUCT DETAILS - PROFESSIONAL LAYOUT
+   ===================================================== */
+
+.product-details-section {
+    padding: 50px 20px;
+}
+
+.product-details-container {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+
+/* Main product layout */
+
+.product-detail-card {
+    display: grid;
+    grid-template-columns: 45% 55%;
+    gap: 45px;
+    align-items: center;
+}
+
+
+/* Product image area */
+
+.product-detail-image-wrapper {
+    width: 100%;
+    height: 420px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: 14px;
+}
+
+
+/* Product image */
+
+.product-detail-image-wrapper img {
+    width: 100%;
+    height: 100%;
+    max-width: 420px;
+    max-height: 420px;
+    object-fit: contain;
+    display: block;
+}
+
+
+/* Product information */
+
+.product-detail-info {
+    padding: 10px 0;
+}
+
+.product-detail-info h2 {
+    font-size: 32px;
+    margin-bottom: 10px;
+}
+
+.product-detail-price {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 10px 0;
+}
+
+.product-detail-category {
+    font-size: 15px;
+    margin-bottom: 20px;
+}
+
+.product-detail-description {
+    font-size: 16px;
+    line-height: 1.6;
+    margin: 15px 0;
+}
+
+
+/* Stock */
+
+.product-stock {
+    font-size: 15px;
+    font-weight: 600;
+    margin: 15px 0;
+}
+
+
+/* Quantity controls */
+
+.quantity-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 20px 0;
+}
+
+.quantity-controls button {
+    width: 38px;
+    height: 38px;
+    border: 1px solid #ccc;
+    background: #fff;
+    border-radius: 6px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.quantity-controls span {
+    min-width: 35px;
+    text-align: center;
+    font-size: 17px;
+    font-weight: 600;
+}
+
+
+/* Action buttons */
+
+.product-detail-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.product-detail-actions button {
+    padding: 12px 22px;
+    border: none;
+    border-radius: 6px;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+
+/* Reviews */
+
+.product-reviews {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #ddd;
+}
+
+
+/* =====================================================
+   MOBILE
+   ===================================================== */
+
+@media (max-width: 768px) {
+
+    .product-detail-card {
+        grid-template-columns: 1fr;
+        gap: 25px;
+    }
+
+    .product-detail-image-wrapper {
+        height: 320px;
+    }
+
+    .product-detail-image-wrapper img {
+        max-width: 320px;
+        max-height: 320px;
+    }
+
+    .product-detail-info h2 {
+        font-size: 26px;
+    }
+
+    .product-detail-actions {
+        flex-direction: column;
+    }
+
+    .product-detail-actions button {
+        width: 100%;
+    }
+
+}
