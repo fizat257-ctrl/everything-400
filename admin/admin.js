@@ -592,6 +592,15 @@ if (productForm) {
                     "product-price"
                 );
 
+                const descriptionInput =
+    document.getElementById(
+        "product-description"
+    );
+    const description =
+    descriptionInput
+        ? descriptionInput.value.trim()
+        : "";
+
 
             const categoryInput =
                 document.getElementById(
@@ -756,6 +765,9 @@ if (productForm) {
                     name:
                         name,
 
+                        description:
+                        description,
+
                     price:
                         price,
 
@@ -901,6 +913,18 @@ async function editProduct(id) {
             "Enter new price:",
             product.price
         );
+        const newDescription =
+    prompt(
+        "Enter product description:",
+        product.description || ""
+    );
+
+
+if (newDescription === null) return;
+
+
+const description =
+    newDescription.trim();
 
 
     if (newPrice === null) return;
@@ -959,6 +983,9 @@ async function editProduct(id) {
 
                 name:
                     cleanName,
+
+                    description:
+                    description,
 
                 price:
                     price,
