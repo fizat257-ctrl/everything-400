@@ -63,8 +63,234 @@ const customerOrderStatus =
     document.getElementById(
         "customer-order-status"
     );
+    
+
+// =====================================================
+// SEARCH + CATEGORY FILTER
+// =====================================================
 
 let selectedCategory = "all";
+
+
+// =====================================================
+// CATEGORY FILTER
+// =====================================================
+
+categoryButtons.forEach(function(button) {
+
+    button.addEventListener(
+        "click",
+        function() {
+
+            selectedCategory =
+                button.dataset.filter || "all";
+
+
+            categoryButtons.forEach(
+                function(btn) {
+
+                    btn.classList.remove("active");
+
+                }
+            );
+
+
+            button.classList.add("active");
+
+
+            applyProductFilters();
+
+        }
+    );
+
+});
+
+
+// =====================================================
+// SEARCH INPUT
+// =====================================================
+
+if (searchInput) {
+
+    searchInput.addEventListener(
+        "input",
+        function() {
+
+            applyProductFilters();
+
+        }
+    );
+
+}
+
+
+// =====================================================
+// APPLY FILTERS
+// =====================================================
+
+function applyProductFilters() {
+
+    const searchTerm =
+        searchInput
+            ? searchInput.value
+                .trim()
+                .toLowerCase()
+            : "";
+
+
+    const productCards =
+        document.querySelectorAll(
+            ".product-card"
+        );
+
+
+    let visibleCount = 0;
+
+
+    productCards.forEach(
+        function(card) {
+
+            const productName =
+                card.querySelector("h3")
+                    ?.textContent
+                    .toLowerCase() || "";
+
+
+            const productDescription =
+                card.querySelector(
+                    ".product-description"
+                )
+                    ?.textContent
+                    .toLowerCase() || "";
+
+
+            const productCategory =
+                (
+                    card.dataset.category ||
+                    ""
+                ).toLowerCase();
+
+
+            const matchesSearch =
+                !searchTerm ||
+                productName.includes(searchTerm) ||
+                productDescription.includes(searchTerm);
+
+
+            const matchesCategory =
+                selectedCategory === "all" ||
+                productCategory === selectedCategory;
+
+
+            if (
+                matchesSearch &&
+                matchesCategory
+            ) {
+
+                card.style.display = "";
+
+                visibleCount++;
+
+            }
+            else {
+
+                card.style.display = "none";
+
+            }
+
+        }
+    );
+
+
+    updateFilterStatus(visibleCount);
+
+}
+
+
+// =====================================================
+// FILTER STATUS
+// =====================================================
+
+function updateFilterStatus(visibleCount) {
+
+    const filterStatus =
+        document.getElementById(
+            "filter-status"
+        );
+
+
+    if (!filterStatus) return;
+
+
+    if (visibleCount === 0) {
+
+        filterStatus.textContent =
+            "No products found.";
+
+        return;
+
+    }
+
+
+    filterStatus.textContent =
+        `Showing ${visibleCount} product${
+            visibleCount === 1 ? "" : "s"
+        }.`;
+
+}
+
+
+// =====================================================
+// CLEAR FILTERS
+// =====================================================
+
+const clearFiltersButton =
+    document.getElementById(
+        "clear-filters"
+    );
+
+
+if (clearFiltersButton) {
+
+    clearFiltersButton.addEventListener(
+        "click",
+        function() {
+
+            selectedCategory = "all";
+
+
+            if (searchInput) {
+
+                searchInput.value = "";
+
+            }
+
+
+            categoryButtons.forEach(
+                function(button) {
+
+                    button.classList.remove("active");
+
+
+                    if (
+                        button.dataset.filter === "all"
+                    ) {
+
+                        button.classList.add("active");
+
+                    }
+
+                }
+            );
+
+
+            applyProductFilters();
+
+        }
+    );
+
+}
+
 
 
 // =====================================================

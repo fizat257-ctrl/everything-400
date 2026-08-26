@@ -119,24 +119,82 @@
 
 
             <!-- =========================
-                 SEARCH
+                 SEARCH & FILTER
             ========================== -->
 
-            <div class="search-box">
+            <div class="product-controls">
 
-                <input
-                    type="text"
-                    id="product-search"
-                    placeholder="Search products..."
-                    autocomplete="off"
-                >
 
+                <!-- SEARCH -->
+
+                <div class="search-box">
+
+                    <input
+                        type="search"
+                        id="product-search"
+                        placeholder="Search products..."
+                        autocomplete="off"
+                        aria-label="Search products"
+                    >
+
+
+                    <button
+                        id="search-btn"
+                        type="button"
+                    >
+                        Search
+                    </button>
+
+                </div>
+
+
+
+                <!-- CATEGORY FILTER -->
+
+                <div class="filter-box">
+
+                    <label for="category-filter">
+                        Category
+                    </label>
+
+
+                    <select
+                        id="category-filter"
+                    >
+
+                        <option value="all">
+                            All Categories
+                        </option>
+
+                        <option value="jewelry">
+                            Jewelry
+                        </option>
+
+                        <option value="cosmetics">
+                            Cosmetics
+                        </option>
+
+                        <option value="home">
+                            Home
+                        </option>
+
+                        <option value="accessories">
+                            Accessories
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+
+                <!-- CLEAR FILTER -->
 
                 <button
-                    id="search-btn"
+                    id="clear-filters"
                     type="button"
                 >
-                    Search
+                    Clear Filters
                 </button>
 
             </div>
@@ -144,54 +202,16 @@
 
 
             <!-- =========================
-                 CATEGORIES
+                 FILTER STATUS
             ========================== -->
 
-            <div class="categories">
+            <div
+                id="filter-status"
+                class="filter-status"
+                aria-live="polite"
+            >
 
-                <button
-                    class="category-btn active"
-                    data-filter="all"
-                    type="button"
-                >
-                    All
-                </button>
-
-
-                <button
-                    class="category-btn"
-                    data-filter="jewelry"
-                    type="button"
-                >
-                    Jewelry
-                </button>
-
-
-                <button
-                    class="category-btn"
-                    data-filter="cosmetics"
-                    type="button"
-                >
-                    Cosmetics
-                </button>
-
-
-                <button
-                    class="category-btn"
-                    data-filter="home"
-                    type="button"
-                >
-                    Home
-                </button>
-
-
-                <button
-                    class="category-btn"
-                    data-filter="accessories"
-                    type="button"
-                >
-                    Accessories
-                </button>
+                Showing all products
 
             </div>
 
@@ -218,9 +238,6 @@
 
         <!-- =========================
              PRODUCT DETAILS
-             This section will be filled
-             by script.js when a product
-             is selected.
         ========================== -->
 
         <section
@@ -244,7 +261,6 @@
 
         <!-- =========================
              PRODUCT ACTIONS
-             Ready for script.js
         ========================== -->
 
         <div
@@ -326,20 +342,13 @@
          JAVASCRIPT
     ========================== -->
 
-
-    <!-- Supabase Library -->
-
     <script
         src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
     ></script>
 
 
-    <!-- Supabase Connection -->
-
     <script src="supabase.js"></script>
 
-
-    <!-- Main Website JavaScript -->
 
     <script src="script.js"></script>
 
