@@ -2067,6 +2067,22 @@ async function loadProductDetails() {
     }
 
 
+    const productIdNumber =
+        Number(productId);
+
+
+    if (Number.isNaN(productIdNumber)) {
+
+        detailsContainer.innerHTML = `
+            <p>
+                Invalid product ID.
+            </p>
+        `;
+
+        return;
+    }
+
+
     const db =
         getSupabaseClient();
 
@@ -2092,13 +2108,17 @@ async function loadProductDetails() {
 
     try {
 
+        // =====================================================
+        // LOAD PRODUCT
+        // =====================================================
+
         const {
             data: product,
             error
         } = await db
             .from("products")
             .select("*")
-            .eq("id", productId)
+            .eq("id", productIdNumber)
             .maybeSingle();
 
 
@@ -2203,6 +2223,104 @@ async function loadProductDetails() {
                     </div>
                 `;
 
+
+        // =====================================================
+        // LOAD REVIEWS
+        // =====================================================
+
+        const {
+            data: reviews,
+            error: reviewsError
+        } = await db
+            .from("review")
+            .select("*")
+            .eq("product_id", productIdNumber)
+            .order("created_at", {
+                ascending: false
+            });
+
+
+        if (reviewsError) {
+
+            console.error(
+                "Reviews loading error:",
+                reviewsError
+            );
+
+        }
+
+
+        let reviewsHTML = "";
+
+
+        if (
+            !reviews ||
+            reviews.length === 0
+        ) {
+
+            reviewsHTML = `
+                <p class="no-reviews">
+                    No reviews yet.
+                </p>
+            `;
+
+        }
+        else {
+
+            reviewsHTML =
+                reviews
+                    .map(function(review) {
+
+                        const rating =
+                            Number(
+                                review.rating || 0
+                            );
+
+                        const stars =
+                            "⭐".repeat(
+                                Math.max(
+                                    0,
+                                    Math.min(
+                                        5,
+                                        rating
+                                    )
+                                )
+                            );
+
+
+                        return `
+                            <div class="single-review">
+
+                                <h4>
+                                    ${escapeHTML(
+                                        review.customer_name ||
+                                        "Customer"
+                                    )}
+                                </h4>
+
+                                <p>
+                                    ${stars}
+                                </p>
+
+                                <p>
+                                    ${escapeHTML(
+                                        review.review_text ||
+                                        ""
+                                    )}
+                                </p>
+
+                            </div>
+                        `;
+
+                    })
+                    .join("");
+
+        }
+
+
+        // =====================================================
+        // PRODUCT HTML
+        // =====================================================
 
         detailsContainer.innerHTML = `
 
@@ -2321,15 +2439,91 @@ async function loadProductDetails() {
                     </div>
 
 
+                    <!-- =====================================================
+                         REVIEWS
+                    ====================================================== -->
+
                     <div class="product-reviews">
 
                         <h3>
                             Reviews
                         </h3>
 
-                        <p>
-                            No reviews yet.
-                        </p>
+
+                        <div id="reviews-list">
+
+                            ${reviewsHTML}
+
+                        </div>
+
+
+                        <!-- REVIEW FORM -->
+
+                        <div class="review-form">
+
+                            <h3>
+                                Write a Review
+                            </h3>
+
+
+                            <input
+                                type="text"
+                                id="review-customer-name"
+                                placeholder="Your Name"
+                            >
+
+
+                            <select
+                                id="review-rating"
+                            >
+
+                                <option value="">
+                                    Select Rating
+                                </option>
+
+                                <option value="5">
+                                    ⭐⭐⭐⭐⭐ - 5
+                                </option>
+
+                                <option value="4">
+                                    ⭐⭐⭐⭐ - 4
+                                </option>
+
+                                <option value="3">
+                                    ⭐⭐⭐ - 3
+                                </option>
+
+                                <option value="2">
+                                    ⭐⭐ - 2
+                                </option>
+
+                                <option value="1">
+                                    ⭐ - 1
+                                </option>
+
+                            </select>
+
+
+                            <textarea
+                                id="review-text"
+                                placeholder="Write your review..."
+                                rows="4"
+                            ></textarea>
+
+
+                            <button
+                                type="button"
+                                id="submit-review"
+                            >
+                                Submit Review
+                            </button>
+
+
+                            <p
+                                id="review-message"
+                            ></p>
+
+                        </div>
 
                     </div>
 
@@ -2340,6 +2534,10 @@ async function loadProductDetails() {
 
         `;
 
+
+        // =====================================================
+        // QUANTITY
+        // =====================================================
 
         let quantity = 1;
 
@@ -2459,7 +2657,191 @@ async function loadProductDetails() {
 
         }
 
-    } catch (error) {
+
+        // =====================================================
+        // SUBMIT REVIEW
+        // =====================================================
+
+        const submitReviewButton =
+            document.getElementById(
+                "submit-review"
+            );
+
+
+        const customerNameInput =
+            document.getElementById(
+                "review-customer-name"
+            );
+
+
+        const ratingInput =
+            document.getElementById(
+                "review-rating"
+            );
+
+
+        const reviewTextInput =
+            document.getElementById(
+                "review-text"
+            );
+
+
+        const reviewMessage =
+            document.getElementById(
+                "review-message"
+            );
+
+
+        if (submitReviewButton) {
+
+            submitReviewButton.addEventListener(
+                "click",
+                async function() {
+
+                    const customerName =
+                        customerNameInput.value.trim();
+
+
+                    const rating =
+                        Number(
+                            ratingInput.value
+                        );
+
+
+                    const reviewText =
+                        reviewTextInput.value.trim();
+
+
+                    if (!customerName) {
+
+                        reviewMessage.textContent =
+                            "Please enter your name.";
+
+                        return;
+                    }
+
+
+                    if (
+                        !rating ||
+                        rating < 1 ||
+                        rating > 5
+                    ) {
+
+                        reviewMessage.textContent =
+                            "Please select a rating.";
+
+                        return;
+                    }
+
+
+                    if (!reviewText) {
+
+                        reviewMessage.textContent =
+                            "Please write a review.";
+
+                        return;
+                    }
+
+
+                    submitReviewButton.disabled =
+                        true;
+
+
+                    submitReviewButton.textContent =
+                        "Submitting...";
+
+
+                    reviewMessage.textContent =
+                        "";
+
+
+                    try {
+
+                        const {
+                            error: insertError
+                        } = await db
+                            .from("review")
+                            .insert([
+                                {
+                                    product_id:
+                                        productIdNumber,
+
+                                    customer_name:
+                                        customerName,
+
+                                    rating:
+                                        rating,
+
+                                    review_text:
+                                        reviewText
+                                }
+                            ]);
+
+
+                        if (insertError) {
+
+                            console.error(
+                                "Review insert error:",
+                                insertError
+                            );
+
+
+                            reviewMessage.textContent =
+                                "Unable to submit review. Please try again.";
+
+                            return;
+                        }
+
+
+                        reviewMessage.textContent =
+                            "Review submitted successfully!";
+
+
+                        customerNameInput.value =
+                            "";
+
+                        ratingInput.value =
+                            "";
+
+                        reviewTextInput.value =
+                            "";
+
+
+                        // Reload product details
+                        await loadProductDetails();
+
+
+                    }
+                    catch (reviewError) {
+
+                        console.error(
+                            "Review submission exception:",
+                            reviewError
+                        );
+
+
+                        reviewMessage.textContent =
+                            "Something went wrong. Please try again.";
+
+                    }
+                    finally {
+
+                        submitReviewButton.disabled =
+                            false;
+
+                        submitReviewButton.textContent =
+                            "Submit Review";
+
+                    }
+
+                }
+            );
+
+        }
+
+
+    }
+    catch (error) {
 
         console.error(
             "Product details exception:",
