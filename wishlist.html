@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>My Wishlist - Everything 400</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <header>
+
+        <h1>
+            Everything 400
+        </h1>
+
+
+        <nav>
+
+            <a href="index.html">
+                Home
+            </a>
+
+
+            <a href="index.html#products">
+                Shop
+            </a>
+
+
+            <a href="cart.html">
+                Cart
+            </a>
+
+
+            <a href="wishlist.html">
+                Wishlist ♥
+            </a>
+
+
+            <a href="track-order.html">
+                Track Order
+            </a>
+
+        </nav>
+
+    </header>
+
+
+
+    <!-- =====================================================
+         MAIN
+    ====================================================== -->
+
+    <main>
+
+        <section class="products">
+
+            <h2>
+                My Wishlist ♥
+            </h2>
+
+
+            <div
+                id="wishlist-container"
+                class="product-container"
+            >
+
+                <p class="loading-products">
+                    Loading wishlist...
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <footer>
+
+        <p>
+            © 2026 Everything 400. All Rights Reserved.
+        </p>
+
+    </footer>
+
+
+
+    <!-- =====================================================
+         WISHLIST JAVASCRIPT
+    ====================================================== -->
+
+    <script>
+
+        // =====================================================
+        // WISHLIST CONTAINER
+        // =====================================================
+
+        const wishlistContainer =
+            document.getElementById(
+                "wishlist-container"
+            );
+
+
+        // =====================================================
+        // LOAD WISHLIST
+        // =====================================================
+
+        function loadWishlist() {
+
+            const wishlist =
+                JSON.parse(
+                    localStorage.getItem(
+                        "wishlist"
+                    )
+                ) || [];
+
+
+            // =================================================
+            // EMPTY WISHLIST
+            // =================================================
+
+            if (wishlist.length === 0) {
+
+                wishlistContainer.innerHTML = `
+
+                    <div class="empty-products">
+
+                        <h3>
+                            Your Wishlist is Empty ♥
+                        </h3>
+
+                        <p>
+                            Add products you love to your wishlist.
+                        </p>
+
+                        <a href="index.html#products">
+                            Continue Shopping
+                        </a>
+
+                    </div>
+
+                `;
+
+                return;
+
+            }
+
+
+            // =================================================
+            // CLEAR CONTAINER
+            // =================================================
+
+            wishlistContainer.innerHTML = "";
+
+
+            // =================================================
+            // DISPLAY PRODUCTS
+            // =================================================
+
+            wishlist.forEach(
+                function(product) {
+
+                    const card =
+                        document.createElement(
+                            "div"
+                        );
+
+
+                    card.className =
+                        "product-card";
+
+
+                    // IMAGE
+
+                    const imageHTML =
+                        product.image
+                            ? `
+                                <img
+                                    src="${product.image}"
+                                    alt="${product.name}"
+                                >
+                            `
+                            : `
+                                <span>
+                                    🛍️
+                                </span>
+                            `;
+
+
+                    // PRODUCT CARD
+
+                    card.innerHTML = `
+
+                        <div class="product-image">
+
+                            ${imageHTML}
+
+                        </div>
+
+
+                        <h3>
+                            ${product.name}
+                        </h3>
+
+
+                        <p class="product-price">
+
+                            Rs.
+                            ${Number(
+                                product.price
+                            ) || 0}
+
+                        </p>
+
+
+                        <button
+                            type="button"
+                            class="wishlist-cart"
+                            data-id="${product.id}"
+                        >
+                            Add to Cart
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="wishlist-remove"
+                            data-id="${product.id}"
+                        >
+                            ♥ Remove from Wishlist
+                        </button>
+
+                    `;
+
+
+                    wishlistContainer.appendChild(
+                        card
+                    );
+
+                }
+            );
+
+
+            // =================================================
+            // REMOVE FROM WISHLIST
+            // =================================================
+
+            document
+                .querySelectorAll(
+                    ".wishlist-remove"
+                )
+                .forEach(
+                    function(button) {
+
+                        button.addEventListener(
+                            "click",
+                            function() {
+
+                                const productId =
+                                    String(
+                                        button.dataset.id
+                                    );
+
+
+                                let wishlist =
+                                    JSON.parse(
+                                        localStorage.getItem(
+                                            "wishlist"
+                                        )
+                                    ) || [];
+
+
+                                wishlist =
+                                    wishlist.filter(
+                                        function(product) {
+
+                                            return String(
+                                                product.id
+                                            ) !== productId;
+
+                                        }
+                                    );
+
+
+                                localStorage.setItem(
+                                    "wishlist",
+                                    JSON.stringify(
+                                        wishlist
+                                    )
+                                );
+
+
+                                loadWishlist();
+
+                            }
+                        );
+
+                    }
+                );
+
+
+            // =================================================
+            // ADD TO CART
+            // =================================================
+
+            document
+                .querySelectorAll(
+                    ".wishlist-cart"
+                )
+                .forEach(
+                    function(button) {
+
+                        button.addEventListener(
+                            "click",
+                            function() {
+
+                                const productId =
+                                    String(
+                                        button.dataset.id
+                                    );
+
+
+                                const wishlist =
+                                    JSON.parse(
+                                        localStorage.getItem(
+                                            "wishlist"
+                                        )
+                                    ) || [];
+
+
+                                const product =
+                                    wishlist.find(
+                                        function(item) {
+
+                                            return String(
+                                                item.id
+                                            ) === productId;
+
+                                        }
+                                    );
+
+
+                                if (!product) {
+
+                                    alert(
+                                        "Product not found."
+                                    );
+
+                                    return;
+
+                                }
+
+
+                                let cart =
+                                    JSON.parse(
+                                        localStorage.getItem(
+                                            "cart"
+                                        )
+                                    ) || [];
+
+
+                                const existingProduct =
+                                    cart.find(
+                                        function(item) {
+
+                                            return String(
+                                                item.id
+                                            ) === productId;
+
+                                        }
+                                    );
+
+
+                                if (existingProduct) {
+
+                                    existingProduct.quantity =
+                                        Number(
+                                            existingProduct.quantity || 0
+                                        ) + 1;
+
+                                }
+                                else {
+
+                                    cart.push({
+
+                                        id:
+                                            product.id,
+
+                                        name:
+                                            product.name,
+
+                                        price:
+                                            product.price,
+
+                                        image:
+                                            product.image,
+
+                                        quantity:
+                                            1
+
+                                    });
+
+                                }
+
+
+                                localStorage.setItem(
+                                    "cart",
+                                    JSON.stringify(
+                                        cart
+                                    )
+                                );
+
+
+                                alert(
+                                    "Product added to cart!"
+                                );
+
+                            }
+                        );
+
+                    }
+                );
+
+        }
+
+
+        // =====================================================
+        // START
+        // =====================================================
+
+        loadWishlist();
+
+    </script>
+
+
+</body>
+
+</html>

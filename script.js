@@ -599,6 +599,10 @@ async function displayProducts() {
 
             card.className =
                 "product-card";
+                card.dataset.originalIndex =
+    String(
+        productContainer.children.length
+    );
 
 
             card.dataset.category =
@@ -786,6 +790,15 @@ async function displayProducts() {
                 >
                     Buy Now
                 </button>
+                <button
+    class="wishlist-btn"
+    data-id="${escapeHTML(
+        product.id
+    )}"
+    type="button"
+>
+    ♡ Add to Wishlist
+</button>
 
             `;
 
@@ -930,6 +943,120 @@ async function displayProducts() {
 
 
     filterProducts();
+}
+// -----------------------------------------
+// WISHLIST
+// -----------------------------------------
+
+const wishlistButton =
+    card.querySelector(".wishlist-btn");
+
+
+if (wishlistButton) {
+
+    let wishlist =
+        JSON.parse(
+            localStorage.getItem("wishlist")
+        ) || [];
+
+
+    const productId =
+        String(product.id);
+
+
+    const alreadyAdded =
+        wishlist.some(
+            function(item) {
+                return String(item.id) === productId;
+            }
+        );
+
+
+    if (alreadyAdded) {
+
+        wishlistButton.textContent =
+            "♥ In Wishlist";
+
+    }
+
+
+    wishlistButton.addEventListener(
+        "click",
+        function() {
+
+            let currentWishlist =
+                JSON.parse(
+                    localStorage.getItem("wishlist")
+                ) || [];
+
+
+            const existingIndex =
+                currentWishlist.findIndex(
+                    function(item) {
+
+                        return String(item.id) === productId;
+
+                    }
+                );
+
+
+            if (existingIndex === -1) {
+
+                currentWishlist.push({
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    image: product.image,
+                    category: product.category
+                });
+
+
+                localStorage.setItem(
+                    "wishlist",
+                    JSON.stringify(
+                        currentWishlist
+                    )
+                );
+
+
+                wishlistButton.textContent =
+                    "♥ In Wishlist";
+
+
+                alert(
+                    "Product added to Wishlist!"
+                );
+
+            }
+            else {
+
+                currentWishlist.splice(
+                    existingIndex,
+                    1
+                );
+
+
+                localStorage.setItem(
+                    "wishlist",
+                    JSON.stringify(
+                        currentWishlist
+                    )
+                );
+
+
+                wishlistButton.textContent =
+                    "♡ Add to Wishlist";
+
+
+                alert(
+                    "Product removed from Wishlist."
+                );
+
+            }
+
+        }
+    );
+
 }
 // =====================================================
 // SEARCH + CATEGORY FILTER
@@ -1194,6 +1321,164 @@ if (shopNowButton) {
 
         }
     );
+}
+// =====================================================
+// SORT PRODUCTS
+// =====================================================
+
+const sortProducts =
+    document.getElementById("sort-products");
+
+
+if (sortProducts) {
+
+    sortProducts.addEventListener(
+        "change",
+        function() {
+
+            const productCards =
+                Array.from(
+                    document.querySelectorAll(
+                        ".product-card"
+                    )
+                );
+
+
+            const sortValue =
+                sortProducts.value;
+
+
+            if (
+                sortValue === "price-low" ||
+                sortValue === "price-high"
+            ) {
+
+                productCards.sort(
+                    function(a, b) {
+
+                        const priceA =
+                            getProductPrice(a);
+
+                        const priceB =
+                            getProductPrice(b);
+
+
+                        return sortValue === "price-low"
+                            ? priceA - priceB
+                            : priceB - priceA;
+
+                    }
+                );
+
+            }
+
+
+            else if (
+                sortValue === "name-a-z" ||
+                sortValue === "name-z-a"
+            ) {
+
+                productCards.sort(
+                    function(a, b) {
+
+                        const nameA =
+                            getProductName(a);
+
+                        const nameB =
+                            getProductName(b);
+
+
+                        return sortValue === "name-a-z"
+                            ? nameA.localeCompare(nameB)
+                            : nameB.localeCompare(nameA);
+
+                    }
+                );
+
+            }
+
+
+            else {
+
+                // Default order
+                productCards.sort(
+                    function(a, b) {
+
+                        return (
+                            Number(
+                                a.dataset.originalIndex
+                            ) -
+                            Number(
+                                b.dataset.originalIndex
+                            )
+                        );
+
+                    }
+                );
+
+            }
+
+
+            productCards.forEach(
+                function(card) {
+
+                    productContainer.appendChild(
+                        card
+                    );
+
+                }
+            );
+
+
+            filterProducts();
+
+        }
+    );
+
+}
+
+
+// =====================================================
+// GET PRODUCT PRICE
+// =====================================================
+
+function getProductPrice(card) {
+
+    const priceElement =
+        card.querySelector(
+            ".product-price"
+        );
+
+
+    if (!priceElement) return 0;
+
+
+    const priceText =
+        priceElement.textContent
+            .replace(/[^0-9.]/g, "");
+
+
+    return Number(priceText) || 0;
+
+}
+
+
+// =====================================================
+// GET PRODUCT NAME
+// =====================================================
+
+function getProductName(card) {
+
+    const nameElement =
+        card.querySelector("h3");
+
+
+    return nameElement
+        ? nameElement.textContent
+            .trim()
+            .toLowerCase()
+        : "";
+
 }
 
 
