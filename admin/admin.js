@@ -2412,7 +2412,6 @@ async function loadReviews() {
                 error
             );
 
-
             reviewsContainer.innerHTML = `
                 <p>
                     Reviews could not be loaded.
@@ -2528,19 +2527,111 @@ async function loadReviews() {
                             <small>
                                 ${escapeHTML(date)}
                             </small>
+
+
+                            <br>
+
+
                             <button
-    type="button"
-    class="delete-review"
-    data-id="${escapeHTML(String(review.id))}"
->
-    Delete Review
-</button>
+                                type="button"
+                                class="delete-review"
+                                data-id="${escapeHTML(
+                                    String(review.id)
+                                )}"
+                            >
+                                Delete Review
+                            </button>
 
                         </div>
                     `;
 
                 })
                 .join("");
+
+
+        // =====================================================
+        // DELETE REVIEW BUTTONS
+        // =====================================================
+
+        const deleteReviewButtons =
+            reviewsContainer.querySelectorAll(
+                ".delete-review"
+            );
+
+
+        deleteReviewButtons.forEach(
+            function(button) {
+
+                button.addEventListener(
+                    "click",
+                    async function() {
+
+                        const reviewId =
+                            button.dataset.id;
+
+
+                        const confirmed =
+                            confirm(
+                                "Are you sure you want to delete this review?"
+                            );
+
+
+                        if (!confirmed) return;
+
+
+                        button.disabled = true;
+
+                        button.textContent =
+                            "Deleting...";
+
+
+                        const {
+                            error: deleteError
+                        } = await db
+                            .from("review")
+                            .delete()
+                            .eq(
+                                "id",
+                                reviewId
+                            );
+
+
+                        if (deleteError) {
+
+                            console.error(
+                                "Delete review error:",
+                                deleteError
+                            );
+
+
+                            alert(
+                                "Review could not be deleted: " +
+                                deleteError.message
+                            );
+
+
+                            button.disabled =
+                                false;
+
+                            button.textContent =
+                                "Delete Review";
+
+                            return;
+                        }
+
+
+                        alert(
+                            "Review deleted successfully!"
+                        );
+
+
+                        await loadReviews();
+
+                    }
+                );
+
+            }
+        );
 
 
     } catch (error) {
@@ -2567,62 +2658,3 @@ async function loadReviews() {
 // =====================================================
 
 loadReviews();
-const deleteReviewButtons =
-    reviewsContainer.querySelectorAll(
-        ".delete-review"
-    );
-
-
-deleteReviewButtons.forEach(function(button) {
-
-    button.addEventListener(
-        "click",
-        async function() {
-
-            const reviewId =
-                button.dataset.id;
-
-
-            const confirmed =
-                confirm(
-                    "Are you sure you want to delete this review?"
-                );
-
-
-            if (!confirmed) return;
-
-
-            const {
-                error
-            } = await db
-                .from("review")
-                .delete()
-                .eq("id", reviewId);
-
-
-            if (error) {
-
-                console.error(
-                    "Delete review error:",
-                    error
-                );
-
-                alert(
-                    "Review could not be deleted."
-                );
-
-                return;
-            }
-
-
-            alert(
-                "Review deleted successfully."
-            );
-
-
-            loadReviews();
-
-        }
-    );
-
-});
