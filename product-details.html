@@ -1,68 +1,128 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<!DOCTYPE html>
+<html lang="en">
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<head>
 
-<title>Product Details - Everything 400</title>
+    <meta charset="UTF-8">
 
-<link rel="stylesheet" href="style.css">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-</head><body><header>
+    <title>Product Details - Everything 400</title>
 
-    <h1>Everything 400</h1>
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
 
-    <nav>
-
-        <a href="index.html">
-            Home
-        </a>
-
-        <a href="index.html#products">
-            Shop
-        </a>
-
-        <a href="cart.html">
-            Cart (0)
-        </a>
-
-        <a href="track-order.html">
-            Track Order
-        </a>
-
-    </nav>
-
-</header>
+</head>
 
 
-<main>
-
-    <section class="product-details-section">
-
-        <div id="product-details">
-
-            <p>
-                Loading product...
-            </p>
-
-        </div>
-
-    </section>
-
-</main>
+<body>
 
 
-<footer>
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
 
-    <p>
-        © 2026 Everything 400. All Rights Reserved.
-    </p>
+    <header>
 
-</footer>
+        <h1>
+            Everything 400
+        </h1>
 
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+        <nav>
 
-<script src="supabase.js"></script>
+            <a href="index.html">
+                Home
+            </a>
 
-<script src="script.js"></script>
 
-</body></html>
+            <a href="index.html#products">
+                Shop
+            </a>
+
+
+            <a href="cart.html">
+                Cart (0)
+            </a>
+
+
+            <a href="track-order.html">
+                Track Order
+            </a>
+
+        </nav>
+
+    </header>
+
+
+
+    <!-- =====================================================
+         MAIN
+    ====================================================== -->
+
+    <main>
+
+        <section class="product-details-section">
+
+            <div
+                id="product-details"
+                class="product-details-container"
+            >
+
+                <div class="product-loading">
+
+                    <p>
+                        Loading product...
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <footer>
+
+        <p>
+            © 2026 Everything 400. All Rights Reserved.
+        </p>
+
+    </footer>
+
+
+
+    <!-- =====================================================
+         SUPABASE
+    ====================================================== -->
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+    ></script>
+
+
+    <script src="supabase.js"></script>
+
+
+    <!-- =====================================================
+         MAIN JAVASCRIPT
+    ====================================================== -->
+
+    <script src="script.js"></script>
+
+
+</body>
+
+</html>
