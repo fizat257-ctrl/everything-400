@@ -2248,6 +2248,29 @@ async function loadProductDetails() {
             );
 
         }
+        // =====================================================
+// REVIEW RATING SUMMARY
+// =====================================================
+
+const reviewRatings = [1, 2, 3, 4, 5];
+
+const totalReviews =
+    reviews ? reviews.length : 0;
+
+const totalRating =
+    reviews
+        ? reviews.reduce(
+            function(total, review) {
+                return total + Number(review.rating || 0);
+            },
+            0
+        )
+        : 0;
+
+const averageRating =
+    totalReviews > 0
+        ? (totalRating / totalReviews).toFixed(1)
+        : "0.0";
 
 
         let reviewsHTML = "";
@@ -2466,37 +2489,86 @@ async function loadProductDetails() {
         Reviews
     </h3>
 
-    <div id="review-summary">
+   <div id="review-summary">
 
-        ${
-            reviews && reviews.length > 0
-                ? `
-                    <p>
-                        ⭐ ${
-                            (
-                                reviews.reduce(
-                                    (total, review) =>
-                                        total + Number(review.rating || 0),
-                                    0
-                                ) / reviews.length
-                            ).toFixed(1)
-                        } / 5
-                    </p>
+    ${
+        totalReviews > 0
+            ? `
+                <div class="review-average">
+
+                    <strong>
+                        ⭐ ${averageRating} / 5
+                    </strong>
 
                     <p>
-                        Based on ${reviews.length}
-                        review${reviews.length === 1 ? "" : "s"}
+                        Based on ${totalReviews}
+                        review${totalReviews === 1 ? "" : "s"}
                     </p>
-                `
-                : `
-                    <p>
-                        No ratings yet.
-                    </p>
-                `
-        }
 
-    </div>
+                </div>
 
+
+                <div class="rating-distribution">
+
+                    ${
+                        reviewRatings
+                            .slice()
+                            .reverse()
+                            .map(function(star) {
+
+                                const count =
+                                    reviews.filter(
+                                        function(review) {
+                                            return Number(
+                                                review.rating
+                                            ) === star;
+                                        }
+                                    ).length;
+
+
+                                const percentage =
+                                    totalReviews > 0
+                                        ? (count / totalReviews) * 100
+                                        : 0;
+
+
+                                return `
+                                    <div class="rating-row">
+
+                                        <span>
+                                            ${star} ⭐
+                                        </span>
+
+                                        <div class="rating-bar">
+
+                                            <div
+                                                class="rating-bar-fill"
+                                                style="width: ${percentage}%"
+                                            ></div>
+
+                                        </div>
+
+                                        <span>
+                                            ${count}
+                                        </span>
+
+                                    </div>
+                                `;
+
+                            })
+                            .join("")
+                    }
+
+                </div>
+            `
+            : `
+                <p>
+                    No ratings yet.
+                </p>
+            `
+    }
+
+</div>
 
     <div id="reviews-list">
 
