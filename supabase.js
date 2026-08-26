@@ -15,17 +15,19 @@ const SUPABASE_KEY =
 
 
 // =====================================================
-// CHECK SUPABASE LIBRARY
+// CREATE SUPABASE CLIENT
 // =====================================================
 
-(function () {
+(function initializeSupabase() {
 
     console.log(
         "Everything 400: Checking Supabase library..."
     );
 
 
-    // Check if Supabase CDN loaded
+    // -------------------------------------------------
+    // CHECK SUPABASE LIBRARY
+    // -------------------------------------------------
 
     if (
         !window.supabase ||
@@ -33,11 +35,11 @@ const SUPABASE_KEY =
     ) {
 
         console.error(
-            "Supabase library is NOT loaded."
+            "Everything 400: Supabase library is NOT loaded."
         );
 
         console.error(
-            "Make sure the Supabase CDN is loaded BEFORE supabase.js."
+            "Make sure Supabase CDN is loaded BEFORE this file."
         );
 
         window.supabaseClient = null;
@@ -46,9 +48,9 @@ const SUPABASE_KEY =
     }
 
 
-    // =================================================
-    // CREATE SUPABASE CLIENT
-    // =================================================
+    // -------------------------------------------------
+    // CREATE CLIENT
+    // -------------------------------------------------
 
     try {
 
@@ -59,17 +61,17 @@ const SUPABASE_KEY =
             );
 
 
-        // =================================================
-        // MAKE CLIENT AVAILABLE GLOBALLY
-        // =================================================
+        // -------------------------------------------------
+        // MAKE CLIENT AVAILABLE TO ALL JS FILES
+        // -------------------------------------------------
 
         window.supabaseClient =
             client;
 
 
-        // =================================================
-        // SUCCESS CHECK
-        // =================================================
+        // -------------------------------------------------
+        // VERIFY CLIENT
+        // -------------------------------------------------
 
         if (window.supabaseClient) {
 
