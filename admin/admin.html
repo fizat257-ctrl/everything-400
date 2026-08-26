@@ -65,7 +65,7 @@
             <h2>Admin Dashboard</h2>
 
             <p>
-                Manage your products and customer orders.
+                Manage your products, customer orders, and reviews.
             </p>
 
         </section>
@@ -410,6 +410,53 @@
 
                 <p class="loading-orders">
                     Loading orders...
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================
+             REVIEWS MANAGEMENT
+        ========================== -->
+
+        <section class="admin-card">
+
+
+            <div class="products-heading">
+
+                <div>
+
+                    <h3>
+                        Customer Reviews
+                    </h3>
+
+                    <p>
+                        View customer reviews and ratings.
+                    </p>
+
+                </div>
+
+
+                <span id="review-count">
+                    0 Reviews
+                </span>
+
+            </div>
+
+
+
+            <!-- REVIEWS FROM SUPABASE -->
+
+            <div
+                id="admin-reviews"
+                class="admin-reviews"
+            >
+
+                <p class="loading-reviews">
+                    Loading reviews...
                 </p>
 
             </div>

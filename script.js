@@ -2288,29 +2288,46 @@ async function loadProductDetails() {
                             );
 
 
-                        return `
-                            <div class="single-review">
+                      return `
+    <div class="single-review">
 
-                                <h4>
-                                    ${escapeHTML(
-                                        review.customer_name ||
-                                        "Customer"
-                                    )}
-                                </h4>
+        <h4>
+            ${escapeHTML(
+                review.customer_name ||
+                "Customer"
+            )}
+        </h4>
 
-                                <p>
-                                    ${stars}
-                                </p>
+        <p>
+            ${stars}
+        </p>
 
-                                <p>
-                                    ${escapeHTML(
-                                        review.review_text ||
-                                        ""
-                                    )}
-                                </p>
+        <p>
+            ${escapeHTML(
+                review.review_text ||
+                ""
+            )}
+        </p>
 
-                            </div>
-                        `;
+        <small>
+            ${
+                review.created_at
+                    ? new Date(
+                        review.created_at
+                    ).toLocaleDateString(
+                        "en-GB",
+                        {
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric"
+                        }
+                    )
+                    : ""
+            }
+        </small>
+
+    </div>
+`;
 
                     })
                     .join("");
@@ -2443,18 +2460,49 @@ async function loadProductDetails() {
                          REVIEWS
                     ====================================================== -->
 
-                    <div class="product-reviews">
+                   <div class="product-reviews">
 
-                        <h3>
-                            Reviews
-                        </h3>
+    <h3>
+        Reviews
+    </h3>
+
+    <div id="review-summary">
+
+        ${
+            reviews && reviews.length > 0
+                ? `
+                    <p>
+                        ⭐ ${
+                            (
+                                reviews.reduce(
+                                    (total, review) =>
+                                        total + Number(review.rating || 0),
+                                    0
+                                ) / reviews.length
+                            ).toFixed(1)
+                        } / 5
+                    </p>
+
+                    <p>
+                        Based on ${reviews.length}
+                        review${reviews.length === 1 ? "" : "s"}
+                    </p>
+                `
+                : `
+                    <p>
+                        No ratings yet.
+                    </p>
+                `
+        }
+
+    </div>
 
 
-                        <div id="reviews-list">
+    <div id="reviews-list">
 
-                            ${reviewsHTML}
+        ${reviewsHTML}
 
-                        </div>
+    </div>
 
 
                         <!-- REVIEW FORM -->
@@ -2473,36 +2521,21 @@ async function loadProductDetails() {
                             >
 
 
-                            <select
-                                id="review-rating"
-                            >
+                           <div class="star-rating" id="star-rating">
 
-                                <option value="">
-                                    Select Rating
-                                </option>
+    <button type="button" data-rating="1">☆</button>
+    <button type="button" data-rating="2">☆</button>
+    <button type="button" data-rating="3">☆</button>
+    <button type="button" data-rating="4">☆</button>
+    <button type="button" data-rating="5">☆</button>
 
-                                <option value="5">
-                                    ⭐⭐⭐⭐⭐ - 5
-                                </option>
+</div>
 
-                                <option value="4">
-                                    ⭐⭐⭐⭐ - 4
-                                </option>
-
-                                <option value="3">
-                                    ⭐⭐⭐ - 3
-                                </option>
-
-                                <option value="2">
-                                    ⭐⭐ - 2
-                                </option>
-
-                                <option value="1">
-                                    ⭐ - 1
-                                </option>
-
-                            </select>
-
+<input
+    type="hidden"
+    id="review-rating"
+    value=""
+>
 
                             <textarea
                                 id="review-text"
@@ -2678,7 +2711,52 @@ async function loadProductDetails() {
             document.getElementById(
                 "review-rating"
             );
+const starButtons =
+    document.querySelectorAll(
+        "#star-rating button"
+    );
 
+
+let selectedRating = 0;
+
+
+starButtons.forEach(function(button) {
+
+    button.addEventListener(
+        "click",
+        function() {
+
+            selectedRating =
+                Number(
+                    button.dataset.rating
+                );
+
+
+            ratingInput.value =
+                selectedRating;
+
+
+            starButtons.forEach(
+                function(star) {
+
+                    const starRating =
+                        Number(
+                            star.dataset.rating
+                        );
+
+
+                    star.textContent =
+                        starRating <= selectedRating
+                            ? "★"
+                            : "☆";
+
+                }
+            );
+
+        }
+    );
+
+});
 
         const reviewTextInput =
             document.getElementById(

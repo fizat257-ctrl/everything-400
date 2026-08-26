@@ -2357,3 +2357,272 @@ async function updatePaymentStatus(orderId, newPaymentStatus) {
         );
     }
 }
+// =====================================================
+// LOAD CUSTOMER REVIEWS
+// =====================================================
+
+async function loadReviews() {
+
+    const reviewsContainer =
+        document.getElementById("admin-reviews");
+
+    const reviewCount =
+        document.getElementById("review-count");
+
+
+    if (!reviewsContainer) return;
+
+
+    if (!db) {
+
+        reviewsContainer.innerHTML = `
+            <p>
+                Supabase connection is not available.
+            </p>
+        `;
+
+        return;
+    }
+
+
+    reviewsContainer.innerHTML = `
+        <p>
+            Loading reviews...
+        </p>
+    `;
+
+
+    try {
+
+        const {
+            data: reviews,
+            error
+        } = await db
+            .from("review")
+            .select("*")
+            .order("created_at", {
+                ascending: false
+            });
+
+
+        if (error) {
+
+            console.error(
+                "Reviews load error:",
+                error
+            );
+
+
+            reviewsContainer.innerHTML = `
+                <p>
+                    Reviews could not be loaded.
+                </p>
+            `;
+
+            return;
+        }
+
+
+        const reviewList =
+            reviews || [];
+
+
+        if (reviewCount) {
+
+            reviewCount.textContent =
+                `${reviewList.length} Review${reviewList.length !== 1 ? "s" : ""}`;
+
+        }
+
+
+        if (reviewList.length === 0) {
+
+            reviewsContainer.innerHTML = `
+                <div class="no-reviews">
+
+                    <p>
+                        No customer reviews yet.
+                    </p>
+
+                </div>
+            `;
+
+            return;
+        }
+
+
+        reviewsContainer.innerHTML =
+            reviewList
+                .map(function(review) {
+
+                    const rating =
+                        Number(
+                            review.rating || 0
+                        );
+
+
+                    const stars =
+                        "⭐".repeat(
+                            Math.max(
+                                0,
+                                Math.min(
+                                    5,
+                                    rating
+                                )
+                            )
+                        );
+
+
+                    const date =
+                        review.created_at
+                            ? new Date(
+                                review.created_at
+                            ).toLocaleDateString(
+                                "en-GB",
+                                {
+                                    day: "2-digit",
+                                    month: "short",
+                                    year: "numeric"
+                                }
+                            )
+                            : "";
+
+
+                    return `
+                        <div class="admin-review-card">
+
+                            <div class="admin-review-header">
+
+                                <h4>
+                                    ${escapeHTML(
+                                        review.customer_name ||
+                                        "Customer"
+                                    )}
+                                </h4>
+
+                                <span>
+                                    ${stars}
+                                </span>
+
+                            </div>
+
+
+                            <p class="admin-review-text">
+                                ${escapeHTML(
+                                    review.review_text ||
+                                    ""
+                                )}
+                            </p>
+
+
+                            <small>
+                                Product ID:
+                                ${escapeHTML(
+                                    String(
+                                        review.product_id
+                                    )
+                                )}
+                            </small>
+
+
+                            <small>
+                                ${escapeHTML(date)}
+                            </small>
+                            <button
+    type="button"
+    class="delete-review"
+    data-id="${escapeHTML(String(review.id))}"
+>
+    Delete Review
+</button>
+
+                        </div>
+                    `;
+
+                })
+                .join("");
+
+
+    } catch (error) {
+
+        console.error(
+            "Load reviews exception:",
+            error
+        );
+
+
+        reviewsContainer.innerHTML = `
+            <p>
+                Something went wrong while loading reviews.
+            </p>
+        `;
+
+    }
+
+}
+
+
+// =====================================================
+// LOAD REVIEWS
+// =====================================================
+
+loadReviews();
+const deleteReviewButtons =
+    reviewsContainer.querySelectorAll(
+        ".delete-review"
+    );
+
+
+deleteReviewButtons.forEach(function(button) {
+
+    button.addEventListener(
+        "click",
+        async function() {
+
+            const reviewId =
+                button.dataset.id;
+
+
+            const confirmed =
+                confirm(
+                    "Are you sure you want to delete this review?"
+                );
+
+
+            if (!confirmed) return;
+
+
+            const {
+                error
+            } = await db
+                .from("review")
+                .delete()
+                .eq("id", reviewId);
+
+
+            if (error) {
+
+                console.error(
+                    "Delete review error:",
+                    error
+                );
+
+                alert(
+                    "Review could not be deleted."
+                );
+
+                return;
+            }
+
+
+            alert(
+                "Review deleted successfully."
+            );
+
+
+            loadReviews();
+
+        }
+    );
+
+});
