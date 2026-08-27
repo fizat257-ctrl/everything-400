@@ -1106,7 +1106,7 @@ function getDisplayProductContainer() {
 // =====================================================
 // DISPLAY PRODUCTS
 // =====================================================
-
+console.log("PART 3A LOADED");
 async function displayProducts() {
 
     const container =
