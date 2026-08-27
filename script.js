@@ -2646,6 +2646,7 @@ if (currentCheckoutForm) {
                 "Everything 400 - Checkout submitted."
             );
             alert("CHECKOUT SUBMIT WORKING");
+            return;
 
 
             // =============================================
