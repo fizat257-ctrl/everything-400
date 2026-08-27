@@ -2742,13 +2742,15 @@ if (currentCheckoutForm) {
                     : "";
                     
 
-            const paymentMethod =
-                paymentInput
-                    ? String(
-                        paymentInput.value || ""
-                    ).trim()
-                    : "";
+           const selectedPayment =
+    document.querySelector(
+        '#checkout-form input[type="radio"][name="payment_method"]:checked'
+    );
 
+const paymentMethod =
+    selectedPayment
+        ? String(selectedPayment.value || "").trim()
+        : "";
 
             console.log(
                 "Checkout customer:",
