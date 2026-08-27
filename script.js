@@ -2746,15 +2746,13 @@ if (currentCheckoutForm) {
             // =============================================
 
             const selectedPayment =
-                currentCheckoutForm.querySelector(
-                    'input[type="radio"][name="payment_method"]:checked'
+                document.querySelector(
+                    '#checkout-form input[name="payment_method"]:checked'
                 );
 
             const paymentMethod =
                 selectedPayment
-                    ? String(
-                        selectedPayment.value || ""
-                    ).trim()
+                    ?  selectedPayment.value.trim()
                     : "";
 
 
