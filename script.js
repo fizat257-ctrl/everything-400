@@ -2890,8 +2890,24 @@ if (currentCheckoutForm) {
 
                     if (!product) {
                         return;
-                    }
+                    }// =================================================
+// PAYMENT METHOD - FINAL
+// =================================================
 
+const paymentRadio =
+    currentCheckoutForm.querySelector(
+        'input[type="radio"][name="payment_method"]:checked'
+    );
+
+const finalPaymentMethod =
+    paymentRadio
+        ? paymentRadio.value.trim()
+        : "";
+
+console.log(
+    "FINAL PAYMENT:",
+    finalPaymentMethod
+);
                     const price =
                         Number(
                             product.price
