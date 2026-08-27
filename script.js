@@ -2641,6 +2641,7 @@ if (currentCheckoutForm) {
         async function (event) {
 
             event.preventDefault();
+            event.stopPropagation();
 
             console.log(
                 "Everything 400 - Checkout submitted."
