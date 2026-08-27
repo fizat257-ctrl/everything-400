@@ -1799,3 +1799,252 @@ footer {
     }
 
 }
+/* =====================================================
+   EVERYTHING 400 - CHECKOUT PAGE
+   CHECKOUT LAYOUT UPDATE
+   ===================================================== */
+
+/* Checkout main section */
+
+.checkout-section {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 25px;
+}
+
+
+/* =====================================================
+   CHECKOUT ITEMS
+   ===================================================== */
+
+.checkout-items {
+    width: 100%;
+    margin-bottom: 30px;
+}
+
+
+/* =====================================================
+   CHECKOUT PRODUCT
+   ===================================================== */
+
+.checkout-item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 25px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    box-sizing: border-box;
+}
+
+
+/* Product information */
+
+.checkout-product-info {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex: 1;
+}
+
+
+/* =====================================================
+   SMALL PRODUCT IMAGE
+   ===================================================== */
+
+.checkout-product-info img {
+    width: 90px;
+    height: 90px;
+    object-fit: cover;
+    border-radius: 10px;
+    flex-shrink: 0;
+}
+
+
+/* Product name */
+
+.checkout-product-info h3 {
+    margin: 0 0 8px 0;
+    font-size: 18px;
+}
+
+
+/* Product text */
+
+.checkout-product-info p {
+    margin: 5px 0;
+    font-size: 15px;
+}
+
+
+/* =====================================================
+   ITEM TOTAL
+   ===================================================== */
+
+.checkout-item-total {
+    min-width: 130px;
+    text-align: right;
+}
+
+
+/* =====================================================
+   CUSTOMER INFORMATION
+   ===================================================== */
+
+.checkout-form {
+    width: 100%;
+    max-width: 1100px;
+    margin: 30px auto;
+    padding: 35px;
+    box-sizing: border-box;
+    border-radius: 14px;
+}
+
+
+/* Form heading */
+
+.checkout-form h2,
+.checkout-form h3 {
+    width: 100%;
+    margin-bottom: 25px;
+}
+
+
+/* =====================================================
+   FORM GROUP
+   ===================================================== */
+
+.checkout-form .form-group {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+
+/* Labels */
+
+.checkout-form label {
+    display: block;
+    width: 100%;
+    margin-bottom: 8px;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+
+/* Inputs */
+
+.checkout-form input,
+.checkout-form textarea,
+.checkout-form select {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 14px 16px;
+    font-size: 16px;
+    border-radius: 8px;
+}
+
+
+/* Textarea */
+
+.checkout-form textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+
+/* =====================================================
+   CUSTOMER INFORMATION GRID
+   ===================================================== */
+
+.customer-information {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+
+/* Full-width fields */
+
+.customer-information .full-width {
+    grid-column: 1 / -1;
+}
+
+
+/* =====================================================
+   CHECKOUT TOTAL
+   ===================================================== */
+
+.checkout-total {
+    width: 100%;
+    max-width: 1100px;
+    margin: 20px auto;
+    padding: 20px;
+    box-sizing: border-box;
+    text-align: right;
+}
+
+
+/* =====================================================
+   PLACE ORDER BUTTON
+   ===================================================== */
+
+#checkout-btn {
+    display: block;
+    width: 100%;
+    max-width: 1100px;
+    margin: 25px auto;
+    padding: 16px 25px;
+    font-size: 17px;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+
+/* =====================================================
+   MOBILE
+   ===================================================== */
+
+@media (max-width: 700px) {
+
+    .checkout-section {
+        padding: 25px 15px;
+    }
+
+    .checkout-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .checkout-product-info {
+        width: 100%;
+    }
+
+    .checkout-product-info img {
+        width: 70px;
+        height: 70px;
+    }
+
+    .checkout-item-total {
+        width: 100%;
+        text-align: left;
+    }
+
+    .checkout-form {
+        padding: 20px;
+    }
+
+    .customer-information {
+        grid-template-columns: 1fr;
+    }
+
+    .customer-information .full-width {
+        grid-column: auto;
+    }
+
+}
