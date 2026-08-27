@@ -19,9 +19,7 @@
 
 </head>
 
-
 <body>
-
 
     <!-- =========================
          HEADER
@@ -61,7 +59,6 @@
     </header>
 
 
-
     <!-- =========================
          MAIN
     ========================== -->
@@ -91,7 +88,6 @@
             </div>
 
 
-
             <!-- =========================
                  CART SUMMARY
             ========================== -->
@@ -109,9 +105,14 @@
                 </h3>
 
 
+                <!-- =========================
+                     PROCEED TO CHECKOUT
+                ========================== -->
+
                 <button
                     id="checkout-btn"
                     type="button"
+                    class="checkout-button"
                 >
                     Proceed to Checkout
                 </button>
@@ -121,7 +122,6 @@
         </section>
 
     </main>
-
 
 
     <!-- =========================
@@ -137,7 +137,6 @@
     </footer>
 
 
-
     <!-- =========================
          SUPABASE LIBRARY
     ========================== -->
@@ -147,13 +146,11 @@
     ></script>
 
 
-
     <!-- =========================
          SUPABASE CONNECTION
     ========================== -->
 
     <script src="./supabase.js"></script>
-
 
 
     <!-- =========================
@@ -162,6 +159,93 @@
 
     <script src="./script.js"></script>
 
+
+    <!-- =========================
+         PROCEED TO CHECKOUT
+         SAFETY CLICK HANDLER
+    ========================== -->
+
+    <script>
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            function() {
+
+                const checkoutButton =
+                    document.getElementById(
+                        "checkout-btn"
+                    );
+
+                if (!checkoutButton) {
+
+                    console.error(
+                        "Proceed to Checkout button not found."
+                    );
+
+                    return;
+                }
+
+                checkoutButton.addEventListener(
+                    "click",
+                    function() {
+
+                        console.log(
+                            "Proceed to Checkout clicked"
+                        );
+
+                        const savedCart =
+                            localStorage.getItem(
+                                "cart"
+                            );
+
+                        let currentCart = [];
+
+                        try {
+
+                            currentCart =
+                                JSON.parse(
+                                    savedCart
+                                ) || [];
+
+                        }
+                        catch (error) {
+
+                            console.error(
+                                "Cart loading error:",
+                                error
+                            );
+
+                            currentCart = [];
+                        }
+
+                        if (
+                            !Array.isArray(
+                                currentCart
+                            ) ||
+                            currentCart.length === 0
+                        ) {
+
+                            alert(
+                                "Your cart is empty."
+                            );
+
+                            return;
+                        }
+
+                        window.location.href =
+                            "./checkout.html";
+
+                    }
+                );
+
+                console.log(
+                    "Checkout button connected successfully."
+                );
+
+            }
+        );
+
+    </script>
 
 </body>
 
