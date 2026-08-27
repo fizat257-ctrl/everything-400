@@ -2677,19 +2677,19 @@ if (currentCheckoutForm) {
             // =================================================
 
             const nameInput =
-                document.getElementById("name");
+                document.getElementById("customer-name");
 
             const phoneInput =
-                document.getElementById("phone");
+                document.getElementById("customer-phone");
 
             const emailInput =
-                document.getElementById("email");
+                document.getElementById("customer-email");
 
             const addressInput =
-                document.getElementById("address");
+                document.getElementById("customer-address");
 
             const cityInput =
-                document.getElementById("city");
+                document.getElementById("customer-city");
 
 
             // =================================================
@@ -2740,6 +2740,7 @@ if (currentCheckoutForm) {
                         cityInput.value || ""
                     ).trim()
                     : "";
+                    
 
             const paymentMethod =
                 paymentInput
