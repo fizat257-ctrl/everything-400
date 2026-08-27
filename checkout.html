@@ -77,8 +77,10 @@
                     </h3>
 
 
-                    <form id="checkout-form">
-
+                    <form
+                        id="checkout-form"
+                        novalidate
+                    >
 
                         <!-- FULL NAME -->
 
@@ -240,9 +242,7 @@
 
 
                             <small class="payment-note">
-
                                 Select your preferred payment method.
-
                             </small>
 
                         </div>
@@ -255,6 +255,7 @@
                         <div
                             id="customer-order-status"
                             class="customer-order-status"
+                            aria-live="polite"
                         ></div>
 
 
