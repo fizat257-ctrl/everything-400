@@ -98,3 +98,7 @@ const SUPABASE_KEY =
     }
 
 })();
+console.log(
+    "TEST: Supabase client =",
+    window.supabaseClient
+);
