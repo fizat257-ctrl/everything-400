@@ -2477,6 +2477,7 @@ function displayCheckout() {
 // PART 4/7 END
 // =====================================================
 // =====================================================
+/// =====================================================
 // EVERYTHING 400 - SCRIPT.JS
 // PART 5/7
 // CART + CHECKOUT CONTINUED
@@ -2486,7 +2487,10 @@ function displayCheckout() {
 // INITIALIZE CART DISPLAY
 // =====================================================
 
-if (cartItemsContainer) {
+if (
+    typeof cartItemsContainer !== "undefined" &&
+    cartItemsContainer
+) {
     displayCart();
 }
 
@@ -2494,7 +2498,10 @@ if (cartItemsContainer) {
 // INITIALIZE CHECKOUT DISPLAY
 // =====================================================
 
-if (checkoutItemsContainer) {
+if (
+    typeof checkoutItemsContainer !== "undefined" &&
+    checkoutItemsContainer
+) {
     displayCheckout();
 }
 
@@ -2502,7 +2509,9 @@ if (checkoutItemsContainer) {
 // CART PAGE BUTTONS
 // =====================================================
 
-// Clear Cart Button
+// =====================================================
+// CLEAR CART BUTTON
+// =====================================================
 
 const clearCartButton =
     document.getElementById(
@@ -2516,6 +2525,7 @@ if (clearCartButton) {
         function() {
 
             if (
+                !Array.isArray(cart) ||
                 cart.length === 0
             ) {
                 return;
@@ -2530,7 +2540,20 @@ if (clearCartButton) {
                 return;
             }
 
-            clearCart();
+            if (
+                typeof clearCart ===
+                "function"
+            ) {
+
+                clearCart();
+
+            }
+            else {
+
+                console.error(
+                    "clearCart function is not defined."
+                );
+            }
         }
     );
 }
@@ -2539,39 +2562,59 @@ if (clearCartButton) {
 // GO TO CHECKOUT
 // =====================================================
 
-const goToCheckoutButton =
-    document.getElementById(
-        "checkout-button"
-    );
+// Event delegation is used because the button
+// may be rendered dynamically.
 
-if (goToCheckoutButton) {
+document.addEventListener(
+    "click",
+    function(event) {
 
-    goToCheckoutButton.addEventListener(
-        "click",
-        function() {
+        const checkoutLink =
+            event.target.closest(
+                "#checkout-button"
+            );
 
-            if (
-                !Array.isArray(cart) ||
-                cart.length === 0
-            ) {
-                alert(
-                    "Your cart is empty."
-                );
-
-                return;
-            }
-
-            window.location.href =
-                "checkout.html";
+        if (!checkoutLink) {
+            return;
         }
-    );
-}
+
+        console.log(
+            "Proceed to Checkout clicked"
+        );
+
+        // ---------------------------------------------
+        // CHECK CART
+        // ---------------------------------------------
+
+        if (
+            !Array.isArray(cart) ||
+            cart.length === 0
+        ) {
+
+            alert(
+                "Your cart is empty."
+            );
+
+            return;
+        }
+
+        // ---------------------------------------------
+        // GO TO CHECKOUT PAGE
+        // ---------------------------------------------
+
+        window.location.href =
+            "checkout.html";
+    }
+);
 
 // =====================================================
 // CHECKOUT FORM
 // =====================================================
 
-if (checkoutForm) {
+if (
+    typeof checkoutForm !== "undefined" &&
+    checkoutForm
+) {
 
     displayCheckout();
 
@@ -2580,6 +2623,10 @@ if (checkoutForm) {
         async function(event) {
 
             event.preventDefault();
+
+            // =================================================
+            // CHECK CART
+            // =================================================
 
             if (
                 !Array.isArray(cart) ||
@@ -2695,6 +2742,10 @@ if (checkoutForm) {
             cart.forEach(
                 function(product) {
 
+                    if (!product) {
+                        return;
+                    }
+
                     const price =
                         Number(
                             product.price
@@ -2714,19 +2765,45 @@ if (checkoutForm) {
             );
 
             // =================================================
-            // DISABLE BUTTON
+            // GET PLACE ORDER BUTTON
             // =================================================
 
-            if (checkoutButton) {
+            const placeOrderButton =
+                checkoutForm.querySelector(
+                    "#checkout-btn"
+                ) ||
+                checkoutForm.querySelector(
+                    "[type='submit']"
+                );
 
-                checkoutButton.disabled =
+            // =================================================
+            // DISABLE PLACE ORDER BUTTON
+            // =================================================
+
+            if (placeOrderButton) {
+
+                placeOrderButton.disabled =
                     true;
 
-                checkoutButton.textContent =
+                placeOrderButton.textContent =
                     "Placing Order...";
             }
 
             try {
+
+                // =================================================
+                // CHECK SUPABASE FUNCTION
+                // =================================================
+
+                if (
+                    typeof getSupabaseClient !==
+                    "function"
+                ) {
+
+                    throw new Error(
+                        "getSupabaseClient function is not defined."
+                    );
+                }
 
                 const database =
                     getSupabaseClient();
@@ -2777,6 +2854,10 @@ if (checkoutForm) {
                     .select()
                     .single();
 
+                // =================================================
+                // ORDER ERROR
+                // =================================================
+
                 if (orderError) {
 
                     console.error(
@@ -2816,7 +2897,8 @@ if (checkoutForm) {
                                         product.id,
 
                                     product_name:
-                                        product.name,
+                                        product.name ||
+                                        "Unnamed Product",
 
                                     quantity:
                                         Math.max(
@@ -2830,7 +2912,6 @@ if (checkoutForm) {
                                         Number(
                                             product.price
                                         ) || 0
-
                                 };
                             }
                         );
@@ -2863,19 +2944,41 @@ if (checkoutForm) {
 
                 cart = [];
 
-                saveCart();
+                if (
+                    typeof saveCart ===
+                    "function"
+                ) {
+                    saveCart();
+                }
 
-                updateCartCount();
+                if (
+                    typeof updateCartCount ===
+                    "function"
+                ) {
+                    updateCartCount();
+                }
 
-                displayCart();
+                if (
+                    typeof displayCart ===
+                    "function"
+                ) {
+                    displayCart();
+                }
 
-                displayCheckout();
+                if (
+                    typeof displayCheckout ===
+                    "function"
+                ) {
+                    displayCheckout();
+                }
 
                 // =================================================
                 // SUCCESS MESSAGE
                 // =================================================
 
                 if (
+                    typeof customerOrderStatus !==
+                    "undefined" &&
                     customerOrderStatus
                 ) {
 
@@ -2900,7 +3003,9 @@ if (checkoutForm) {
                                             Your Order ID:
                                             <strong>
                                                 ${escapeHTML(
-                                                    orderId
+                                                    String(
+                                                        orderId
+                                                    )
                                                 )}
                                             </strong>
                                         </p>
@@ -2918,6 +3023,7 @@ if (checkoutForm) {
 
                         </div>
                     `;
+
                 }
                 else {
 
@@ -2946,12 +3052,16 @@ if (checkoutForm) {
             }
             finally {
 
-                if (checkoutButton) {
+                // =================================================
+                // ENABLE PLACE ORDER BUTTON AGAIN
+                // =================================================
 
-                    checkoutButton.disabled =
+                if (placeOrderButton) {
+
+                    placeOrderButton.disabled =
                         false;
 
-                    checkoutButton.textContent =
+                    placeOrderButton.textContent =
                         "Place Order";
                 }
             }
@@ -2959,6 +3069,9 @@ if (checkoutForm) {
     );
 }
 
+// =====================================================
+// PART 5/7 END
+// =====================================================
 // =====================================================
 // PART 5/7 END
 // =====================================================
