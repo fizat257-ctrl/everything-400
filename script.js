@@ -2541,7 +2541,7 @@ if (clearCartButton) {
 
 const goToCheckoutButton =
     document.getElementById(
-        "go-to-checkout"
+        "checkout-button"
     );
 
 if (goToCheckoutButton) {
