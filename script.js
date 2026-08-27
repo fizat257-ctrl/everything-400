@@ -2477,8 +2477,6 @@ function displayCheckout() {
 // PART 4/7 END
 // =====================================================
 // =====================================================
-/// =====================================================
-// =====================================================
 // EVERYTHING 400 - SCRIPT.JS
 // PART 5A/7
 // CART + CHECKOUT
@@ -2491,11 +2489,10 @@ function displayCheckout() {
 
 if (
     typeof cartItemsContainer !== "undefined" &&
-    cartItemsContainer
+    cartItemsContainer &&
+    typeof displayCart === "function"
 ) {
-    if (typeof displayCart === "function") {
-        displayCart();
-    }
+    displayCart();
 }
 
 
@@ -2505,11 +2502,10 @@ if (
 
 if (
     typeof checkoutItemsContainer !== "undefined" &&
-    checkoutItemsContainer
+    checkoutItemsContainer &&
+    typeof displayCheckout === "function"
 ) {
-    if (typeof displayCheckout === "function") {
-        displayCheckout();
-    }
+    displayCheckout();
 }
 
 
@@ -2546,9 +2542,10 @@ if (clearCartButton) {
             if (
                 typeof clearCart === "function"
             ) {
+
                 clearCart();
-            }
-            else {
+
+            } else {
 
                 cart = [];
 
@@ -2616,7 +2613,7 @@ document.addEventListener(
 
 
 // =====================================================
-// CHECKOUT FORM ELEMENT
+// CHECKOUT FORM
 // =====================================================
 
 const currentCheckoutForm =
@@ -2625,23 +2622,25 @@ const currentCheckoutForm =
     );
 
 
-// =====================================================
-// CHECKOUT FORM SUBMIT
-// =====================================================
-
 if (currentCheckoutForm) {
 
     console.log(
         "Everything 400 - Checkout form found."
     );
 
+
     if (
         typeof displayCheckout ===
         "function"
     ) {
+
         displayCheckout();
     }
 
+
+    // =================================================
+    // CHECKOUT SUBMIT
+    // =================================================
 
     currentCheckoutForm.addEventListener(
         "submit",
@@ -2654,9 +2653,9 @@ if (currentCheckoutForm) {
             );
 
 
-            // =================================================
+            // =============================================
             // CHECK CART
-            // =================================================
+            // =============================================
 
             if (
                 typeof cart === "undefined" ||
@@ -2672,39 +2671,39 @@ if (currentCheckoutForm) {
             }
 
 
-            // =================================================
-            // GET INPUT ELEMENTS DIRECTLY
-            // =================================================
+            // =============================================
+            // GET CUSTOMER INPUTS
+            // =============================================
 
             const nameInput =
-                document.getElementById("customer-name");
+                document.getElementById(
+                    "customer-name"
+                );
 
             const phoneInput =
-                document.getElementById("customer-phone");
+                document.getElementById(
+                    "customer-phone"
+                );
 
             const emailInput =
-                document.getElementById("customer-email");
+                document.getElementById(
+                    "customer-email"
+                );
 
             const addressInput =
-                document.getElementById("customer-address");
+                document.getElementById(
+                    "customer-address"
+                );
 
             const cityInput =
-                document.getElementById("customer-city");
-
-
-            // =================================================
-            // GET PAYMENT METHOD
-            // =================================================
-
-            const paymentInput =
-                document.querySelector(
-                    'checkout-forminput[name="payment_method"]:checked'
+                document.getElementById(
+                    "customer-city"
                 );
 
 
-            // =================================================
-            // READ VALUES
-            // =================================================
+            // =============================================
+            // READ CUSTOMER VALUES
+            // =============================================
 
             const customerName =
                 nameInput
@@ -2740,20 +2739,31 @@ if (currentCheckoutForm) {
                         cityInput.value || ""
                     ).trim()
                     : "";
-                    
 
-           const selectedPayment =
-    document.querySelector(
-        '#checkout-form input[type="radio"][name="payment_method"]:checked'
-    );
 
-const paymentMethod =
-    selectedPayment
-        ? String(selectedPayment.value || "").trim()
-        : "";
+            // =============================================
+            // GET SELECTED PAYMENT
+            // =============================================
+
+            const selectedPayment =
+                currentCheckoutForm.querySelector(
+                    'input[type="radio"][name="payment_method"]:checked'
+                );
+
+            const paymentMethod =
+                selectedPayment
+                    ? String(
+                        selectedPayment.value || ""
+                    ).trim()
+                    : "";
+
+
+            // =============================================
+            // DEBUG
+            // =============================================
 
             console.log(
-                "Checkout customer:",
+                "Everything 400 - Checkout customer:",
                 {
                     customerName,
                     customerPhone,
@@ -2765,9 +2775,9 @@ const paymentMethod =
             );
 
 
-            // =================================================
+            // =============================================
             // VALIDATE NAME
-            // =================================================
+            // =============================================
 
             if (!customerName) {
 
@@ -2783,9 +2793,9 @@ const paymentMethod =
             }
 
 
-            // =================================================
+            // =============================================
             // VALIDATE PHONE
-            // =================================================
+            // =============================================
 
             if (!customerPhone) {
 
@@ -2801,9 +2811,9 @@ const paymentMethod =
             }
 
 
-            // =================================================
+            // =============================================
             // VALIDATE EMAIL
-            // =================================================
+            // =============================================
 
             if (!customerEmail) {
 
@@ -2819,9 +2829,9 @@ const paymentMethod =
             }
 
 
-            // =================================================
+            // =============================================
             // VALIDATE ADDRESS
-            // =================================================
+            // =============================================
 
             if (!customerAddress) {
 
@@ -2837,9 +2847,9 @@ const paymentMethod =
             }
 
 
-            // =================================================
+            // =============================================
             // VALIDATE CITY
-            // =================================================
+            // =============================================
 
             if (!customerCity) {
 
@@ -2855,9 +2865,9 @@ const paymentMethod =
             }
 
 
-            // =================================================
+            // =============================================
             // VALIDATE PAYMENT
-            // =================================================
+            // =============================================
 
             if (!paymentMethod) {
 
@@ -2869,9 +2879,9 @@ const paymentMethod =
             }
 
 
-            // =================================================
+            // =============================================
             // CALCULATE TOTAL
-            // =================================================
+            // =============================================
 
             let orderTotal = 0;
 
@@ -2901,19 +2911,29 @@ const paymentMethod =
             );
 
 
-            // =================================================
-            // GET PLACE ORDER BUTTON
-            // =================================================
+            // =============================================
+            // CHECK TOTAL
+            // =============================================
+
+            if (orderTotal <= 0) {
+
+                alert(
+                    "Unable to calculate your order total."
+                );
+
+                return;
+            }
+
+
+            // =============================================
+            // PLACE ORDER BUTTON
+            // =============================================
 
             const placeOrderButton =
                 document.getElementById(
                     "place-order-btn"
                 );
 
-
-            // =================================================
-            // DISABLE BUTTON
-            // =================================================
 
             if (placeOrderButton) {
 
@@ -2925,24 +2945,20 @@ const paymentMethod =
             }
 
 
-            // =================================================
-            // CONTINUE IN PART 5B
-            // =================================================// =====================================================
+            // =============================================
+            // PART 5B CONTINUES
+            // =============================================// =====================================================
 // EVERYTHING 400 - SCRIPT.JS
 // PART 5B/7
 // CHECKOUT CONTINUED
 // =====================================================
 
 
-// =====================================================
-// SUPABASE + ORDER CREATION
-// =====================================================
-
             try {
 
-                // =================================================
-                // GET SUPABASE CLIENT
-                // =================================================
+                // =============================================
+                // SUPABASE CLIENT
+                // =============================================
 
                 if (
                     typeof getSupabaseClient !==
@@ -2968,72 +2984,65 @@ const paymentMethod =
 
 
                 console.log(
-                    "Everything 400 - Supabase client connected."
+                    "Everything 400 - Supabase connected."
                 );
 
 
-                // =================================================
-                // PREPARE PRODUCTS
-                // =================================================
+                // =============================================
+                // PREPARE PRODUCTS FOR JSONB
+                // =============================================
 
                 const orderProducts =
                     cart.map(
                         function (product) {
 
+                            if (!product) {
+                                return null;
+                            }
+
                             return {
 
                                 id:
-                                    product &&
-                                    product.id
-                                        ? product.id
-                                        : null,
+                                    product.id || null,
 
                                 name:
-                                    product &&
-                                    product.name
-                                        ? product.name
-                                        : "Unnamed Product",
+                                    product.name ||
+                                    "Unnamed Product",
 
                                 price:
-                                    product &&
-                                    product.price !== undefined
-                                        ? Number(
-                                            product.price
-                                        ) || 0
-                                        : 0,
+                                    Number(
+                                        product.price
+                                    ) || 0,
 
                                 quantity:
-                                    product &&
-                                    product.quantity !== undefined
-                                        ? Math.max(
-                                            1,
-                                            Number(
-                                                product.quantity
-                                            ) || 1
-                                        )
-                                        : 1,
+                                    Math.max(
+                                        1,
+                                        Number(
+                                            product.quantity
+                                        ) || 1
+                                    ),
 
                                 image:
-                                    product &&
-                                    product.image
-                                        ? product.image
-                                        : "",
+                                    product.image ||
+                                    "",
 
                                 category:
-                                    product &&
-                                    product.category
-                                        ? product.category
-                                        : "other"
+                                    product.category ||
+                                    "other"
                             };
+                        }
+                    ).filter(
+                        function (item) {
+                            return item !== null;
                         }
                     );
 
 
-                // =================================================
-                // ORDER DATA
-                // =================================================
+                // =============================================
+                // CREATE ORDER DATA
+                // =============================================
                 //
-                // Current orders table:
+                // Supabase orders table:
                 //
                 // id
                 // created_at
@@ -3049,7 +3058,7 @@ const paymentMethod =
                 // total_amount
                 //
                 // product = JSONB
-                // =================================================
+                // =============================================
 
                 const orderData = {
 
@@ -3091,30 +3100,25 @@ const paymentMethod =
                 );
 
 
-                // =================================================
-                // INSERT ORDER
-                // =================================================
+                // =============================================
+                // INSERT INTO ORDERS
+                // =============================================
 
-                const result =
-                    await database
-                        .from("orders")
-                        .insert(
-                            orderData
-                        )
-                        .select()
-                        .single();
-
-
-                const order =
-                    result.data;
-
-                const orderError =
-                    result.error;
+                const {
+                    data: order,
+                    error: orderError
+                } = await database
+                    .from("orders")
+                    .insert(
+                        orderData
+                    )
+                    .select()
+                    .single();
 
 
-                // =================================================
+                // =============================================
                 // CHECK ORDER ERROR
-                // =================================================
+                // =============================================
 
                 if (orderError) {
 
@@ -3130,9 +3134,9 @@ const paymentMethod =
                 }
 
 
-                // =================================================
+                // =============================================
                 // ORDER CREATED
-                // =================================================
+                // =============================================
 
                 console.log(
                     "Everything 400 - Order created:",
@@ -3143,36 +3147,20 @@ const paymentMethod =
                 const orderId =
                     order &&
                     order.id
-                        ? String(
-                            order.id
-                        )
+                        ? String(order.id)
                         : "";
 
 
-                // =================================================
-                // IMPORTANT:
-                // DO NOT INSERT INTO order_items
-                //
-                // Your current setup has:
-                // orders
-                // products
-                // reviews
-                //
-                // And your order products are already
-                // stored inside orders.product as JSONB.
-                // =================================================
-
-
-                // =================================================
+                // =============================================
                 // CLEAR CART
-                // =================================================
+                // =============================================
 
                 cart = [];
 
 
-                // =================================================
+                // =============================================
                 // SAVE CART
-                // =================================================
+                // =============================================
 
                 if (
                     typeof saveCart ===
@@ -3183,9 +3171,9 @@ const paymentMethod =
                 }
 
 
-                // =================================================
+                // =============================================
                 // UPDATE CART COUNT
-                // =================================================
+                // =============================================
 
                 if (
                     typeof updateCartCount ===
@@ -3196,9 +3184,9 @@ const paymentMethod =
                 }
 
 
-                // =================================================
+                // =============================================
                 // UPDATE CART DISPLAY
-                // =================================================
+                // =============================================
 
                 if (
                     typeof displayCart ===
@@ -3209,9 +3197,9 @@ const paymentMethod =
                 }
 
 
-                // =================================================
+                // =============================================
                 // UPDATE CHECKOUT DISPLAY
-                // =================================================
+                // =============================================
 
                 if (
                     typeof displayCheckout ===
@@ -3222,47 +3210,9 @@ const paymentMethod =
                 }
 
 
-                // =================================================
+                // =============================================
                 // SUCCESS MESSAGE
-                // =================================================
-
-                let successMessage =
-                    "Order placed successfully!";
-
-
-                if (orderId) {
-
-                    successMessage +=
-                        "\n\nOrder ID: " +
-                        orderId;
-                }
-
-
-                successMessage +=
-                    "\nTotal: Rs. " +
-                    orderTotal.toLocaleString();
-
-
-                successMessage +=
-                    "\nPayment: " +
-                    paymentMethod;
-
-
-                alert(
-                    successMessage
-                );
-
-
-                // =================================================
-                // RESET FORM
-                // =================================================
-
-                currentCheckoutForm.reset();
-
-
-                // =================================================
-                // SUCCESS STATUS ELEMENT
-                // =================================================
+                // =============================================
 
                 const statusElement =
                     document.getElementById(
@@ -3282,9 +3232,14 @@ const paymentMethod =
 
                             <p>
                                 Thank you,
-                                ${escapeHTML(
-                                    customerName
-                                )}.
+                                ${
+                                    typeof escapeHTML ===
+                                    "function"
+                                        ? escapeHTML(
+                                            customerName
+                                        )
+                                        : customerName
+                                }.
                             </p>
 
                             ${
@@ -3293,9 +3248,14 @@ const paymentMethod =
                                         <p>
                                             Order ID:
                                             <strong>
-                                                ${escapeHTML(
-                                                    orderId
-                                                )}
+                                                ${
+                                                    typeof escapeHTML ===
+                                                    "function"
+                                                        ? escapeHTML(
+                                                            orderId
+                                                        )
+                                                        : orderId
+                                                }
                                             </strong>
                                         </p>
                                     `
@@ -3313,30 +3273,59 @@ const paymentMethod =
                             <p>
                                 Payment Method:
                                 <strong>
-                                    ${escapeHTML(
-                                        paymentMethod
-                                    )}
+                                    ${
+                                        typeof escapeHTML ===
+                                        "function"
+                                            ? escapeHTML(
+                                                paymentMethod
+                                            )
+                                            : paymentMethod
+                                    }
                                 </strong>
                             </p>
 
                         </div>
-
                     `;
+
                 }
+                else {
+
+                    alert(
+                        "Order placed successfully!\n\n" +
+                        (
+                            orderId
+                                ? "Order ID: " +
+                                  orderId +
+                                  "\n"
+                                : ""
+                        ) +
+                        "Total: Rs. " +
+                        orderTotal.toLocaleString() +
+                        "\nPayment: " +
+                        paymentMethod
+                    );
+                }
+
+
+                // =============================================
+                // RESET FORM
+                // =============================================
+
+                currentCheckoutForm.reset();
 
 
             }
             catch (error) {
 
                 console.error(
-                    "Checkout error:",
+                    "Everything 400 - Checkout error:",
                     error
                 );
 
 
-                // =================================================
+                // =============================================
                 // SHOW ERROR
-                // =================================================
+                // =============================================
 
                 const statusElement =
                     document.getElementById(
@@ -3345,6 +3334,12 @@ const paymentMethod =
 
 
                 if (statusElement) {
+
+                    const errorMessage =
+                        error &&
+                        error.message
+                            ? error.message
+                            : "Please try again.";
 
                     statusElement.innerHTML = `
 
@@ -3356,17 +3351,16 @@ const paymentMethod =
 
                             <p>
                                 ${
-                                    escapeHTML(
-                                        error &&
-                                        error.message
-                                            ? error.message
-                                            : "Please try again."
-                                    )
+                                    typeof escapeHTML ===
+                                    "function"
+                                        ? escapeHTML(
+                                            errorMessage
+                                        )
+                                        : errorMessage
                                 }
                             </p>
 
                         </div>
-
                     `;
                 }
 
@@ -3378,9 +3372,9 @@ const paymentMethod =
             }
 
 
-            // =================================================
+            // =============================================
             // ENABLE BUTTON AGAIN
-            // =================================================
+            // =============================================
 
             finally {
 
@@ -3393,6 +3387,7 @@ const paymentMethod =
                         "Place Order";
                 }
             }
+
         }
     );
 }
@@ -3400,6 +3395,7 @@ const paymentMethod =
 
 // =====================================================
 // PART 5B/7 END
+// =====================================================
 // =====================================================
 // EVERYTHING 400 - SCRIPT.JS
 // PART 6/7
