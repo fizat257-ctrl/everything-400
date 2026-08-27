@@ -2963,6 +2963,7 @@ if (checkoutForm) {
 // PART 5/7 END
 // =====================================================
 // =====================================================
+// =====================================================
 // EVERYTHING 400 - SCRIPT.JS
 // PART 6/7
 // ORDER STATUS + PRODUCT DETAILS
@@ -2990,8 +2991,7 @@ if (checkOrderButton) {
 
             const orderId =
                 orderIdInput
-                    ? orderIdInput.value
-                        .trim()
+                    ? orderIdInput.value.trim()
                     : "";
 
             if (!orderId) {
@@ -3076,7 +3076,9 @@ if (checkOrderButton) {
                                 </strong>
 
                                 ${escapeHTML(
-                                    data.id
+                                    String(
+                                        data.id || ""
+                                    )
                                 )}
                             </p>
 
@@ -3086,8 +3088,10 @@ if (checkOrderButton) {
                                 </strong>
 
                                 ${escapeHTML(
-                                    data.customer_name ||
-                                    ""
+                                    String(
+                                        data.customer_name ||
+                                        ""
+                                    )
                                 )}
                             </p>
 
@@ -3097,8 +3101,10 @@ if (checkOrderButton) {
                                 </strong>
 
                                 ${escapeHTML(
-                                    data.status ||
-                                    "Pending"
+                                    String(
+                                        data.status ||
+                                        "Pending"
+                                    )
                                 )}
                             </p>
 
@@ -3140,7 +3146,6 @@ if (checkOrderButton) {
 
                 checkOrderButton.textContent =
                     "Check Order";
-
             }
         }
     );
@@ -3166,6 +3171,7 @@ async function showProductDetails(
         const product =
             products.find(
                 function(item) {
+
                     return (
                         String(item.id) ===
                         String(productId)
@@ -3223,12 +3229,16 @@ async function showProductDetails(
             );
 
         const productName =
-            product.name ||
-            "Unnamed Product";
+            String(
+                product.name ||
+                "Unnamed Product"
+            );
 
         const description =
-            product.description ||
-            "No description available.";
+            String(
+                product.description ||
+                "No description available."
+            );
 
         // =================================================
         // MODAL CONTENT
@@ -3255,7 +3265,9 @@ async function showProductDetails(
                                 ? `
                                     <img
                                         src="${escapeHTML(
-                                            product.image
+                                            String(
+                                                product.image
+                                            )
                                         )}"
                                         alt="${escapeHTML(
                                             productName
@@ -3275,8 +3287,10 @@ async function showProductDetails(
 
                         <span>
                             ${escapeHTML(
-                                product.category ||
-                                "Other"
+                                String(
+                                    product.category ||
+                                    "Other"
+                                )
                             )}
                         </span>
 
@@ -3347,7 +3361,6 @@ async function showProductDetails(
 
                     modal.style.display =
                         "none";
-
                 }
             );
         }
@@ -3374,7 +3387,6 @@ async function showProductDetails(
 
                         modal.style.display =
                             "none";
-
                     }
                 }
             );
@@ -3406,6 +3418,18 @@ async function showProductDetails(
                         return;
                     }
 
+                    if (
+                        typeof addToCart !==
+                        "function"
+                    ) {
+
+                        console.error(
+                            "addToCart function is not defined."
+                        );
+
+                        return;
+                    }
+
                     const added =
                         addToCart(
                             product,
@@ -3413,14 +3437,12 @@ async function showProductDetails(
                         );
 
                     if (
-                        added
+                        added !== false
                     ) {
 
                         modal.style.display =
                             "none";
-
                     }
-
                 }
             );
         }
@@ -3440,7 +3462,7 @@ async function showProductDetails(
 }
 
 // =====================================================
-// PRODUCT DETAILS CLICK
+// PRODUCT DETAILS BUTTON CLICK
 // =====================================================
 
 document.addEventListener(
@@ -3458,6 +3480,59 @@ document.addEventListener(
 
         const productId =
             detailsButton.dataset.id;
+
+        if (!productId) {
+
+            console.error(
+                "Product ID is missing."
+            );
+
+            return;
+        }
+
+        showProductDetails(
+            productId
+        );
+    }
+);
+
+// =====================================================
+// PRODUCT IMAGE CLICK
+// =====================================================
+
+document.addEventListener(
+    "click",
+    function(event) {
+
+        const imageContainer =
+            event.target.closest(
+                ".product-card .product-image"
+            );
+
+        if (!imageContainer) {
+            return;
+        }
+
+        const card =
+            imageContainer.closest(
+                ".product-card"
+            );
+
+        if (!card) {
+            return;
+        }
+
+        const productId =
+            card.dataset.id;
+
+        if (!productId) {
+
+            console.error(
+                "Product ID is missing from product card."
+            );
+
+            return;
+        }
 
         showProductDetails(
             productId
@@ -3488,13 +3563,13 @@ document.addEventListener(
 
             modal.style.display =
                 "none";
-
         }
     }
 );
 
 // =====================================================
 // PART 6/7 END
+// =====================================================
 // =====================================================
 // =====================================================
 // EVERYTHING 400 - SCRIPT.JS
