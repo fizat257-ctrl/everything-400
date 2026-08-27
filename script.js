@@ -2575,20 +2575,39 @@ if (clearCartButton) {
 // PROCEED TO CHECKOUT
 // =====================================================
 
+// =====================================================
+// PROCEED TO CHECKOUT
+// =====================================================
+
 document.addEventListener(
     "click",
     function (event) {
 
+        // Do NOT run this handler on checkout form
+        if (
+            document.getElementById(
+                "checkout-form"
+            )
+        ) {
+            return;
+        }
+
+
         const checkoutButton =
-            event.target.closest("#checkout-btn");
+            event.target.closest(
+                "#checkout-btn"
+            );
+
 
         if (!checkoutButton) {
             return;
         }
 
+
         console.log(
             "Everything 400 - Proceed to Checkout clicked."
         );
+
 
         if (
             typeof cart === "undefined" ||
@@ -2603,11 +2622,11 @@ document.addEventListener(
             return;
         }
 
+
         window.location.href =
             "checkout.html";
     }
 );
-
 
 // =====================================================
 // CHECKOUT FORM
