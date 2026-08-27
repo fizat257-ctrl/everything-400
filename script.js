@@ -2665,8 +2665,7 @@ if (currentCheckoutForm) {
             console.log(
                 "Everything 400 - Checkout submitted."
             );
-            alert("CHECKOUT SUBMIT WORKING");
-            return;
+        
 
 
             // =============================================
