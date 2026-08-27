@@ -19,9 +19,7 @@
 
 </head>
 
-
 <body>
-
 
     <!-- =====================================================
          HEADER
@@ -81,20 +79,19 @@
 
                     <form
                         id="checkout-form"
-                        novalidate
                     >
 
 
                         <!-- FULL NAME -->
 
-                        <label for="name">
+                        <label for="customer-name">
                             Full Name
                         </label>
 
                         <input
                             type="text"
-                            id="name"
-                            name="name"
+                            id="customer-name"
+                            name="customer-name"
                             placeholder="Enter your full name"
                             autocomplete="name"
                             required
@@ -103,14 +100,14 @@
 
                         <!-- PHONE -->
 
-                        <label for="phone">
+                        <label for="customer-phone">
                             Phone Number
                         </label>
 
                         <input
                             type="tel"
-                            id="phone"
-                            name="phone"
+                            id="customer-phone"
+                            name="customer-phone"
                             placeholder="Enter your phone number"
                             autocomplete="tel"
                             required
@@ -119,29 +116,28 @@
 
                         <!-- EMAIL -->
 
-                        <label for="email">
+                        <label for="customer-email">
                             Email Address
                         </label>
 
                         <input
                             type="email"
-                            id="email"
-                            name="email"
+                            id="customer-email"
+                            name="customer-email"
                             placeholder="Enter your email address"
                             autocomplete="email"
-                            required
                         >
 
 
                         <!-- ADDRESS -->
 
-                        <label for="address">
+                        <label for="customer-address">
                             Complete Address
                         </label>
 
                         <textarea
-                            id="address"
-                            name="address"
+                            id="customer-address"
+                            name="customer-address"
                             placeholder="Enter your complete address"
                             autocomplete="street-address"
                             required
@@ -150,14 +146,14 @@
 
                         <!-- CITY -->
 
-                        <label for="city">
+                        <label for="customer-city">
                             City
                         </label>
 
                         <input
                             type="text"
-                            id="city"
-                            name="city"
+                            id="customer-city"
+                            name="customer-city"
                             placeholder="Enter your city"
                             autocomplete="address-level2"
                             required
@@ -181,7 +177,7 @@
 
                                 <input
                                     type="radio"
-                                    name="payment_method"
+                                    name="payment-method"
                                     value="Cash on Delivery"
                                     required
                                 >
@@ -199,7 +195,7 @@
 
                                 <input
                                     type="radio"
-                                    name="payment_method"
+                                    name="payment-method"
                                     value="JazzCash"
                                 >
 
@@ -216,7 +212,7 @@
 
                                 <input
                                     type="radio"
-                                    name="payment_method"
+                                    name="payment-method"
                                     value="Easypaisa"
                                 >
 
@@ -233,7 +229,7 @@
 
                                 <input
                                     type="radio"
-                                    name="payment_method"
+                                    name="payment-method"
                                     value="Card Payment"
                                 >
 
@@ -254,12 +250,22 @@
 
 
                         <!-- =================================================
+                             ORDER STATUS
+                        ================================================== -->
+
+                        <div
+                            id="customer-order-status"
+                            class="customer-order-status"
+                        ></div>
+
+
+                        <!-- =================================================
                              PLACE ORDER
                         ================================================== -->
 
                         <button
                             type="submit"
-                            id="place-order-btn"
+                            id="checkout-btn"
                         >
                             Place Order
                         </button>
