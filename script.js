@@ -1088,7 +1088,6 @@ if (resetFiltersButton) {
 // =====================================================
 // PART 2/7 END
 // =====================================================
-// =====================================================
 // EVERYTHING 400 - SCRIPT.JS
 // PART 3A/7
 // DISPLAY PRODUCTS
@@ -1140,15 +1139,10 @@ async function displayProducts() {
 
             container.innerHTML = `
                 <div class="empty-products">
-
-                    <h3>
-                        No products available.
-                    </h3>
-
+                    <h3>No products available.</h3>
                     <p>
                         Please check your products database.
                     </p>
-
                 </div>
             `;
 
@@ -1210,8 +1204,10 @@ async function displayProducts() {
                 // =================================================
 
                 const productName =
-                    product.name ||
-                    "Unnamed Product";
+                    String(
+                        product.name ||
+                        "Unnamed Product"
+                    );
 
                 const price =
                     Number(
@@ -1227,8 +1223,10 @@ async function displayProducts() {
                     );
 
                 const description =
-                    product.description ||
-                    "No description available.";
+                    String(
+                        product.description ||
+                        "No description available."
+                    );
 
                 // =================================================
                 // IMAGE
@@ -1236,33 +1234,24 @@ async function displayProducts() {
 
                 let imageHTML = "";
 
-                if (
-                    product.image
-                ) {
+                if (product.image) {
 
                     imageHTML = `
                         <img
                             src="${escapeHTML(
-                                String(
-                                    product.image
-                                )
+                                String(product.image)
                             )}"
                             alt="${escapeHTML(
-                                String(
-                                    productName
-                                )
+                                productName
                             )}"
                             loading="lazy"
                         >
                     `;
 
-                }
-                else {
+                } else {
 
                     imageHTML = `
-                        <span>
-                            🛍️
-                        </span>
+                        <span>🛍️</span>
                     `;
                 }
 
@@ -1272,23 +1261,17 @@ async function displayProducts() {
 
                 let stockText = "";
 
-                if (
-                    stock <= 0
-                ) {
+                if (stock <= 0) {
 
                     stockText =
                         "Out of Stock";
 
-                }
-                else if (
-                    stock <= 5
-                ) {
+                } else if (stock <= 5) {
 
                     stockText =
                         `Only ${stock} left`;
 
-                }
-                else {
+                } else {
 
                     stockText =
                         "In Stock";
@@ -1316,30 +1299,22 @@ async function displayProducts() {
 
                         <h3>
                             ${escapeHTML(
-                                String(
-                                    productName
-                                )
+                                productName
                             )}
                         </h3>
 
                         <p class="product-description">
                             ${escapeHTML(
-                                String(
-                                    description
-                                )
+                                description
                             )}
                         </p>
 
                         <p class="product-price">
-                            Rs. ${formatPrice(
-                                price
-                            )}
+                            Rs. ${formatPrice(price)}
                         </p>
 
                         <p class="product-stock">
-                            ${escapeHTML(
-                                stockText
-                            )}
+                            ${escapeHTML(stockText)}
                         </p>
 
                         <div class="quantity-control">
@@ -1351,9 +1326,7 @@ async function displayProducts() {
                                 −
                             </button>
 
-                            <span
-                                class="quantity-value"
-                            >
+                            <span class="quantity-value">
                                 1
                             </span>
 
@@ -1412,9 +1385,7 @@ async function displayProducts() {
                     </div>
                 `;
 
-                container.appendChild(
-                    card
-                );
+                container.appendChild(card);
 
                 // =================================================
                 // QUANTITY CONTROLS
@@ -1438,7 +1409,7 @@ async function displayProducts() {
                 let quantity = 1;
 
                 // =================================================
-                // DECREASE QUANTITY
+                // DECREASE
                 // =================================================
 
                 if (minusButton) {
@@ -1447,9 +1418,7 @@ async function displayProducts() {
                         "click",
                         function() {
 
-                            if (
-                                quantity > 1
-                            ) {
+                            if (quantity > 1) {
 
                                 quantity--;
 
@@ -1468,7 +1437,7 @@ async function displayProducts() {
                 }
 
                 // =================================================
-                // INCREASE QUANTITY
+                // INCREASE
                 // =================================================
 
                 if (plusButton) {
@@ -1477,9 +1446,7 @@ async function displayProducts() {
                         "click",
                         function() {
 
-                            if (
-                                stock <= 0
-                            ) {
+                            if (stock <= 0) {
                                 return;
                             }
 
@@ -1500,8 +1467,7 @@ async function displayProducts() {
                                         );
                                 }
 
-                            }
-                            else {
+                            } else {
 
                                 alert(
                                     `Only ${stock} item(s) are available.`
@@ -1526,9 +1492,7 @@ async function displayProducts() {
                         "click",
                         function() {
 
-                            if (
-                                stock <= 0
-                            ) {
+                            if (stock <= 0) {
 
                                 alert(
                                     "This product is out of stock."
@@ -1547,8 +1511,7 @@ async function displayProducts() {
                                     quantity
                                 );
 
-                            }
-                            else {
+                            } else {
 
                                 console.error(
                                     "addToCart function is not defined."
@@ -1573,9 +1536,7 @@ async function displayProducts() {
                         "click",
                         function() {
 
-                            if (
-                                stock <= 0
-                            ) {
+                            if (stock <= 0) {
 
                                 alert(
                                     "This product is out of stock."
@@ -1638,12 +1599,10 @@ async function displayProducts() {
                                 wishlist
                             )
                         ) {
-
                             wishlist = [];
                         }
 
-                    }
-                    catch (error) {
+                    } catch (error) {
 
                         console.error(
                             "Wishlist loading error:",
@@ -1671,9 +1630,7 @@ async function displayProducts() {
                             }
                         );
 
-                    if (
-                        alreadyAdded
-                    ) {
+                    if (alreadyAdded) {
 
                         wishlistButton.textContent =
                             "♥ In Wishlist";
@@ -1700,13 +1657,11 @@ async function displayProducts() {
                                         currentWishlist
                                     )
                                 ) {
-
                                     currentWishlist =
                                         [];
                                 }
 
-                            }
-                            catch (error) {
+                            } catch (error) {
 
                                 console.error(
                                     "Wishlist error:",
@@ -1779,13 +1734,11 @@ async function displayProducts() {
                                     "Product added to Wishlist!"
                                 );
 
-                            }
+                            } else {
 
-                            // =========================================
-                            // REMOVE FROM WISHLIST
-                            // =========================================
-
-                            else {
+                                // =====================================
+                                // REMOVE FROM WISHLIST
+                                // =====================================
 
                                 currentWishlist.splice(
                                     existingIndex,
@@ -1823,8 +1776,7 @@ async function displayProducts() {
 
             filterProducts();
 
-        }
-        else if (
+        } else if (
             typeof updateFilterStatus ===
             "function"
         ) {
@@ -1834,8 +1786,7 @@ async function displayProducts() {
             );
         }
 
-    }
-    catch (error) {
+    } catch (error) {
 
         console.error(
             "Display products error:",
@@ -1881,8 +1832,6 @@ document.addEventListener(
 
 // =====================================================
 // PART 3/7 END
-// =====================================================
-// =====================================================
 // =====================================================
 // EVERYTHING 400 - SCRIPT.JS
 // PART 4/7
