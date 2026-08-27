@@ -2698,7 +2698,7 @@ if (currentCheckoutForm) {
 
             const paymentInput =
                 document.querySelector(
-                    'input[name="payment_method"]:checked'
+                    'checkout-forminput[name="payment_method"]:checked'
                 );
 
 
