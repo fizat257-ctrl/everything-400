@@ -2476,7 +2476,6 @@ function displayCheckout() {
 // =====================================================
 // PART 4/7 END
 // =====================================================
-// =====================================================
 // EVERYTHING 400 - SCRIPT.JS
 // PART 5A/7
 // CART + CHECKOUT
@@ -2581,16 +2580,14 @@ document.addEventListener(
     function (event) {
 
         const checkoutButton =
-            event.target.closest(
-                "#checkout-btn"
-            );
+            event.target.closest("#checkout-btn");
 
         if (!checkoutButton) {
             return;
         }
 
         console.log(
-            "Proceed to Checkout clicked"
+            "Everything 400 - Proceed to Checkout clicked."
         );
 
         if (
@@ -2617,9 +2614,7 @@ document.addEventListener(
 // =====================================================
 
 const currentCheckoutForm =
-    document.getElementById(
-        "checkout-form"
-    );
+    document.getElementById("checkout-form");
 
 
 if (currentCheckoutForm) {
@@ -2633,7 +2628,6 @@ if (currentCheckoutForm) {
         typeof displayCheckout ===
         "function"
     ) {
-
         displayCheckout();
     }
 
@@ -2676,29 +2670,19 @@ if (currentCheckoutForm) {
             // =============================================
 
             const nameInput =
-                document.getElementById(
-                    "customer-name"
-                );
+                document.getElementById("name");
 
             const phoneInput =
-                document.getElementById(
-                    "customer-phone"
-                );
+                document.getElementById("phone");
 
             const emailInput =
-                document.getElementById(
-                    "customer-email"
-                );
+                document.getElementById("email");
 
             const addressInput =
-                document.getElementById(
-                    "customer-address"
-                );
+                document.getElementById("address");
 
             const cityInput =
-                document.getElementById(
-                    "customer-city"
-                );
+                document.getElementById("city");
 
 
             // =============================================
@@ -2742,17 +2726,19 @@ if (currentCheckoutForm) {
 
 
             // =============================================
-            // GET SELECTED PAYMENT
+            // GET SELECTED PAYMENT METHOD
             // =============================================
 
             const selectedPayment =
-                document.querySelector(
-                    '#checkout-form input[name="payment_method"]:checked'
+                currentCheckoutForm.querySelector(
+                    'input[type="radio"][name="payment_method"]:checked'
                 );
 
             const paymentMethod =
                 selectedPayment
-                    ?  selectedPayment.value.trim()
+                    ? String(
+                        selectedPayment.value || ""
+                    ).trim()
                     : "";
 
 
@@ -2761,7 +2747,7 @@ if (currentCheckoutForm) {
             // =============================================
 
             console.log(
-                "Everything 400 - Checkout customer:",
+                "Everything 400 - Checkout data:",
                 {
                     customerName,
                     customerPhone,
@@ -2864,7 +2850,7 @@ if (currentCheckoutForm) {
 
 
             // =============================================
-            // VALIDATE PAYMENT
+            // VALIDATE PAYMENT METHOD
             // =============================================
 
             if (!paymentMethod) {
@@ -2888,24 +2874,8 @@ if (currentCheckoutForm) {
 
                     if (!product) {
                         return;
-                    }// =================================================
-// PAYMENT METHOD - FINAL
-// =================================================
+                    }
 
-const paymentRadio =
-    currentCheckoutForm.querySelector(
-        'input[type="radio"][name="payment_method"]:checked'
-    );
-
-const finalPaymentMethod =
-    paymentRadio
-        ? paymentRadio.value.trim()
-        : "";
-
-console.log(
-    "FINAL PAYMENT:",
-    finalPaymentMethod
-);
                     const price =
                         Number(
                             product.price
@@ -2945,7 +2915,7 @@ console.log(
 
             const placeOrderButton =
                 document.getElementById(
-                    "place-order-btn"
+                    "checkout-btn"
                 );
 
 
@@ -3003,7 +2973,7 @@ console.log(
 
 
                 // =============================================
-                // PREPARE PRODUCTS FOR JSONB
+                // PREPARE PRODUCTS
                 // =============================================
 
                 const orderProducts =
@@ -3055,24 +3025,6 @@ console.log(
                 // =============================================
                 // CREATE ORDER DATA
                 // =============================================
-                //
-                // Supabase orders table:
-                //
-                // id
-                // created_at
-                // customer_name
-                // customer_phone
-                // customer_address
-                // customer_city
-                // product
-                // status
-                // customer_email
-                // payment_method
-                // payment_status
-                // total_amount
-                //
-                // product = JSONB
-                // =============================================
 
                 const orderData = {
 
@@ -3115,7 +3067,7 @@ console.log(
 
 
                 // =============================================
-                // INSERT INTO ORDERS
+                // INSERT ORDER INTO SUPABASE
                 // =============================================
 
                 const {
@@ -3123,9 +3075,7 @@ console.log(
                     error: orderError
                 } = await database
                     .from("orders")
-                    .insert(
-                        orderData
-                    )
+                    .insert(orderData)
                     .select()
                     .single();
 
@@ -3409,6 +3359,7 @@ console.log(
 
 // =====================================================
 // PART 5B/7 END
+// =====================================================
 // =====================================================
 // =====================================================
 // EVERYTHING 400 - SCRIPT.JS
