@@ -1088,9 +1088,800 @@ if (resetFiltersButton) {
 // =====================================================
 // PART 2/7 END
 // =====================================================
+// =====================================================
+// EVERYTHING 400 - SCRIPT.JS
+// PART 3A/7
+// DISPLAY PRODUCTS
+// =====================================================
+
+// =====================================================
+// GET PRODUCT CONTAINER
+// =====================================================
+
+function getDisplayProductContainer() {
+    return document.querySelector(
+        ".product-container"
+    );
+}
+
+// =====================================================
+// DISPLAY PRODUCTS
+// =====================================================
+
+async function displayProducts() {
+
+    const container =
+        getDisplayProductContainer();
+
+    if (!container) {
+        console.warn(
+            "Product container not found."
+        );
+        return;
+    }
+
+    container.innerHTML = `
+        <div class="loading-products">
+            <p>Loading products...</p>
+        </div>
+    `;
+
+    try {
+
+        const products =
+            await getProducts();
+
+        container.innerHTML = "";
+
+        if (
+            !Array.isArray(products) ||
+            products.length === 0
+        ) {
+
+            container.innerHTML = `
+                <div class="empty-products">
+
+                    <h3>
+                        No products available.
+                    </h3>
+
+                    <p>
+                        Please check your products database.
+                    </p>
+
+                </div>
+            `;
+
+            if (
+                typeof updateFilterStatus ===
+                "function"
+            ) {
+                updateFilterStatus(0);
+            }
+
+            return;
+        }
+
+        products.forEach(
+            function(product, index) {
+
+                const card =
+                    document.createElement(
+                        "div"
+                    );
+
+                card.className =
+                    "product-card";
+
+                card.dataset.originalIndex =
+                    String(index);
+
+                card.dataset.id =
+                    String(
+                        product.id || ""
+                    );
+
+                card.dataset.category =
+                    String(
+                        product.category ||
+                        "other"
+                    )
+                        .toLowerCase()
+                        .trim();
+
+                card.dataset.name =
+                    String(
+                        product.name ||
+                        "Unnamed Product"
+                    )
+                        .toLowerCase()
+                        .trim();
+
+                card.dataset.description =
+                    String(
+                        product.description ||
+                        ""
+                    )
+                        .toLowerCase()
+                        .trim();
+
+                // =================================================
+                // PRODUCT DATA
+                // =================================================
+
+                const productName =
+                    product.name ||
+                    "Unnamed Product";
+
+                const price =
+                    Number(
+                        product.price || 0
+                    );
+
+                const stock =
+                    Math.max(
+                        0,
+                        Number(
+                            product.stock
+                        ) || 0
+                    );
+
+                const description =
+                    product.description ||
+                    "No description available.";
+
+                // =================================================
+                // IMAGE
+                // =================================================
+
+                let imageHTML = "";
+
+                if (
+                    product.image
+                ) {
+
+                    imageHTML = `
+                        <img
+                            src="${escapeHTML(
+                                String(
+                                    product.image
+                                )
+                            )}"
+                            alt="${escapeHTML(
+                                String(
+                                    productName
+                                )
+                            )}"
+                            loading="lazy"
+                        >
+                    `;
+
+                }
+                else {
+
+                    imageHTML = `
+                        <span>
+                            🛍️
+                        </span>
+                    `;
+                }
+
+                // =================================================
+                // STOCK TEXT
+                // =================================================
+
+                let stockText = "";
+
+                if (
+                    stock <= 0
+                ) {
+
+                    stockText =
+                        "Out of Stock";
+
+                }
+                else if (
+                    stock <= 5
+                ) {
+
+                    stockText =
+                        `Only ${stock} left`;
+
+                }
+                else {
+
+                    stockText =
+                        "In Stock";
+                }
+
+                // =================================================
+                // PRODUCT CARD
+                // =================================================
+
+                card.innerHTML = `
+                    <div class="product-image">
+                        ${imageHTML}
+                    </div>
+
+                    <div class="product-info">
+
+                        <span class="product-category">
+                            ${escapeHTML(
+                                String(
+                                    product.category ||
+                                    "Other"
+                                )
+                            )}
+                        </span>
+
+                        <h3>
+                            ${escapeHTML(
+                                String(
+                                    productName
+                                )
+                            )}
+                        </h3>
+
+                        <p class="product-description">
+                            ${escapeHTML(
+                                String(
+                                    description
+                                )
+                            )}
+                        </p>
+
+                        <p class="product-price">
+                            Rs. ${formatPrice(
+                                price
+                            )}
+                        </p>
+
+                        <p class="product-stock">
+                            ${escapeHTML(
+                                stockText
+                            )}
+                        </p>
+
+                        <div class="quantity-control">
+
+                            <button
+                                type="button"
+                                class="quantity-minus"
+                            >
+                                −
+                            </button>
+
+                            <span
+                                class="quantity-value"
+                            >
+                                1
+                            </span>
+
+                            <button
+                                type="button"
+                                class="quantity-plus"
+                            >
+                                +
+                            </button>
+
+                        </div>
+
+                        <div class="product-actions">
+
+                            <button
+                                type="button"
+                                class="add-cart-btn"
+                                ${stock <= 0
+                                    ? "disabled"
+                                    : ""}
+                            >
+                                Add to Cart
+                            </button>
+
+                            <button
+                                type="button"
+                                class="buy-now-btn"
+                                ${stock <= 0
+                                    ? "disabled"
+                                    : ""}
+                            >
+                                Buy Now
+                            </button>
+
+                            <button
+                                type="button"
+                                class="wishlist-btn"
+                            >
+                                ♡ Add to Wishlist
+                            </button>
+
+                            <button
+                                type="button"
+                                class="product-details-trigger"
+                                data-id="${escapeHTML(
+                                    String(
+                                        product.id || ""
+                                    )
+                                )}"
+                            >
+                                View Details
+                            </button>
+
+                        </div>
+
+                    </div>
+                `;
+
+                container.appendChild(
+                    card
+                );
+
+                // =================================================
+                // QUANTITY CONTROLS
+                // =================================================
+
+                const minusButton =
+                    card.querySelector(
+                        ".quantity-minus"
+                    );
+
+                const plusButton =
+                    card.querySelector(
+                        ".quantity-plus"
+                    );
+
+                const quantityValue =
+                    card.querySelector(
+                        ".quantity-value"
+                    );
+
+                let quantity = 1;
+
+                // =================================================
+                // DECREASE QUANTITY
+                // =================================================
+
+                if (minusButton) {
+
+                    minusButton.addEventListener(
+                        "click",
+                        function() {
+
+                            if (
+                                quantity > 1
+                            ) {
+
+                                quantity--;
+
+                                if (
+                                    quantityValue
+                                ) {
+
+                                    quantityValue.textContent =
+                                        String(
+                                            quantity
+                                        );
+                                }
+                            }
+                        }
+                    );
+                }
+
+                // =================================================
+                // INCREASE QUANTITY
+                // =================================================
+
+                if (plusButton) {
+
+                    plusButton.addEventListener(
+                        "click",
+                        function() {
+
+                            if (
+                                stock <= 0
+                            ) {
+                                return;
+                            }
+
+                            if (
+                                quantity <
+                                stock
+                            ) {
+
+                                quantity++;
+
+                                if (
+                                    quantityValue
+                                ) {
+
+                                    quantityValue.textContent =
+                                        String(
+                                            quantity
+                                        );
+                                }
+
+                            }
+                            else {
+
+                                alert(
+                                    `Only ${stock} item(s) are available.`
+                                );
+                            }
+                        }
+                    );
+                }
+
+                // =================================================
+                // ADD TO CART
+                // =================================================
+
+                const addButton =
+                    card.querySelector(
+                        ".add-cart-btn"
+                    );
+
+                if (addButton) {
+
+                    addButton.addEventListener(
+                        "click",
+                        function() {
+
+                            if (
+                                stock <= 0
+                            ) {
+
+                                alert(
+                                    "This product is out of stock."
+                                );
+
+                                return;
+                            }
+
+                            if (
+                                typeof addToCart ===
+                                "function"
+                            ) {
+
+                                addToCart(
+                                    product,
+                                    quantity
+                                );
+
+                            }
+                            else {
+
+                                console.error(
+                                    "addToCart function is not defined."
+                                );
+                            }
+                        }
+                    );
+                }
+
+                // =================================================
+                // BUY NOW
+                // =================================================
+
+                const buyButton =
+                    card.querySelector(
+                        ".buy-now-btn"
+                    );
+
+                if (buyButton) {
+
+                    buyButton.addEventListener(
+                        "click",
+                        function() {
+
+                            if (
+                                stock <= 0
+                            ) {
+
+                                alert(
+                                    "This product is out of stock."
+                                );
+
+                                return;
+                            }
+
+                            if (
+                                typeof addToCart !==
+                                "function"
+                            ) {
+
+                                console.error(
+                                    "addToCart function is not defined."
+                                );
+
+                                return;
+                            }
+
+                            const added =
+                                addToCart(
+                                    product,
+                                    quantity
+                                );
+
+                            if (
+                                added !== false
+                            ) {
+
+                                window.location.href =
+                                    "checkout.html";
+                            }
+                        }
+                    );
+                }// =================================================
+                // WISHLIST
+                // =================================================
+
+                const wishlistButton =
+                    card.querySelector(
+                        ".wishlist-btn"
+                    );
+
+                if (wishlistButton) {
+
+                    let wishlist = [];
+
+                    try {
+
+                        wishlist =
+                            JSON.parse(
+                                localStorage.getItem(
+                                    "wishlist"
+                                )
+                            ) || [];
+
+                        if (
+                            !Array.isArray(
+                                wishlist
+                            )
+                        ) {
+
+                            wishlist = [];
+                        }
+
+                    }
+                    catch (error) {
+
+                        console.error(
+                            "Wishlist loading error:",
+                            error
+                        );
+
+                        wishlist = [];
+                    }
+
+                    const productId =
+                        String(
+                            product.id || ""
+                        );
+
+                    const alreadyAdded =
+                        wishlist.some(
+                            function(item) {
+
+                                return (
+                                    String(
+                                        item.id
+                                    ) ===
+                                    productId
+                                );
+                            }
+                        );
+
+                    if (
+                        alreadyAdded
+                    ) {
+
+                        wishlistButton.textContent =
+                            "♥ In Wishlist";
+                    }
+
+                    wishlistButton.addEventListener(
+                        "click",
+                        function() {
+
+                            let currentWishlist =
+                                [];
+
+                            try {
+
+                                currentWishlist =
+                                    JSON.parse(
+                                        localStorage.getItem(
+                                            "wishlist"
+                                        )
+                                    ) || [];
+
+                                if (
+                                    !Array.isArray(
+                                        currentWishlist
+                                    )
+                                ) {
+
+                                    currentWishlist =
+                                        [];
+                                }
+
+                            }
+                            catch (error) {
+
+                                console.error(
+                                    "Wishlist error:",
+                                    error
+                                );
+
+                                currentWishlist =
+                                    [];
+                            }
+
+                            const existingIndex =
+                                currentWishlist.findIndex(
+                                    function(item) {
+
+                                        return (
+                                            String(
+                                                item.id
+                                            ) ===
+                                            productId
+                                        );
+                                    }
+                                );
+
+                            // =========================================
+                            // ADD TO WISHLIST
+                            // =========================================
+
+                            if (
+                                existingIndex === -1
+                            ) {
+
+                                currentWishlist.push({
+
+                                    id:
+                                        product.id,
+
+                                    name:
+                                        product.name ||
+                                        "Unnamed Product",
+
+                                    price:
+                                        Number(
+                                            product.price
+                                        ) || 0,
+
+                                    image:
+                                        product.image ||
+                                        "",
+
+                                    category:
+                                        product.category ||
+                                        "other",
+
+                                    description:
+                                        product.description ||
+                                        ""
+                                });
+
+                                localStorage.setItem(
+                                    "wishlist",
+                                    JSON.stringify(
+                                        currentWishlist
+                                    )
+                                );
+
+                                wishlistButton.textContent =
+                                    "♥ In Wishlist";
+
+                                alert(
+                                    "Product added to Wishlist!"
+                                );
+
+                            }
+
+                            // =========================================
+                            // REMOVE FROM WISHLIST
+                            // =========================================
+
+                            else {
+
+                                currentWishlist.splice(
+                                    existingIndex,
+                                    1
+                                );
+
+                                localStorage.setItem(
+                                    "wishlist",
+                                    JSON.stringify(
+                                        currentWishlist
+                                    )
+                                );
+
+                                wishlistButton.textContent =
+                                    "♡ Add to Wishlist";
+
+                                alert(
+                                    "Product removed from Wishlist."
+                                );
+                            }
+                        }
+                    );
+                }
+            }
+        );
+
+        // =================================================
+        // APPLY FILTERS
+        // =================================================
+
+        if (
+            typeof filterProducts ===
+            "function"
+        ) {
+
+            filterProducts();
+
+        }
+        else if (
+            typeof updateFilterStatus ===
+            "function"
+        ) {
+
+            updateFilterStatus(
+                products.length
+            );
+        }
+
+    }
+    catch (error) {
+
+        console.error(
+            "Display products error:",
+            error
+        );
+
+        container.innerHTML = `
+            <div class="empty-products">
+
+                <p>
+                    Unable to load products.
+                </p>
+
+                <p>
+                    Please try again later.
+                </p>
+
+            </div>
+        `;
+
+        if (
+            typeof updateFilterStatus ===
+            "function"
+        ) {
+
+            updateFilterStatus(0);
+        }
+    }
+}
+
+// =====================================================
+// LOAD PRODUCTS
+// =====================================================
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        displayProducts();
+
+    }
+);
 
 // =====================================================
 // PART 3/7 END
+// =====================================================
 // =====================================================
 // =====================================================
 // EVERYTHING 400 - SCRIPT.JS
