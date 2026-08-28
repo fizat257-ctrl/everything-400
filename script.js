@@ -3073,7 +3073,7 @@ if (currentCheckoutForm) {
                     total_amount:
                         orderTotal,
 
-                    products:
+                    product:
                         orderProducts,
 
                     status:
@@ -3578,7 +3578,9 @@ if (checkOrderButton) {
 // PRODUCT DETAILS MODAL
 // =====================================================
 
-async function showProductDetails(productId) {
+async function showProductDetails(
+    productId
+) {
 
     if (!productId) {
         return;
@@ -3586,22 +3588,27 @@ async function showProductDetails(productId) {
 
     try {
 
-        const products = await getProducts();
+        const products =
+            await getProducts();
 
-        const product = products.find(function(item) {
+        const product =
+            products.find(
+                function(item) {
 
-            return (
-                String(item.id) ===
-                String(productId)
+                    return (
+                        String(item.id) ===
+                        String(productId)
+                    );
+                }
             );
-
-        });
 
         if (!product) {
 
-            alert("Product details not found.");
-            return;
+            alert(
+                "Product details not found."
+            );
 
+            return;
         }
 
         // =================================================
@@ -3615,7 +3622,10 @@ async function showProductDetails(productId) {
 
         if (!modal) {
 
-            modal = document.createElement("div");
+            modal =
+                document.createElement(
+                    "div"
+                );
 
             modal.id =
                 "product-details-modal";
@@ -3623,16 +3633,22 @@ async function showProductDetails(productId) {
             modal.className =
                 "product-details-modal";
 
-            document.body.appendChild(modal);
+            document.body.appendChild(
+                modal
+            );
         }
 
         const price =
-            Number(product.price) || 0;
+            Number(
+                product.price
+            ) || 0;
 
         const stock =
             Math.max(
                 0,
-                Number(product.stock) || 0
+                Number(
+                    product.stock
+                ) || 0
             );
 
         const productName =
@@ -3648,78 +3664,6 @@ async function showProductDetails(productId) {
             );
 
         // =================================================
-        // GET PRODUCT RATING DATA
-        // =================================================
-
-        let reviews = [];
-
-        try {
-
-            const database =
-                typeof getSupabaseClient === "function"
-                    ? getSupabaseClient()
-                    : null;
-
-            if (database) {
-
-                const {
-                    data,
-                    error
-                } = await database
-                    .from("reviews")
-                    .select("*")
-                    .eq("product_id", product.id);
-
-                if (!error && Array.isArray(data)) {
-                    reviews = data;
-                }
-            }
-
-        } catch (reviewError) {
-
-            console.warn(
-                "Review loading error:",
-                reviewError
-            );
-
-        }
-
-        let averageRating = 0;
-
-        if (reviews.length > 0) {
-
-            const totalRating =
-                reviews.reduce(
-                    function(sum, review) {
-
-                        return (
-                            sum +
-                            (
-                                Number(
-                                    review.rating
-                                ) || 0
-                            )
-                        );
-
-                    },
-                    0
-                );
-
-            averageRating =
-                totalRating / reviews.length;
-        }
-
-        const roundedRating =
-            Math.round(averageRating);
-
-        const stars =
-            "★".repeat(roundedRating) +
-            "☆".repeat(
-                Math.max(
-                    0,
-                    5 - roundedRating
-                )
-            );// =================================================
         // MODAL CONTENT
         // =================================================
 
@@ -3800,22 +3744,6 @@ async function showProductDetails(productId) {
 
                         </p>
 
-                        <div class="product-rating">
-
-                            <strong>
-                                ${stars}
-                            </strong>
-
-                            <span>
-                                ${
-                                    reviews.length > 0
-                                        ? `${averageRating.toFixed(1)} / 5 (${reviews.length} reviews)`
-                                        : "No reviews yet"
-                                }
-                            </span>
-
-                        </div>
-
                         <button
                             type="button"
                             class="details-add-cart-btn"
@@ -3836,7 +3764,8 @@ async function showProductDetails(productId) {
 
         `;
 
-        modal.style.display = "block";
+        modal.style.display =
+            "block";
 
         // =================================================
         // CLOSE BUTTON
@@ -3855,7 +3784,6 @@ async function showProductDetails(productId) {
 
                     modal.style.display =
                         "none";
-
                 }
             );
         }
@@ -3882,12 +3810,12 @@ async function showProductDetails(productId) {
 
                         modal.style.display =
                             "none";
-
                     }
-
                 }
             );
-        }// =================================================
+        }
+
+        // =================================================
         // ADD TO CART FROM DETAILS
         // =================================================
 
@@ -3902,7 +3830,9 @@ async function showProductDetails(productId) {
                 "click",
                 function() {
 
-                    if (stock <= 0) {
+                    if (
+                        stock <= 0
+                    ) {
 
                         alert(
                             "This product is out of stock."
@@ -3935,9 +3865,7 @@ async function showProductDetails(productId) {
 
                         modal.style.display =
                             "none";
-
                     }
-
                 }
             );
         }
@@ -3954,9 +3882,7 @@ async function showProductDetails(productId) {
             "Unable to load product details."
         );
     }
-
 }
-
 
 // =====================================================
 // PRODUCT DETAILS BUTTON CLICK
@@ -3990,10 +3916,8 @@ document.addEventListener(
         showProductDetails(
             productId
         );
-
     }
 );
-
 
 // =====================================================
 // PRODUCT IMAGE CLICK
@@ -4036,9 +3960,10 @@ document.addEventListener(
         showProductDetails(
             productId
         );
-
     }
-);// =====================================================
+);
+
+// =====================================================
 // ESC KEY CLOSE MODAL
 // =====================================================
 
@@ -4061,16 +3986,9 @@ document.addEventListener(
 
             modal.style.display =
                 "none";
-
         }
-
     }
 );
-
-
-// =====================================================
-// PART 6/7 END
-// =====================================================
 
 // =====================================================
 // PART 6/7 END
