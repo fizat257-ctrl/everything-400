@@ -3073,7 +3073,7 @@ if (currentCheckoutForm) {
                     total_amount:
                         orderTotal,
 
-                    product:
+                    products:
                         orderProducts,
 
                     status:
