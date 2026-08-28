@@ -3350,10 +3350,14 @@ if (currentCheckoutForm) {
                 }
 
 
-                alert(
-                    "Unable to place your order. Please try again."
-                );
-
+              alert(
+    "Checkout Error: " +
+    (
+        error && error.message
+            ? error.message
+            : "Unknown error"
+    )
+);
             }
 
 
