@@ -56,12 +56,14 @@
 
 
     <!-- =====================================================
-         MAIN
+         MAIN PRODUCT DETAILS
     ====================================================== -->
 
     <main>
 
         <section class="product-details-section">
+
+            <!-- PRODUCT DETAILS WILL LOAD HERE -->
 
             <div
                 id="product-details"
@@ -77,6 +79,203 @@
                 </div>
 
             </div>
+
+
+            <!-- =================================================
+                 REVIEWS SECTION
+            ================================================== -->
+
+            <section
+                id="reviews-section"
+                class="reviews-section"
+            >
+
+                <h2>
+                    Customer Reviews
+                </h2>
+
+
+                <!-- AVERAGE RATING -->
+
+                <div
+                    id="product-rating-summary"
+                    class="product-rating-summary"
+                >
+
+                    <div
+                        id="average-rating"
+                        class="average-rating"
+                    >
+                        ⭐ 0.0
+                    </div>
+
+                    <div
+                        id="rating-count"
+                        class="rating-count"
+                    >
+                        0 Reviews
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     WRITE A REVIEW
+                ================================================== -->
+
+                <div
+                    id="review-form-container"
+                    class="review-form-container"
+                >
+
+                    <h3>
+                        Write a Review
+                    </h3>
+
+
+                    <form
+                        id="review-form"
+                    >
+
+                        <!-- CUSTOMER NAME -->
+
+                        <label for="review-name">
+                            Your Name
+                        </label>
+
+                        <input
+                            type="text"
+                            id="review-name"
+                            name="review-name"
+                            placeholder="Enter your name"
+                            autocomplete="name"
+                            required
+                        >
+
+
+                        <!-- STAR RATING -->
+
+                        <label>
+                            Your Rating
+                        </label>
+
+                        <div
+                            id="star-rating"
+                            class="star-rating"
+                            role="radiogroup"
+                            aria-label="Product rating"
+                        >
+
+                            <button
+                                type="button"
+                                class="star-btn"
+                                data-rating="1"
+                                aria-label="1 star"
+                            >
+                                ☆
+                            </button>
+
+                            <button
+                                type="button"
+                                class="star-btn"
+                                data-rating="2"
+                                aria-label="2 stars"
+                            >
+                                ☆
+                            </button>
+
+                            <button
+                                type="button"
+                                class="star-btn"
+                                data-rating="3"
+                                aria-label="3 stars"
+                            >
+                                ☆
+                            </button>
+
+                            <button
+                                type="button"
+                                class="star-btn"
+                                data-rating="4"
+                                aria-label="4 stars"
+                            >
+                                ☆
+                            </button>
+
+                            <button
+                                type="button"
+                                class="star-btn"
+                                data-rating="5"
+                                aria-label="5 stars"
+                            >
+                                ☆
+                            </button>
+
+                        </div>
+
+
+                        <input
+                            type="hidden"
+                            id="review-rating"
+                            name="review-rating"
+                            value=""
+                        >
+
+
+                        <!-- REVIEW TEXT -->
+
+                        <label for="review-text">
+                            Your Review
+                        </label>
+
+                        <textarea
+                            id="review-text"
+                            name="review-text"
+                            placeholder="Write your review..."
+                            rows="5"
+                            required
+                        ></textarea>
+
+
+                        <!-- REVIEW STATUS -->
+
+                        <div
+                            id="review-status"
+                            class="review-status"
+                            aria-live="polite"
+                        ></div>
+
+
+                        <!-- SUBMIT -->
+
+                        <button
+                            type="submit"
+                            id="submit-review-btn"
+                        >
+                            Submit Review
+                        </button>
+
+                    </form>
+
+                </div>
+
+
+                <!-- =================================================
+                     REVIEWS LIST
+                ================================================== -->
+
+                <div
+                    id="reviews-list"
+                    class="reviews-list"
+                >
+
+                    <p>
+                        Loading reviews...
+                    </p>
+
+                </div>
+
+            </section>
 
         </section>
 
@@ -97,10 +296,17 @@
 
 
     <!-- =====================================================
-         SUPABASE
+         SUPABASE LIBRARY
     ====================================================== -->
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+    ></script>
+
+
+    <!-- =====================================================
+         SUPABASE CONNECTION
+    ====================================================== -->
 
     <script src="supabase.js"></script>
 
@@ -110,6 +316,7 @@
     ====================================================== -->
 
     <script src="script.js"></script>
+
 
 </body>
 
